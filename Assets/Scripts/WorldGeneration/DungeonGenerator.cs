@@ -40,6 +40,10 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] List<RoomContent> contentSets;
     Vector2Int lastPlayerSlot = new Vector2Int(int.MinValue, int.MinValue);
 
+    [Header("Fill")]
+    [SerializeField] private bool fillBetweenRooms = true; // solid wall mass in all space outside rooms and corridors
+    [SerializeField] private int fillMargin = 1;           // extra ring of solid slots around the whole map
+
     [Header("Floor Path")]
     [SerializeField] private bool smoothPath = true; // true = soft blend between cells, false = sharp squares
 
@@ -151,6 +155,12 @@ public class DungeonGenerator : MonoBehaviour
 
         BuildCorridors();
         Debug.Log($"Build corridors: {sw.ElapsedMilliseconds} ms"); sw.Restart();
+
+        if (fillBetweenRooms)
+        {
+            BuildFill();
+            Debug.Log($"Build fill: {sw.ElapsedMilliseconds} ms"); sw.Restart();
+        }
 
         foreach (var room in rooms.Values) PopulateRoom(room);
         Debug.Log($"Populate rooms: {sw.ElapsedMilliseconds} ms"); sw.Restart();
@@ -275,6 +285,8 @@ public class DungeonGenerator : MonoBehaviour
         fog.transform.localScale = Vector3.one * slotSize * cellSize * 1.05f;
 
         room.fog = fog.GetComponent<Renderer>();
+        room.fog.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;   // fog shouldn't darken anything below it
+        room.fog.receiveShadows = false;                                           // or get shadows drawn onto it
     }
     IEnumerator FadeFog(Renderer fog)
     {
@@ -358,10 +370,119 @@ public class DungeonGenerator : MonoBehaviour
                 Vector3 position = CellToWorld(origin, x, y);
                 Instantiate(floorTile, position, Quaternion.identity, corridorObj.transform);
 
-                if (across == gapStart - 1 || across == gapEnd)
+                // With fill on, the fill boxes already form the corridor's side walls
+                if (!fillBetweenRooms && (across == gapStart - 1 || across == gapEnd))
                     Instantiate(wallTile, position, Quaternion.identity, corridorObj.transform);
             }
         }
+    }
+
+    // -------- Fill (solid mass between rooms) --------
+
+    // Fills every cell that isn't room or corridor with a few big scaled wall boxes.
+    // Each slot is split into rectangles around its room:
+    //
+    //   +----+--------+----+
+    //   | NW | north  | NE |    corners: always solid
+    //   +----+--------+----+    sides:   solid, or two pieces with a gap
+    //   |west|  ROOM  |east|             where a corridor leaves the room
+    //   +----+--------+----+
+    //   | SW | south  | SE |    slots without a room: one box for the whole slot
+    //   +----+--------+----+
+    void BuildFill()
+    {
+        GameObject fillObj = new GameObject("Fill");
+        fillObj.transform.SetParent(transform);
+
+        // Big flat box tops would otherwise get baked as (unreachable) walkable navmesh
+        var modifier = fillObj.AddComponent<NavMeshModifier>();
+        modifier.overrideArea = true;
+        modifier.area = NavMesh.GetAreaFromName("Not Walkable");
+        modifier.applyToChildren = true;
+
+        // Bounds of the map in slots, plus a margin
+        Vector2Int min = new Vector2Int(int.MaxValue, int.MaxValue);
+        Vector2Int max = new Vector2Int(int.MinValue, int.MinValue);
+        foreach (RoomData room in rooms.Values)
+        {
+            min = Vector2Int.Min(min, room.slot);
+            max = Vector2Int.Max(max, room.slot);
+        }
+        min -= Vector2Int.one * fillMargin;
+        max += Vector2Int.one * fillMargin;
+
+        for (int sx = min.x; sx <= max.x; sx++)
+        {
+            for (int sy = min.y; sy <= max.y; sy++)
+            {
+                Vector2Int slot = new Vector2Int(sx, sy);
+                if (rooms.TryGetValue(slot, out RoomData room))
+                    FillAroundRoom(room, fillObj.transform);
+                else
+                    FillBox(slot, 0, 0, slotSize, slotSize, fillObj.transform);   // empty slot: solid
+            }
+        }
+    }
+
+    void FillAroundRoom(RoomData room, Transform parent)
+    {
+        Vector2Int slot = room.slot;
+        Vector2Int offset = RoomOffset(room);
+        int x0 = offset.x, x1 = offset.x + room.width;    // room covers x0..x1-1 (slot coordinates)
+        int y0 = offset.y, y1 = offset.y + room.height;   // room covers y0..y1-1
+        int s = slotSize;
+
+        // Corners
+        FillBox(slot, 0,  0,  x0,     y0,     parent);   // SW
+        FillBox(slot, x1, 0,  s - x1, y0,     parent);   // SE
+        FillBox(slot, 0,  y1, x0,     s - y1, parent);   // NW
+        FillBox(slot, x1, y1, s - x1, s - y1, parent);   // NE
+
+        // Sides (split around the corridor if that side has a door)
+        FillBand(slot, 0,  y0, x0,      y1 - y0, room.doors[3], splitAlongY: true,  parent);   // west
+        FillBand(slot, x1, y0, s - x1,  y1 - y0, room.doors[1], splitAlongY: true,  parent);   // east
+        FillBand(slot, x0, 0,  x1 - x0, y0,      room.doors[2], splitAlongY: false, parent);   // south
+        FillBand(slot, x0, y1, x1 - x0, s - y1,  room.doors[0], splitAlongY: false, parent);   // north
+    }
+
+    // A side band: one box, or two boxes leaving the corridor's door rows/columns open
+    void FillBand(Vector2Int slot, int x, int y, int w, int h, bool door, bool splitAlongY, Transform parent)
+    {
+        if (!door)
+        {
+            FillBox(slot, x, y, w, h, parent);
+            return;
+        }
+
+        // Rooms are centered in their slots, so every corridor runs along the slot's middle
+        int gapStart = DoorStart(slotSize);
+        int gapEnd = gapStart + doorWidth;
+
+        if (splitAlongY)
+        {
+            FillBox(slot, x, y,      w, gapStart - y,     parent);   // below the corridor
+            FillBox(slot, x, gapEnd, w, y + h - gapEnd,   parent);   // above the corridor
+        }
+        else
+        {
+            FillBox(slot, x,      y, gapStart - x,   h, parent);     // left of the corridor
+            FillBox(slot, gapEnd, y, x + w - gapEnd, h, parent);     // right of the corridor
+        }
+    }
+
+    // One wall box covering cells x..x+w-1, y..y+h-1 of a slot
+    void FillBox(Vector2Int slot, int x, int y, int w, int h, Transform parent)
+    {
+        if (w <= 0 || h <= 0) return;   // e.g. a room that touches its slot edge
+
+        Vector2Int origin = slot * slotSize;
+        Vector3 center = new Vector3((origin.x + x + w / 2f) * cellSize, 0,
+                                     (origin.y + y + h / 2f) * cellSize);
+
+        GameObject box = Instantiate(wallTile, center, Quaternion.identity, parent);
+        box.GetComponentInChildren<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        Vector3 scale = wallTile.transform.localScale;
+        box.transform.localScale = new Vector3(scale.x * w, scale.y, scale.z * h);
     }
 
     // -------- Room contents --------
