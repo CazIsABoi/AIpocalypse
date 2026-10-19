@@ -469,11 +469,12 @@ MonoBehaviour:
   navMeshSurface: {fileID: 841289499}
   floorTile: {fileID: 5810459312312200726, guid: c711593bafa7b524baaaa48a4f092e6f, type: 3}
   wallTile: {fileID: 374521644867712513, guid: 49910f3e537ed564ebfe2a525ca09520, type: 3}
-  maxRooms: 500
-  minRooms: 500
+  roomFloorMaterial: {fileID: 2100000, guid: 95207d0537ac7e84b9f4e76d07393601, type: 2}
+  maxRooms: 100
+  minRooms: 20
   branchChance: 0.5
-  maxNeighbors: 1
-  loopChance: 0.3
+  maxNeighbors: 2
+  loopChance: 0.4
   seed: 0
   useRandomSeed: 1
   minWidth: 11
@@ -484,7 +485,11 @@ MonoBehaviour:
   doorWidth: 3
   slotSize: 23
   laneDepth: 4
-  contentSets: []
+  contentSets:
+  - {fileID: 11400000, guid: b7097f32d975056468ee51d741779488, type: 2}
+  - {fileID: 11400000, guid: f06b02bda94b4fa468f3ebb0400886bc, type: 2}
+  - {fileID: 11400000, guid: 5a62153c6c3821d40b81b168690b7763, type: 2}
+  smoothPath: 1
   showBlocked: 1
   showSolid: 1
   showFill: 1
