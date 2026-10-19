@@ -57,7 +57,7 @@ public class EnemyController : MonoBehaviour
                 AttackInterval = 0.1f;
                 Vector3 offset = PlayerTarget.transform.position - transform.position;
                 Debug.DrawLine(transform.position + new Vector3(0, 0.5f, 0), transform.position + (offset.normalized * AttackRange), Color.blue);
-                Debug.Log("Distance: " + offset.sqrMagnitude + " range being: " + AttackRange * AttackRange);
+                // Debug.Log("Distance: " + offset.sqrMagnitude + " range being: " + AttackRange * AttackRange);
 
                 if (offset.sqrMagnitude <= AttackRange * AttackRange)
                 {

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.InputSystem;
 
 public class DungeonGenerator : MonoBehaviour
@@ -9,12 +10,14 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private InputActionReference devResetKey;
 
     [Header("References")]
+    [SerializeField] Transform player;
     [SerializeField] private NavMeshSurface navMeshSurface;
 
     [Header("Prefabs")]
     [SerializeField] private GameObject floorTile;
     [SerializeField] private GameObject wallTile;
     [SerializeField] private Material roomFloorMaterial;   // uses the RoomFloor shader graph
+    [SerializeField] GameObject fogPrefab;
 
     [Header("Layout Settings")]
     [SerializeField] private int maxRooms = 10; // Maximum number of rooms to generate
@@ -35,9 +38,14 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private int slotSize = 23; // Size of the room slot in cells
     [SerializeField] private int laneDepth = 4; // Depth of the door lane in cells
     [SerializeField] List<RoomContent> contentSets;
+    Vector2Int lastPlayerSlot = new Vector2Int(int.MinValue, int.MinValue);
 
     [Header("Floor Path")]
     [SerializeField] private bool smoothPath = true; // true = soft blend between cells, false = sharp squares
+
+    [Header("Fog")]
+    [SerializeField] float fogHeight = 3f;
+    [SerializeField] float fogFadeTime = 0.5f;
 
     [Header("Debug")]
     [SerializeField] private bool showBlocked = true;
@@ -48,6 +56,9 @@ public class DungeonGenerator : MonoBehaviour
 
     Dictionary<Vector2Int, RoomData> rooms = new Dictionary<Vector2Int, RoomData>();
     HashSet<RoomData> dirtyRooms = new HashSet<RoomData>();    // rooms whose floor texture changed this frame
+    public event System.Action Generated;
+    public bool IsReady { get; private set; }
+    public Vector3 StartPosition => SlotCenter(Vector2Int.zero) + Vector3.up * 1f;
 
     static readonly Vector2Int[] Dirs = { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
 
@@ -58,9 +69,10 @@ public class DungeonGenerator : MonoBehaviour
 
     void Update()
     {
+        TrackPlayer();
 #if UNITY_EDITOR || DEBUG
         if (devResetKey.action.triggered) { StartCoroutine(GenerateRoutine()); }
-#endif
+    #endif
     }
 
     void LateUpdate()
@@ -76,11 +88,48 @@ public class DungeonGenerator : MonoBehaviour
     {
         FreeFloorTextures();
     }
+    public bool TryGetSpawnPosition(out Vector3 position)
+    {
+        position = default;
+
+        var candidates = new List<RoomData>();
+
+        // 1. frontier: unexplored rooms with a door to an explored room
+        foreach (RoomData room in rooms.Values)
+            if (!room.explored && HasExploredNeighbour(room)) candidates.Add(room);
+
+        // 2. fallback: explored rooms the player isn't in
+        if (candidates.Count == 0)
+            foreach (RoomData room in rooms.Values)
+                if (room.explored && room.slot != lastPlayerSlot) candidates.Add(room);
+
+        // still nothing? then there's nowhere to spawn this time
+        if (candidates.Count == 0) return false;
+
+        // 3. try a few random spots
+        for (int attempt = 0; attempt < 20; attempt++)
+        {
+            RoomData room = candidates[Random.Range(0, candidates.Count)];
+            Vector2Int cell = new Vector2Int(Random.Range(1, room.width - 1),
+                                             Random.Range(1, room.height - 1));
+            if (room.solid != null && room.solid.Contains(cell)) continue;   
+
+            Vector3 world = CellToWorld(RoomOrigin(room), cell.x, cell.y);
+            if (NavMesh.SamplePosition(world, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+            {
+                position = hit.position;
+                return true;
+            }
+        }
+        return false;
+    }
 
     // -------- Generation --------
 
     public IEnumerator GenerateRoutine()
     {
+        IsReady = false;
+        lastPlayerSlot = new Vector2Int(int.MinValue, int.MinValue);
         // Clear the old dungeon (textures are NOT destroyed with GameObjects, so free them ourselves)
         FreeFloorTextures();
         foreach (Transform child in transform) Destroy(child.gameObject);
@@ -108,6 +157,9 @@ public class DungeonGenerator : MonoBehaviour
 
         navMeshSurface.BuildNavMesh();
         Debug.Log($"Build nav mesh: {sw.ElapsedMilliseconds} ms");
+
+        IsReady = true;
+        Generated?.Invoke();
     }
 
     void GenerateLayout()
@@ -118,6 +170,7 @@ public class DungeonGenerator : MonoBehaviour
         // create start room at (0,0), add to rooms, enqueue it
         var startRoom = CreateRoom(Vector2Int.zero);
         rooms[startRoom.slot] = startRoom;
+        startRoom.explored = true;
         queue.Enqueue(startRoom);
 
         int passes = 0;
@@ -211,6 +264,33 @@ public class DungeonGenerator : MonoBehaviour
                 Instantiate(wallTile, CellToWorld(origin, x, y), Quaternion.identity, room.root);
             }
         }
+        if (!room.explored) CreateFog(room);
+    }
+    void CreateFog(RoomData room)
+    {
+        Vector3 position = SlotCenter(room.slot) + Vector3.up * fogHeight;
+        Quaternion rotation = Quaternion.Euler(90, 0, 0);
+
+        GameObject fog = Instantiate(fogPrefab, position, rotation, room.root);
+        fog.transform.localScale = Vector3.one * slotSize * cellSize * 1.05f;
+
+        room.fog = fog.GetComponent<Renderer>();
+    }
+    IEnumerator FadeFog(Renderer fog)
+    {
+        Material mat = fog.material;     // this room's own copy, so only this fog fades
+        Color c = mat.color;
+
+        for (float t = 0; t < 1; t += Time.deltaTime / fogFadeTime)
+        {
+            if (fog == null) yield break;   // dungeon regenerated mid-fade
+            c.a = 1 - t;
+            mat.color = c;
+            yield return null;              // wait one frame
+        }
+
+        Destroy(fog.gameObject);
+        Destroy(mat);                       // .material copies aren't cleaned up automatically
     }
 
     void BuildRoomFloor(RoomData room)
@@ -497,13 +577,18 @@ public class DungeonGenerator : MonoBehaviour
     bool TryGetRoomCell(Vector3 worldPos, out RoomData room, out Vector2Int cell)
     {
         Vector2Int global = WorldToGlobalCell(worldPos);
-        Vector2Int slot = new Vector2Int(Mathf.FloorToInt((float)global.x / slotSize),
-                                         Mathf.FloorToInt((float)global.y / slotSize));
+        Vector2Int slot = WorldToSlot(worldPos);
         cell = default;
         if (!rooms.TryGetValue(slot, out room)) return false;
 
         cell = global - RoomOrigin(room);
         return cell.x >= 0 && cell.x < room.width && cell.y >= 0 && cell.y < room.height;
+    }
+    Vector2Int WorldToSlot(Vector3 worldPos)
+    {
+        Vector2Int g = WorldToGlobalCell(worldPos);
+        return new Vector2Int(Mathf.FloorToInt((float)g.x / slotSize),
+                              Mathf.FloorToInt((float)g.y / slotSize));
     }
 
     void FreeFloorTextures()
@@ -511,6 +596,23 @@ public class DungeonGenerator : MonoBehaviour
         foreach (var room in rooms.Values)
             if (room.trailTex != null) Destroy(room.trailTex);
         dirtyRooms.Clear();
+    }
+    void TrackPlayer()
+    {
+        if (player == null || !IsReady) return;
+        Vector2Int slot = WorldToSlot(player.position);
+        if (slot == lastPlayerSlot) return;
+        lastPlayerSlot = slot;
+        if (rooms.TryGetValue(slot, out RoomData room) && !room.explored)
+            Explore(room);
+    }
+
+    void Explore(RoomData room)
+    {
+        room.explored = true;
+        Debug.Log($"Explored {room.slot}");
+
+        if (room.fog != null) StartCoroutine(FadeFog(room.fog));
     }
 
     // --------- Helpers ---------
@@ -553,6 +655,16 @@ public class DungeonGenerator : MonoBehaviour
 
     Vector3 CellToWorld(Vector2Int origin, int x, int y)
         => new Vector3((origin.x + x + 0.5f) * cellSize, 0, (origin.y + y + 0.5f) * cellSize);
+    bool HasExploredNeighbour(RoomData room)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            Vector2Int neighbourSlot = room.slot + Dirs[i];
+            if (room.doors[i] && rooms.TryGetValue(neighbourSlot, out RoomData neighbour) && neighbour.explored)
+                return true;
+        }
+        return false;
+    }
 
     // -------- Debug --------
 

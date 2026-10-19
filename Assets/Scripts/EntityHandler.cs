@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class EntityHandler : MonoBehaviour
 {
+    [SerializeField] private DungeonGenerator dungeon;
     [SerializeField] private EnemyData[] enemies = new EnemyData[0];
 
     [SerializeField] private float GameTime;
@@ -16,6 +17,7 @@ public class EntityHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!dungeon.IsReady) return;
         GameTime += Time.deltaTime;
         SpawnCD -= Time.deltaTime;
 
@@ -23,7 +25,8 @@ public class EntityHandler : MonoBehaviour
         {
             int rolledEnemy = Random.Range(0, enemies.Length);
             SpawnCD = 3;
-            GameObject spawnedEnemy = Instantiate(enemies[rolledEnemy].EnemyPrefab, new Vector3(0, 0.5f, 0), Quaternion.identity);
+            if (!dungeon.TryGetSpawnPosition(out Vector3 spawnPos)) return;   // no spot found this time, try next cooldown
+            GameObject spawnedEnemy = Instantiate(enemies[rolledEnemy].EnemyPrefab, spawnPos, Quaternion.identity, transform);
             EnemyController enemy = spawnedEnemy.GetComponent<EnemyController>();
             if (GameTime < 20)
             {
@@ -37,6 +40,14 @@ public class EntityHandler : MonoBehaviour
             {
                 enemy.MaxHealth = enemies[rolledEnemy].BaseHealth * 25f;    //10f
             }
+        }
+    }
+
+    public void ClearEnemies()
+    {
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
         }
     }
 }
