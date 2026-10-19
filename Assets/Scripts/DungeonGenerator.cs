@@ -35,6 +35,13 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private int laneDepth = 4; // Depth of the corridor lane in cells
     [SerializeField] List<RoomContent> contentSets;
 
+    [Header("Debug")]
+    [SerializeField] private bool showBlocked = true;
+    [SerializeField] private bool showSolid = true;
+    [SerializeField] private bool showFill = true;
+    [SerializeField] private Vector2Int debugRoomSlot;          // which room to animate
+    [SerializeField] private float fillStepDelay = 0.02f;      // seconds per step
+
     Dictionary<Vector2Int, RoomData> rooms = new Dictionary<Vector2Int, RoomData>();
 
     static readonly Vector2Int[] Dirs = { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
@@ -204,29 +211,41 @@ public class DungeonGenerator : MonoBehaviour
 
     private void PopulateRoom(RoomData room)
     {
-        HashSet<Vector2Int> blocked = new HashSet<Vector2Int>();
+        HashSet<Vector2Int> blocked = new HashSet<Vector2Int>();   // no props allowed here
+        HashSet<Vector2Int> solid = new HashSet<Vector2Int>();     // nothing can walk here
         room.blocked = blocked;
+        room.solid = solid;
 
-        BlockRect(blocked, 0, 0, room.width, 3);                 // bottom
-        BlockRect(blocked, 0, room.height - 3, room.width, 3);   // top
-        BlockRect(blocked, 0, 0, 3, room.height);                // left
-        BlockRect(blocked, room.width - 3, 0, 3, room.height);   // right
+        // Wall ring: reserved AND solid
+        foreach (var set in new[] { blocked, solid })
+        {
+            BlockRect(set, 0, 0, room.width, 1);                 // bottom
+            BlockRect(set, 0, room.height - 1, room.width, 1);   // top
+            BlockRect(set, 0, 0, 1, room.height);                // left
+            BlockRect(set, room.width - 1, 0, 1, room.height);   // right
+        }
 
+        // Door lanes: reserved only (you can walk on them)
         if (room.doors[0]) BlockRect(blocked, DoorStart(room.width), room.height - 1 - laneDepth, doorWidth, laneDepth); // north
         if (room.doors[1]) BlockRect(blocked, room.width - 1 - laneDepth, DoorStart(room.height), laneDepth, doorWidth); // east
-        if (room.doors[2]) BlockRect(blocked, DoorStart(room.width), 1, doorWidth, laneDepth); // south
-        if (room.doors[3]) BlockRect(blocked, 1, DoorStart(room.height), laneDepth, doorWidth); // west
+        if (room.doors[2]) BlockRect(blocked, DoorStart(room.width), 1, doorWidth, laneDepth);                          // south
+        if (room.doors[3]) BlockRect(blocked, 1, DoorStart(room.height), laneDepth, doorWidth);                         // west
 
-        if (room.slot == Vector2Int.zero) return;      // start room stays empty
-
-        RoomContent content = PickContent(room);
-        if (content == null || content.props.Length == 0) return;
-
-        switch (content.pattern)
+        if (room.slot != Vector2Int.zero)   // start room stays empty
         {
-            case PlacementPattern.Scatter: PlaceScatter(room, content, blocked); break;
-            case PlacementPattern.PillarGrid: PlacePillarGrid(room, content, blocked); break;
+            RoomContent content = PickContent(room);
+            if (content != null && content.props.Length > 0)
+            {
+                switch (content.pattern)
+                {
+                    case PlacementPattern.Scatter: PlaceScatter(room, content, blocked, solid); break;
+                    case PlacementPattern.PillarGrid: PlacePillarGrid(room, content, blocked, solid); break;
+                }
+            }
         }
+
+        if (!IsConnected(room, solid))
+            Debug.LogWarning($"Room {room.slot} is not fully connected!");
     }
     RoomContent PickContent(RoomData room)
     {
@@ -263,6 +282,45 @@ public class DungeonGenerator : MonoBehaviour
             for (int y = y0; y < y0 + h; y++)
                 set.Add(new Vector2Int(x, y));
     }
+    bool IsConnected(RoomData room, HashSet<Vector2Int> solid)
+    {
+        // 1. Count positions where the 2×2 brush fits, and remember one to start from
+        int total = 0;
+        Vector2Int start = new Vector2Int(-1, -1);
+        for (int x = 1; x < room.width - 1; x++)
+            for (int y = 1; y < room.height - 1; y++)
+            {
+                Vector2Int c = new Vector2Int(x, y);
+                if (!Fits(room, solid, c)) continue;
+                total++;
+                start = c;
+            }
+
+        if (total == 0) return false;
+
+        // 2. Flood fill from start
+        var visited = new HashSet<Vector2Int> { start };
+        var queue = new Queue<Vector2Int>();
+        queue.Enqueue(start);
+
+        while (queue.Count > 0)
+        {
+            Vector2Int current = queue.Dequeue();
+            foreach (Vector2Int d in Dirs)
+            {
+                Vector2Int next = current + d;
+                if (!Fits(room, solid, next)) continue;
+                if (!visited.Add(next)) continue;
+                queue.Enqueue(next);
+            }
+        }
+
+        room.lastFill = visited;   // debug: remember what we reached
+
+        // 3. Did we reach everything?
+        return visited.Count == total;
+    }
+
     void PlaceProp(RoomData room, RoomContent content, Vector2Int cell)
     {
         GameObject prefab = content.props[Random.Range(0, content.props.Length)];
@@ -270,7 +328,7 @@ public class DungeonGenerator : MonoBehaviour
         Quaternion rot = Quaternion.Euler(0, 90 * Random.Range(0, 4), 0);
         Instantiate(prefab, pos, rot, room.root);
     }
-    void PlaceScatter(RoomData room, RoomContent content, HashSet<Vector2Int> blocked)
+    void PlaceScatter(RoomData room, RoomContent content, HashSet<Vector2Int> blocked, HashSet<Vector2Int> solid)
     {
         int interior = (room.width - 2) * (room.height - 2);
         int count = Mathf.RoundToInt(interior * content.density);
@@ -282,14 +340,15 @@ public class DungeonGenerator : MonoBehaviour
             attempts++;
             Vector2Int cell = new Vector2Int(Random.Range(1, room.width - 1),
                                              Random.Range(1, room.height - 1));
-            if (blocked.Contains(cell)) continue;
+
+            if (blocked.Contains(cell) || solid.Contains(cell)) continue;  // reserved or taken
+            if (!TryAddSolid(room, solid, cell)) continue;                 // would seal something off
 
             PlaceProp(room, content, cell);
-            BlockRect(blocked, cell.x - 2, cell.y - 2, 5, 5);
             placed++;
         }
     }
-    void PlacePillarGrid(RoomData room, RoomContent content, HashSet<Vector2Int> blocked)
+    void PlacePillarGrid(RoomData room, RoomContent content, HashSet<Vector2Int> blocked, HashSet<Vector2Int> solid)
     {
         int cx = room.width / 2;
         int cy = room.height / 2;
@@ -300,10 +359,13 @@ public class DungeonGenerator : MonoBehaviour
             {
                 bool onGridX = Mathf.Abs(x - cx) % content.spacing == 0;
                 bool onGridY = Mathf.Abs(y - cy) % content.spacing == 0;
-                Vector2Int cell = new Vector2Int(x, y);
+                if (!onGridX || !onGridY) continue;
 
-                if (onGridX && onGridY && !blocked.Contains(cell))
-                    PlaceProp(room, content, cell);
+                Vector2Int cell = new Vector2Int(x, y);
+                if (blocked.Contains(cell) || solid.Contains(cell)) continue;
+                if (!TryAddSolid(room, solid, cell)) continue;
+
+                PlaceProp(room, content, cell);
             }
         }
     }
@@ -314,6 +376,8 @@ public class DungeonGenerator : MonoBehaviour
         if (devResetKey.action.triggered) { StartCoroutine(GenerateRoutine()); }
     #endif
     }
+
+    // --------- Helpers ---------
 
     int CountFilledNeighbours(Vector2Int slot) { 
         int count = 0;
@@ -342,7 +406,28 @@ public class DungeonGenerator : MonoBehaviour
 
     Vector3 CellToWorld(Vector2Int origin, int x, int y)
         => new Vector3((origin.x + x + 0.5f) * cellSize, 0, (origin.y + y + 0.5f) * cellSize);
+    bool IsWalkable(RoomData room, HashSet<Vector2Int> solid, Vector2Int c)
+    {
+        bool inside = c.x >= 1 && c.x < room.width - 1 && c.y >= 1 && c.y < room.height - 1;
+        return inside && !solid.Contains(c);
+    }
+    bool Fits(RoomData room, HashSet<Vector2Int> solid, Vector2Int c)
+    {
+        return IsWalkable(room, solid, c)
+            && IsWalkable(room, solid, c + Vector2Int.right)
+            && IsWalkable(room, solid, c + Vector2Int.up)
+            && IsWalkable(room, solid, c + Vector2Int.one);
+    }
+    bool TryAddSolid(RoomData room, HashSet<Vector2Int> solid, Vector2Int cell)
+    {
+        solid.Add(cell);                          // pretend the prop is there
+        if (IsConnected(room, solid)) return true;
 
+        solid.Remove(cell);                       // it sealed something off, so undo
+        return false;
+    }
+
+    // -------- Debug --------
     private void OnDrawGizmos()
     {
         if (rooms == null) return;
@@ -369,12 +454,68 @@ public class DungeonGenerator : MonoBehaviour
                 }
             }
 
-            if (room.blocked != null)
+            Vector2Int origin = RoomOrigin(room);
+
+            if (showBlocked && room.blocked != null)
             {
-                Gizmos.color = new Color(1, 0, 0, 0.4f);   // see-through red
-                foreach (Vector2Int cell in room.blocked)
-                    Gizmos.DrawCube(CellToWorld(RoomOrigin(room), cell.x, cell.y), Vector3.one * cellSize * 0.8f);
+                Gizmos.color = new Color(1, 0, 0, 0.3f);    // red: no props allowed
+                foreach (Vector2Int c in room.blocked)
+                    Gizmos.DrawCube(CellToWorld(origin, c.x, c.y), Vector3.one * cellSize * 0.8f);
             }
+
+            if (showSolid && room.solid != null)
+            {
+                Gizmos.color = new Color(0, 0, 0, 0.6f);    // black: can't walk
+                foreach (Vector2Int c in room.solid)
+                    Gizmos.DrawCube(CellToWorld(origin, c.x, c.y) + Vector3.up * 0.3f, Vector3.one * cellSize * 0.5f);
+            }
+
+            if (showFill && room.lastFill != null)
+            {
+                Gizmos.color = new Color(0, 0.6f, 1, 0.5f); // blue: reached by the flood fill
+                foreach (Vector2Int c in room.lastFill)
+                    Gizmos.DrawCube(CellToWorld(origin, c.x, c.y) + Vector3.up * 0.6f, Vector3.one * cellSize * 0.4f);
+            }
+        }
+    }
+
+    [ContextMenu("Animate Flood Fill")]
+    void AnimateFillMenu()
+    {
+        if (!rooms.TryGetValue(debugRoomSlot, out RoomData room) || room.solid == null)
+        {
+            Debug.LogWarning($"No populated room at {debugRoomSlot}");
+            return;
+        }
+        StartCoroutine(AnimateFill(room));
+    }
+
+    IEnumerator AnimateFill(RoomData room)
+    {
+        // find a start position, the same way IsConnected does
+        Vector2Int start = new Vector2Int(-1, -1);
+        for (int x = 1; x < room.width - 1 && start.x < 0; x++)
+            for (int y = 1; y < room.height - 1; y++)
+                if (Fits(room, room.solid, new Vector2Int(x, y))) { start = new Vector2Int(x, y); break; }
+
+        if (start.x < 0) yield break;
+
+        var visited = new HashSet<Vector2Int> { start };
+        room.lastFill = visited;          // the gizmos draw this set as it grows
+        var queue = new Queue<Vector2Int>();
+        queue.Enqueue(start);
+
+        while (queue.Count > 0)
+        {
+            Vector2Int current = queue.Dequeue();
+            foreach (Vector2Int d in Dirs)
+            {
+                Vector2Int next = current + d;
+                if (!Fits(room, room.solid, next)) continue;
+                if (!visited.Add(next)) continue;
+                queue.Enqueue(next);
+            }
+            yield return new WaitForSeconds(fillStepDelay);   // pause so you can watch
         }
     }
 }

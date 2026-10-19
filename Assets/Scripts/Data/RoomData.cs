@@ -8,4 +8,6 @@ class RoomData
     public Transform root; 
     public bool[] doors = new bool[4]; // 0 = N, 1 = E, 2 = S, 3 = W
     public HashSet<Vector2Int> blocked;
+    public HashSet<Vector2Int> solid;     // cells nothing can walk through (walls + props)
+    public HashSet<Vector2Int> lastFill;  // debug: cells the last flood fill reached
 }
