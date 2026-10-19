@@ -61,28 +61,40 @@ public class DungeonGenerator : MonoBehaviour
         rooms[startRoom.slot] = startRoom;
         queue.Enqueue(startRoom);
 
-        while (queue.Count > 0)
+        int passes = 0;
+        do
         {
-            RoomData current = queue.Dequeue();
-
-            for (int i = 0; i < 4; i++)
+            while (queue.Count > 0)
             {
-                Vector2Int next = current.slot + Dirs[i];
+                RoomData current = queue.Dequeue();
 
-                // if (should skip) continue;
-                if (rooms.ContainsKey(next)) continue;
-                if (rooms.Count >= maxRooms) continue;
-                if (Random.value > branchChance) continue;
-                if (CountFilledNeighbours(next) > maxNeighbors) continue;
-                var neighbourRoom = CreateRoom(next);
-                rooms[next] = neighbourRoom;
-                current.doors[i] = true;
-                neighbourRoom.doors[(i + 2) % 4] = true;
-                queue.Enqueue(neighbourRoom);
-            } 
+                for (int i = 0; i < 4; i++)
+                {
+                    Vector2Int next = current.slot + Dirs[i];
+
+                    if (rooms.ContainsKey(next)) continue;
+                    if (rooms.Count >= maxRooms) continue;
+                    if (Random.value > branchChance) continue;
+                    if (CountFilledNeighbours(next) > maxNeighbors) continue;
+
+                    var neighbourRoom = CreateRoom(next);
+                    rooms[next] = neighbourRoom;
+                    current.doors[i] = true;
+                    neighbourRoom.doors[(i + 2) % 4] = true;
+                    queue.Enqueue(neighbourRoom);
+                } // end for (directions)
+            } // end while (queue)
+
+            // queue is empty: this pass is done
+            if (rooms.Count >= minRooms) break;                            // enough rooms, stop
+            foreach (RoomData room in rooms.Values) queue.Enqueue(room);   // give every room another chance
+            passes++;
         }
+        while (passes < 20); // end do
+
         AddLoops();
     }
+
     RoomData CreateRoom(Vector2Int slot)
     {
         return new RoomData { slot = slot, width = Random.Range(minWidth / 2, maxWidth / 2 + 1) * 2 + 1, height = Random.Range(minHeight / 2, maxHeight / 2 + 1) * 2 + 1, doors = new bool[4] { false, false, false, false } };
@@ -108,6 +120,7 @@ public class DungeonGenerator : MonoBehaviour
 
     public IEnumerator GenerateRoutine()
     {
+        var sw = System.Diagnostics.Stopwatch.StartNew();
         if (useRandomSeed) seed = System.Environment.TickCount;
         Random.InitState(seed);
         Debug.Log($"Generating dungeon with seed: {seed}");
@@ -119,14 +132,19 @@ public class DungeonGenerator : MonoBehaviour
         do { GenerateLayout(); attempts++; }
         while (rooms.Count < minRooms && attempts < 100);
         Debug.Log($"Generated {rooms.Count} rooms in {attempts} attempts.");
+        Debug.Log($"Layout: {sw.ElapsedMilliseconds} ms"); sw.Restart();
 
         foreach (var room in rooms.Values)
         {
             BuildRoom(room);
         }
+        Debug.Log($"Build rooms: {sw.ElapsedMilliseconds} ms"); sw.Restart();
         BuildCorridors();
+        Debug.Log($"Build corridors: {sw.ElapsedMilliseconds} ms"); sw.Restart();
         foreach (var room in rooms.Values) PopulateRoom(room);
+        Debug.Log($"Populate rooms: {sw.ElapsedMilliseconds} ms"); sw.Restart();
         navMeshSurface.BuildNavMesh();
+        Debug.Log($"Build nav mesh: {sw.ElapsedMilliseconds} ms"); sw.Restart();
     }
     
     private void BuildRoom(RoomData room)

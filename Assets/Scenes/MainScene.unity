@@ -417,6 +417,9 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 10fc4df2da32a41aaa32d77bc913491c, type: 2}
+  m_SceneObjectReference:
+    m_OverrideState: 0
+    m_Value: {fileID: 0}
 --- !u!4 &832575519
 Transform:
   m_ObjectHideFlags: 0
@@ -442,6 +445,7 @@ GameObject:
   m_Component:
   - component: {fileID: 841289498}
   - component: {fileID: 841289497}
+  - component: {fileID: 841289499}
   m_Layer: 0
   m_Name: Dungeon
   m_TagString: Untagged
@@ -462,11 +466,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   devResetKey: {fileID: 5772072779567993099, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  navMeshSurface: {fileID: 841289499}
   floorTile: {fileID: 5810459312312200726, guid: c711593bafa7b524baaaa48a4f092e6f, type: 3}
   wallTile: {fileID: 374521644867712513, guid: 49910f3e537ed564ebfe2a525ca09520, type: 3}
-  width: 30
-  height: 10
+  maxRooms: 500
+  minRooms: 500
+  branchChance: 0.5
+  maxNeighbors: 1
+  loopChance: 0.3
+  seed: 0
+  useRandomSeed: 1
+  minWidth: 11
+  minHeight: 11
+  maxWidth: 21
+  maxHeight: 21
   cellSize: 1
+  doorWidth: 3
+  slotSize: 23
+  laneDepth: 4
+  contentSets: []
+  showBlocked: 1
+  showSolid: 1
+  showFill: 1
+  debugRoomSlot: {x: 0, y: 0}
+  fillStepDelay: 0.02
 --- !u!4 &841289498
 Transform:
   m_ObjectHideFlags: 0
@@ -482,6 +505,38 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &841289499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 841289496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
+  m_SerializedVersion: 0
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.16666667
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 0}
+  m_BuildHeightMesh: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
