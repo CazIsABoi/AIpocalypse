@@ -9,6 +9,8 @@ public class RoomContent : ScriptableObject
     public GameObject[] props;      // random pick per placed prop
     public float density = 0.05f;   // props per interior cell (10e)
     public int spacing = 4;
+    public Material mapMaterial;      // minimap color of each prop (empty = normal obstacle color)
+    public Material mapRoomMaterial;  // minimap color of the whole room (empty = normal room color)
 }
 
-public enum PlacementPattern { Scatter, PillarGrid }
+public enum PlacementPattern { Scatter, PillarGrid, Center }

@@ -355,7 +355,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 308069032}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1335637755}
+        m_TargetAssemblyTypeName: MainMenuController, Assembly-CSharp
+        m_MethodName: StartGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &308069032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1059,6 +1071,7 @@ GameObject:
   - component: {fileID: 1335637753}
   - component: {fileID: 1335637752}
   - component: {fileID: 1335637751}
+  - component: {fileID: 1335637755}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1154,6 +1167,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1335637755
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1335637750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d876d355c455f24448629f0e808cac8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  MainSceneName: MainScene
+  creditsPanel: {fileID: 0}
 --- !u!1 &1497406367
 GameObject:
   m_ObjectHideFlags: 0
@@ -1510,7 +1537,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1712801350}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1335637755}
+        m_TargetAssemblyTypeName: MainMenuController, Assembly-CSharp
+        m_MethodName: StartGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1712801350
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1575,7 +1614,7 @@ AudioSource:
   m_GameObject: {fileID: 2063243828}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 8176568060521532356, guid: c3ba3808b322ce6429a20ce361419d7c, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: a8f9f9db7140bdf4d8cf2e5c767f8840, type: 3}
   m_PlayOnAwake: 1

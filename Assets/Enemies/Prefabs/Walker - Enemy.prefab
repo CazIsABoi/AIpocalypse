@@ -447,12 +447,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   PlayerTarget: {fileID: 0}
+  playerHealth: {fileID: 0}
   TargetPosition: {x: 0, y: 0, z: 0}
   AiType: 0
   agent: {fileID: 0}
   Health: 0
   MaxHealth: 0
   Damage: 0
+  Xp: 0
   AttackRange: 2.5
   AttackCD: 0
   AttackInterval: 0

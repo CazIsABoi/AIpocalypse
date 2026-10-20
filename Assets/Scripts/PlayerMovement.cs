@@ -1,20 +1,18 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Windows;
 
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private InputActionReference move;
     private CharacterController controller;
+    private PlayerStats stats;
     [SerializeField] private float fallSpeed = 10f;   // constant downward push, keeps the player on the floor
-    [SerializeField] private float BaseSpeed;
-    [SerializeField] private float Speed;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         controller = GetComponent<CharacterController>();
-        Speed = BaseSpeed;
+        stats = GetComponent<PlayerStats>();
     }
     private void Start()
     {
@@ -27,7 +25,7 @@ public class PlayerMovement : MonoBehaviour
         Vector2 input = move.action.ReadValue<Vector2>();
         Vector3 moveDir = new Vector3(input.x, 0, input.y);
 
-        Vector3 velocity = moveDir * Speed + Vector3.down * fallSpeed;
+        Vector3 velocity = moveDir * stats.Speed + Vector3.down * fallSpeed;
         controller.Move(velocity * Time.deltaTime);
     }
 

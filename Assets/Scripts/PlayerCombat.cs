@@ -10,6 +10,7 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private InputActionReference RightClick;
 
     [SerializeField] private LayerMask EnemyLayer;
+    private PlayerStats stats;
 
     [SerializeField] private GameObject RiflePivot;
 
@@ -24,8 +25,9 @@ public class PlayerCombat : MonoBehaviour
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
+    void Awake()
     {
-        
+        stats = GetComponent<PlayerStats>();
     }
 
     // Update is called once per frame
@@ -57,7 +59,9 @@ public class PlayerCombat : MonoBehaviour
                 foreach (Collider hit in hits)
                 {
                     if (hit.gameObject.GetComponent<EnemyController>()) hit.gameObject.GetComponent<EnemyController>().TakeDamage(MeleeDamage, CritChance, CritDamage);
+                    if(hit.gameObject.GetComponent<EnemyController>()) hit.gameObject.GetComponent<EnemyController>().TakeDamage(stats.Damage);
                 }
+                
             }
         }
         else if (!RightClick.action.IsPressed())

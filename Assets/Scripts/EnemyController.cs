@@ -14,6 +14,7 @@ public class EnemyController : MonoBehaviour
     public float Health;
     public float MaxHealth;
     public float Damage;
+    public int Xp;
     // Assigned on prefab
     [SerializeField] private float AttackRange;
     [SerializeField] private float AttackCD;
@@ -26,10 +27,13 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private GameObject DamagePopup;
     [SerializeField] private Slider hpSlider;
     [SerializeField] private Gradient HpColor;
+    [SerializeField] private GameObject xpPrefab;
 
     public EntityHandler handler;
     public bool SpeedBoostIncrease;     // if cap is reached 
     private float SpeedMax;
+   
+    private bool died;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -44,7 +48,18 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Health <= 0) { Destroy(gameObject); return; } // Enemy died, destroy the gameobject and exit the update loop.
+        
+
+        if (Health <= 0 && !died)
+        {
+            died = true;
+        }
+
+        if (died) {
+            GameObject spawnedXp = Instantiate(xpPrefab, transform.position, Quaternion.identity);
+            spawnedXp.GetComponent<XpOrb>().Amount = Xp;
+            Destroy(gameObject); return;  
+            } // Enemy died, destroy the gameobject and exit the update loop.
         if (AttackInterval > 0) AttackInterval -= Time.deltaTime;
         if (AttackCD > 0) AttackCD -= Time.deltaTime;
 

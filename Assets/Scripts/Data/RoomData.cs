@@ -13,8 +13,7 @@ class RoomData
     public HashSet<Vector2Int> solid;     // cells nothing can walk through (walls + props)
     public HashSet<Vector2Int> lastFill;  // debug: cells the last flood fill reached
 
-    public Renderer floor;                // the room's single floor object
-    public Texture2D trailTex;            // 1 pixel per cell, red channel = wear
-    public float[,] wear;                 // 0 = untouched, 1 = fully worn
+    public WearSurface surface;           // the room's floor + wear texture
     public Renderer fog;
+    public Renderer mapQuad;              // the room's rectangle on the minimap
 }
