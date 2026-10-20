@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class EnemyController : MonoBehaviour
 {
     [SerializeField] private GameObject PlayerTarget;   // Always gonna be the player
+    [SerializeField] private PlayerHealth playerHealth; // Always gonna be the player health script
     [SerializeField] private Vector3 TargetPosition;    // Might be set to something else depending on Ai Quirks.
     [SerializeField] private int AiType = -1;   // 0 == Walker.
     [SerializeField] private NavMeshAgent agent;
@@ -34,6 +35,7 @@ public class EnemyController : MonoBehaviour
         Health = MaxHealth;
         agent = GetComponent<NavMeshAgent>();
         PlayerTarget = GameObject.Find("Player");
+        playerHealth = PlayerTarget.GetComponent<PlayerHealth>();
     }
 
     // Update is called once per frame
@@ -41,7 +43,7 @@ public class EnemyController : MonoBehaviour
     {
         if (TEMP) TakeDamage(10);
 
-        if (Health <= 0) Destroy(gameObject);
+        if (Health <= 0) { Destroy(gameObject); return; } // Enemy died, destroy the gameobject and exit the update loop.
         if (AttackInterval > 0) AttackInterval -= Time.deltaTime;
         if (AttackCD > 0) AttackCD -= Time.deltaTime;
 
@@ -77,11 +79,16 @@ public class EnemyController : MonoBehaviour
                 AttackWindow -= Time.deltaTime;
                 agent.speed = 0;
 
-
-
                 if (AttackWindow <= 0)
                 {
                     Debug.Log("Attack Finished");
+                    Vector3 offset = PlayerTarget.transform.position - transform.position;
+                    if (offset.sqrMagnitude <= AttackRange * AttackRange) // If the player is still in range, apply damage
+                    {
+                        playerHealth.TakeDamage(Damage);
+                        Debug.Log($"Player hit for {Damage}");
+                    }
+
                     agent.speed = Speed;
                     IsAttacking = false;
                 }
