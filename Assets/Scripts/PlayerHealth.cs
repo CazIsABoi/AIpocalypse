@@ -37,6 +37,12 @@ public class PlayerHealth : MonoBehaviour
         if (IsDead) Died?.Invoke();
     }
 
+    public void Heal(float amount)
+    {
+        if (IsDead) return;
+        SetHealth(Health + amount);
+    }
+
     public void ResetHealth()
     {
         invulnerableTimer = 0f;

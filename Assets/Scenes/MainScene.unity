@@ -448,6 +448,94 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &90813762
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 90813763}
+  - component: {fileID: 90813766}
+  - component: {fileID: 90813765}
+  - component: {fileID: 90813764}
+  m_Layer: 5
+  m_Name: Fade
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &90813763
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90813762}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1034513975}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &90813764
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90813762}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
+--- !u!114 &90813765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90813762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &90813766
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90813762}
+  m_CullTransparentMesh: 1
 --- !u!1 &157589575
 GameObject:
   m_ObjectHideFlags: 0
@@ -2267,6 +2355,7 @@ MonoBehaviour:
   playerHealth: {fileID: 1583679633}
   spawner: {fileID: 1020415736}
   gameOverPanel: {fileID: 1434915282}
+  fade: {fileID: 90813764}
   minimapCam: {fileID: 314635956}
   minimap: {fileID: 314635957}
   renderEvery: 3
@@ -2364,7 +2453,7 @@ MonoBehaviour:
   mapStartMaterial: {fileID: 2100000, guid: d460ca087792f5e408935b2a2ade9725, type: 2}
   mapCorridorMaterial: {fileID: 2100000, guid: d14ae73691623cf43ad43a294e8d1090, type: 2}
   mapObstacleMaterial: {fileID: 2100000, guid: 29ca1a7a8abedb843900fdd6da7ff5cd, type: 2}
-  maxRooms: 100
+  maxRooms: 30
   minRooms: 20
   branchChance: 0.5
   maxNeighbors: 2
@@ -2383,7 +2472,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b7097f32d975056468ee51d741779488, type: 2}
   - {fileID: 11400000, guid: f06b02bda94b4fa468f3ebb0400886bc, type: 2}
   - {fileID: 11400000, guid: 5a62153c6c3821d40b81b168690b7763, type: 2}
-  - {fileID: 11400000, guid: fec8eab308186bf43954eb2ec1732cbb, type: 2}
+  coreContent: {fileID: 11400000, guid: 95fe484283766f5459447a005c9225f1, type: 2}
+  treasureContent: {fileID: 11400000, guid: fec8eab308186bf43954eb2ec1732cbb, type: 2}
+  treasureRooms: 2
   fillBetweenRooms: 1
   fillMargin: 1
   smoothPath: 1
@@ -2469,6 +2560,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 217030490}
     m_Modifications:
+    - target: {fileID: 3536153287342790283, guid: f5a58c186bf6df14985b1b2e4f480392, type: 3}
+      propertyPath: game
+      value: 
+      objectReference: {fileID: 822126392}
     - target: {fileID: 3536153287342790283, guid: f5a58c186bf6df14985b1b2e4f480392, type: 3}
       propertyPath: dungeon
       value: 
@@ -2575,6 +2670,7 @@ RectTransform:
   - {fileID: 653221960}
   - {fileID: 1434915283}
   - {fileID: 1543960091}
+  - {fileID: 90813763}
   m_Father: {fileID: 217030490}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2659,10 +2755,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   stats: {fileID: 1583679634}
-  health: {fileID: 0}
-  levelUpPool: {fileID: 0}
+  health: {fileID: 1583679633}
+  levelUpPool: {fileID: 11400000, guid: 051a0718d1a8f8c45b3ce91c46fcf917, type: 2}
   panel: {fileID: 1543960090}
-  cards: []
+  cards:
+  - {fileID: 197878438}
+  - {fileID: 50702306}
+  - {fileID: 1950207418}
 --- !u!114 &1064860342 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5970814220684614354, guid: c8d59da36b19cab46b90c8da22a2d66d, type: 3}

@@ -27,7 +27,7 @@ public class PlayerCombat : MonoBehaviour
             Collider[] hits = Physics.OverlapSphere(transform.position + CalculateAimingDirection() * 1.25f, 1.5f, EnemyLayer);
             foreach (Collider hit in hits)
             {
-                if(hit.gameObject.GetComponent<EnemyController>()) hit.gameObject.GetComponent<EnemyController>().TakeDamage(stats.Damage);
+                if (hit.TryGetComponent(out IDamageable target)) target.TakeDamage(stats.Damage);
             }
         }
     }

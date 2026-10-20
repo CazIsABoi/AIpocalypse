@@ -8,6 +8,8 @@ class RoomData
     public int height;
     public Transform root;
     public bool[] doors = new bool[4]; // 0 = N, 1 = E, 2 = S, 3 = W
+    public int distance;
+    public RoomRole role;
     public bool explored;
     public HashSet<Vector2Int> blocked;
     public HashSet<Vector2Int> solid;     // cells nothing can walk through (walls + props)
@@ -17,3 +19,4 @@ class RoomData
     public Renderer fog;
     public Renderer mapQuad;              // the room's rectangle on the minimap
 }
+public enum RoomRole { Normal, Start, Core, Treasure }

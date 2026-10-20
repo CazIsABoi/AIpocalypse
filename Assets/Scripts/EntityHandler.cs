@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class EntityHandler : MonoBehaviour
 {
+    [SerializeField] private GameController game;
     [SerializeField] private DungeonGenerator dungeon;
     [SerializeField] private EnemyData[] enemies = new EnemyData[0];
 
@@ -20,25 +21,26 @@ public class EntityHandler : MonoBehaviour
         if (!dungeon.IsReady) return;
         GameTime += Time.deltaTime;
         SpawnCD -= Time.deltaTime;
+        float floorScale = 1f + (game.Floor - 1) * 0.25f;
 
-        if(SpawnCD <= 0)
+        if (SpawnCD <= 0)
         {
             int rolledEnemy = Random.Range(0, enemies.Length);
-            SpawnCD = 3;
+            SpawnCD = 3 / floorScale;
             if (!dungeon.TryGetSpawnPosition(out Vector3 spawnPos)) return;   // no spot found this time, try next cooldown
             GameObject spawnedEnemy = Instantiate(enemies[rolledEnemy].EnemyPrefab, spawnPos, Quaternion.identity, transform);
             EnemyController enemy = spawnedEnemy.GetComponent<EnemyController>();
             if (GameTime < 20)
             {
-                enemy.MaxHealth = enemies[rolledEnemy].BaseHealth * 1f;
-                enemy.Damage = enemies[rolledEnemy].BaseDamage * 1f;
-                enemy.Xp = enemies[rolledEnemy].XpValue * 1;
+                enemy.MaxHealth = enemies[rolledEnemy].BaseHealth * 1f * floorScale;
+                enemy.Damage = enemies[rolledEnemy].BaseDamage * 1f * floorScale;
+                enemy.Xp = enemies[rolledEnemy].XpValue * 1 * Mathf.RoundToInt(floorScale);
             }
             else if(GameTime < 720)
             {
-                enemy.MaxHealth = enemies[rolledEnemy].BaseHealth * Mathf.Pow(1.0046f, GameTime - 20f); // 0.33
-                enemy.Damage = enemies[rolledEnemy].BaseDamage * Mathf.Pow(1.0046f, GameTime - 20f); // 0.33
-                enemy.Xp = enemies[rolledEnemy].XpValue * Mathf.RoundToInt(Mathf.Pow(1.0046f, GameTime - 20f)); // 0.33
+                enemy.MaxHealth = enemies[rolledEnemy].BaseHealth * Mathf.Pow(1.0046f, GameTime - 20f) * floorScale; // 0.33
+                enemy.Damage = enemies[rolledEnemy].BaseDamage * Mathf.Pow(1.0046f, GameTime - 20f) * floorScale; // 0.33
+                enemy.Xp = enemies[rolledEnemy].XpValue * Mathf.RoundToInt(Mathf.Pow(1.0046f, GameTime - 20f)) * Mathf.RoundToInt(floorScale); // 0.33
             }
             else if(GameTime >= 720)
             {

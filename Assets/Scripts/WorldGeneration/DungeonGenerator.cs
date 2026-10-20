@@ -45,6 +45,11 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] List<RoomContent> contentSets;
     Vector2Int lastPlayerSlot = new Vector2Int(int.MinValue, int.MinValue);
 
+    [Header("Room Roles")]
+    [SerializeField] private RoomContent coreContent;      
+    [SerializeField] private RoomContent treasureContent;   
+    [SerializeField] private int treasureRooms = 2;
+
     [Header("Fill")]
     [SerializeField] private bool fillBetweenRooms = true; // solid wall mass in all space outside rooms and corridors
     [SerializeField] private int fillMargin = 1;           // extra ring of solid slots around the whole map
@@ -78,12 +83,17 @@ public class DungeonGenerator : MonoBehaviour
     {
         StartCoroutine(GenerateRoutine());
     }
+    public void Regenerate()
+    {
+        if (!IsReady) return;   // already generating
+        StartCoroutine(GenerateRoutine());
+    }
 
     void Update()
     {
         TrackPlayer();
 #if UNITY_EDITOR || DEBUG
-        if (devResetKey.action.triggered) { StartCoroutine(GenerateRoutine()); }
+        if (devResetKey.action.triggered) { Regenerate(); }
     #endif
     }
 
@@ -157,6 +167,8 @@ public class DungeonGenerator : MonoBehaviour
         do { GenerateLayout(); attempts++; }
         while (rooms.Count < minRooms && attempts < 100);
         Debug.Log($"Layout: {sw.ElapsedMilliseconds} ms ({rooms.Count} rooms in {attempts} attempts)"); sw.Restart();
+        ComputeDistances();
+        AssignRoles();
 
         foreach (var room in rooms.Values) BuildRoom(room);
         Debug.Log($"Build rooms: {sw.ElapsedMilliseconds} ms"); sw.Restart();
@@ -518,8 +530,75 @@ public class DungeonGenerator : MonoBehaviour
         Vector3 scale = wallTile.transform.localScale;
         box.transform.localScale = new Vector3(scale.x * w, scale.y, scale.z * h);
     }
+    void ComputeDistances()
+    {
+        foreach (RoomData room in rooms.Values) room.distance = -1;   // -1 = not reached yet
+
+        RoomData start = rooms[Vector2Int.zero];
+        start.distance = 0;
+        var queue = new Queue<RoomData>();
+        queue.Enqueue(start);
+
+        while (queue.Count > 0)
+        {
+            RoomData current = queue.Dequeue();
+            for (int i = 0; i < 4; i++)
+            {
+                if (!current.doors[i]) continue;
+                RoomData neighbor = rooms[current.slot + Dirs[i]];
+                if (neighbor.distance != -1) continue;
+                neighbor.distance = current.distance + 1;
+                queue.Enqueue(neighbor);
+            }
+        }
+    }
 
     // -------- Room contents --------
+    void AssignRoles()
+    {
+        // 1. everything starts as Normal; the room at (0,0) becomes Start
+        foreach (RoomData room in rooms.Values) room.role = RoomRole.Normal;
+        rooms[Vector2Int.zero].role = RoomRole.Start;
+
+
+        // 2. Core = the room with the highest distance
+        List<RoomData> farthest = new List<RoomData>();
+        foreach (RoomData room in rooms.Values)
+        {
+            if (room.distance == -1) continue;  // not reached
+            if (farthest.Count == 0 || room.distance > farthest[0].distance)
+            {
+                farthest.Clear();
+                farthest.Add(room);
+            }
+            else if (room.distance == farthest[0].distance)
+            {
+                farthest.Add(room);
+            }
+        }
+        if (farthest.Count > 0) farthest[Random.Range(0, farthest.Count)].role = RoomRole.Core;
+
+
+        // 3. Treasure = the farthest dead ends
+        List<RoomData> candidates = new List<RoomData>();
+        foreach (RoomData room in rooms.Values)
+        {
+            if (room.role != RoomRole.Normal) continue;
+            if (DoorCount(room) == 1) candidates.Add(room);
+        }
+
+        // Not enough dead ends? Add the other Normal rooms too (they'll sort in by distance)
+        if (candidates.Count < treasureRooms)
+        {
+            foreach (RoomData room in rooms.Values)
+                if (room.role == RoomRole.Normal && !candidates.Contains(room)) candidates.Add(room);
+        }
+
+        candidates.Sort((a, b) => b.distance.CompareTo(a.distance));   // farthest first
+
+        for (int i = 0; i < treasureRooms && i < candidates.Count; i++)
+            candidates[i].role = RoomRole.Treasure;
+    }
 
     private void PopulateRoom(RoomData room)
     {
@@ -543,22 +622,23 @@ public class DungeonGenerator : MonoBehaviour
         if (room.doors[2]) BlockRect(blocked, DoorStart(room.width), 1, doorWidth, laneDepth);                          // south
         if (room.doors[3]) BlockRect(blocked, 1, DoorStart(room.height), laneDepth, doorWidth);                         // west
 
-        if (room.slot != Vector2Int.zero)   // start room stays empty
+        RoomContent content;
+        if (room.role == RoomRole.Start) content = null;
+        else if (room.role == RoomRole.Core) content = coreContent;
+        else if (room.role == RoomRole.Treasure) content = treasureContent;
+        else content = PickContent(room);
+
+        // Special rooms (e.g. treasure) get their own color on the minimap
+        if (content != null && content.mapRoomMaterial != null)
+            room.mapQuad.sharedMaterial = content.mapRoomMaterial;
+
+        if (content != null && content.props.Length > 0)
         {
-            RoomContent content = PickContent(room);
-
-            // Special rooms (e.g. treasure) get their own color on the minimap
-            if (content != null && content.mapRoomMaterial != null)
-                room.mapQuad.sharedMaterial = content.mapRoomMaterial;
-
-            if (content != null && content.props.Length > 0)
+            switch (content.pattern)
             {
-                switch (content.pattern)
-                {
-                    case PlacementPattern.Scatter: PlaceScatter(room, content, blocked, solid); break;
-                    case PlacementPattern.PillarGrid: PlacePillarGrid(room, content, blocked, solid); break;
-                    case PlacementPattern.Center: PlaceCenter(room, content, blocked, solid); break;
-                }
+                case PlacementPattern.Scatter: PlaceScatter(room, content, blocked, solid); break;
+                case PlacementPattern.PillarGrid: PlacePillarGrid(room, content, blocked, solid); break;
+                case PlacementPattern.Center: PlaceCenter(room, content, blocked, solid); break;
             }
         }
 
@@ -821,6 +901,12 @@ public class DungeonGenerator : MonoBehaviour
     private int DoorStart(int length)
     {
         return (length - doorWidth) / 2;
+    }
+    int DoorCount(RoomData room)
+    {
+        int count = 0;
+        foreach (bool hasDoor in room.doors) if (hasDoor) count++;
+        return count;
     }
 
     Vector2Int RoomOffset(RoomData room)

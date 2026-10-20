@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f48cf5d16e685e498a1355c26a6403d, type: 3}
+  m_Name: CoreRoom
+  m_EditorClassIdentifier: Assembly-CSharp::RoomContent
+  weight: 3
+  minRoomSize: 11
+  pattern: 2
+  props:
+  - {fileID: 5273236684985416777, guid: c333b3b55a5e31145b14e7d60212e1ea, type: 3}
+  density: 0.05
+  spacing: 4
+  mapMaterial: {fileID: 2100000, guid: 19b8ea268e65ad849bf72cf45bff2668, type: 2}
+  mapRoomMaterial: {fileID: 2100000, guid: ba52d5882f4581e46b9537995aaecc48, type: 2}
