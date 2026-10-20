@@ -10,6 +10,7 @@ class RoomData
     public bool[] doors = new bool[4]; // 0 = N, 1 = E, 2 = S, 3 = W
     public int distance;
     public RoomRole role;
+    public RoomContent content;           // what goes in this room (decided in AssignRoles, null = empty)
     public bool explored;
     public HashSet<Vector2Int> blocked;
     public HashSet<Vector2Int> solid;     // cells nothing can walk through (walls + props)

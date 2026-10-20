@@ -330,12 +330,14 @@ public class DungeonGenerator : MonoBehaviour
 
     void BuildRoomFloor(RoomData room)
     {
-        room.surface = CreateSurface(RoomOrigin(room), room.width, room.height, room.root, "Floor");
+        // Room types can tint their floor; null = keep the material's normal clean color
+        Color? tint = room.content != null && room.content.tintFloor ? room.content.floorColor : (Color?)null;
+        room.surface = CreateSurface(RoomOrigin(room), room.width, room.height, room.root, "Floor", tint);
     }
 
     // One floor object covering a rectangle of cells, with its own wear texture.
     // Used for both rooms and corridors.
-    WearSurface CreateSurface(Vector2Int origin, int width, int height, Transform parent, string name)
+    WearSurface CreateSurface(Vector2Int origin, int width, int height, Transform parent, string name, Color? cleanColor = null)
     {
         Vector3 corner = new Vector3(origin.x * cellSize, 0, origin.y * cellSize);    // bottom-left corner, world
         Vector3 size = new Vector3(width * cellSize, 0, height * cellSize);
@@ -360,6 +362,7 @@ public class DungeonGenerator : MonoBehaviour
         var block = new MaterialPropertyBlock();
         block.SetTexture("_TrailTex", texture);
         block.SetVector("_RoomRect", new Vector4(corner.x, corner.z, size.x, size.z));
+        if (cleanColor.HasValue) block.SetColor("_CleanColor", cleanColor.Value);   // per-room floor color
         floorRenderer.SetPropertyBlock(block);
 
         return new WearSurface
@@ -598,6 +601,16 @@ public class DungeonGenerator : MonoBehaviour
 
         for (int i = 0; i < treasureRooms && i < candidates.Count; i++)
             candidates[i].role = RoomRole.Treasure;
+
+        // 4. Decide every room's content now, before anything is built,
+        //    so the floor (built in BuildRoom) already knows which room type it is
+        foreach (RoomData room in rooms.Values)
+        {
+            if (room.role == RoomRole.Start) room.content = null;
+            else if (room.role == RoomRole.Core) room.content = coreContent;
+            else if (room.role == RoomRole.Treasure) room.content = treasureContent;
+            else room.content = PickContent(room);
+        }
     }
 
     private void PopulateRoom(RoomData room)
@@ -622,11 +635,7 @@ public class DungeonGenerator : MonoBehaviour
         if (room.doors[2]) BlockRect(blocked, DoorStart(room.width), 1, doorWidth, laneDepth);                          // south
         if (room.doors[3]) BlockRect(blocked, 1, DoorStart(room.height), laneDepth, doorWidth);                         // west
 
-        RoomContent content;
-        if (room.role == RoomRole.Start) content = null;
-        else if (room.role == RoomRole.Core) content = coreContent;
-        else if (room.role == RoomRole.Treasure) content = treasureContent;
-        else content = PickContent(room);
+        RoomContent content = room.content;   // decided in AssignRoles
 
         // Special rooms (e.g. treasure) get their own color on the minimap
         if (content != null && content.mapRoomMaterial != null)
@@ -639,6 +648,10 @@ public class DungeonGenerator : MonoBehaviour
                 case PlacementPattern.Scatter: PlaceScatter(room, content, blocked, solid); break;
                 case PlacementPattern.PillarGrid: PlacePillarGrid(room, content, blocked, solid); break;
                 case PlacementPattern.Center: PlaceCenter(room, content, blocked, solid); break;
+                case PlacementPattern.Rows: PlaceRows(room, content, blocked, solid); break;
+                case PlacementPattern.Perimeter: PlacePerimeter(room, content, blocked, solid); break;
+                case PlacementPattern.Ring: PlaceRing(room, content, blocked, solid); break;
+                case PlacementPattern.Clusters: PlaceClusters(room, content, blocked, solid); break;
             }
         }
 
@@ -680,8 +693,18 @@ public class DungeonGenerator : MonoBehaviour
     {
         GameObject prefab = content.props[Random.Range(0, content.props.Length)];
         Vector3 pos = CellToWorld(RoomOrigin(room), cell.x, cell.y);
-        Quaternion rot = Quaternion.Euler(0, 90 * Random.Range(0, 4), 0);
+        float angle = 0f;
+        switch (content.rotation)
+        {
+            case PropRotation.Random90: angle = 90f * Random.Range(0, 4); break;
+            case PropRotation.Random180: angle = 180f * Random.Range(0, 2); break;   // facing one way or the opposite
+            case PropRotation.RandomAny: angle = Random.Range(0f, 360f); break;      // any angle, good for debris
+                                                                                     // None: stays 0
+        }
+        Quaternion rot = Quaternion.Euler(0, angle, 0);
         GameObject prop = Instantiate(prefab, pos, rot, room.root);
+        if (content.randomScale)
+            prop.transform.localScale *= Random.Range(0.85f, 1.15f);
         Vector2Int offset = RoomOffset(room);
         Material mapMat = content.mapMaterial != null ? content.mapMaterial : mapObstacleMaterial;
         Renderer mapIcon = CreateMapQuad(room.slot, offset.x + cell.x, offset.y + cell.y, 1, 1, mapMat, room.root, obstacleMapOffset);
@@ -704,9 +727,7 @@ public class DungeonGenerator : MonoBehaviour
             Vector2Int cell = new Vector2Int(Random.Range(1, room.width - 1),
                                              Random.Range(1, room.height - 1));
 
-            if (blocked.Contains(cell) || solid.Contains(cell)) continue;  // reserved or taken
-            if (!TryAddSolid(room, solid, cell)) continue;                 // would seal something off
-
+            if (!TryClaimCell(room, content, blocked, solid, cell)) continue;  
             PlaceProp(room, content, cell);
             placed++;
         }
@@ -726,9 +747,7 @@ public class DungeonGenerator : MonoBehaviour
                 if (!onGridX || !onGridY) continue;
 
                 Vector2Int cell = new Vector2Int(x, y);
-                if (blocked.Contains(cell) || solid.Contains(cell)) continue;
-                if (!TryAddSolid(room, solid, cell)) continue;
-
+                if (!TryClaimCell(room, content, blocked, solid, cell)) continue;   
                 PlaceProp(room, content, cell);
             }
         }
@@ -737,10 +756,83 @@ public class DungeonGenerator : MonoBehaviour
     {
         Vector2Int cell = new Vector2Int(room.width / 2, room.height / 2);
 
-        if (blocked.Contains(cell) || solid.Contains(cell)) return;
-        if (!TryAddSolid(room, solid, cell)) return;
-
+        if (!TryClaimCell(room, content, blocked, solid, cell)) return;  
         PlaceProp(room, content, cell);
+    }
+    void PlaceRows(RoomData room, RoomContent content, HashSet<Vector2Int> blocked, HashSet<Vector2Int> solid)
+    {
+        bool horizontal = room.width >= room.height;            // rows run along the room's longer side
+        int lengthAlong = horizontal ? room.width : room.height;
+        int lengthAcross = horizontal ? room.height : room.width;
+
+        for (int across = 2; across < lengthAcross - 2; across += content.spacing)   // one row every 'spacing'
+        {
+            for (int along = 2; along < lengthAlong - 2; along++)
+            {
+                Vector2Int cell = horizontal ? new Vector2Int(along, across) : new Vector2Int(across, along);
+                if (!TryClaimCell(room, content, blocked, solid, cell)) continue;
+                PlaceProp(room, content, cell);
+            }
+        }
+    }
+    void PlacePerimeter(RoomData room, RoomContent content, HashSet<Vector2Int> blocked, HashSet<Vector2Int> solid)
+    {
+        for (int x = 1; x < room.width - 1; x++)
+        {
+            for (int y = 1; y < room.height - 1; y++)
+            {
+                bool nextToWall = x == 1 || y == 1 || x == room.width - 2 || y == room.height - 2;
+                if (!nextToWall) continue;
+                if (Random.value > content.density) continue;       // here: chance per cell (1 = solid line)
+
+                Vector2Int cell = new Vector2Int(x, y);
+                if (!TryClaimCell(room, content, blocked, solid, cell)) continue;
+                PlaceProp(room, content, cell);
+            }
+        }
+    }
+    void PlaceRing(RoomData room, RoomContent content, HashSet<Vector2Int> blocked, HashSet<Vector2Int> solid)
+    {
+        Vector2 center = new Vector2(room.width / 2, room.height / 2);
+        float radius = content.spacing;                              // here: the ring's radius in cells
+
+        for (int x = 1; x < room.width - 1; x++)
+        {
+            for (int y = 1; y < room.height - 1; y++)
+            {
+                float distance = Vector2.Distance(new Vector2(x, y), center);
+                if (Mathf.Abs(distance - radius) > 0.5f) continue;   // only cells ON the circle
+
+                Vector2Int cell = new Vector2Int(x, y);
+                if (!TryClaimCell(room, content, blocked, solid, cell)) continue;
+                PlaceProp(room, content, cell);
+            }
+        }
+    }
+    void PlaceClusters(RoomData room, RoomContent content, HashSet<Vector2Int> blocked, HashSet<Vector2Int> solid)
+    {
+        int clusterCount = 3;                // or a field on RoomContent
+        int radius = content.spacing;        // here: cluster size in cells
+
+        for (int c = 0; c < clusterCount; c++)
+        {
+            Vector2Int center = new Vector2Int(Random.Range(2, room.width - 2), Random.Range(2, room.height - 2));
+
+            for (int x = center.x - radius; x <= center.x + radius; x++)
+            {
+                for (int y = center.y - radius; y <= center.y + radius; y++)
+                {
+                    if (x < 1 || x >= room.width - 1 || y < 1 || y >= room.height - 1) continue;
+                    if (Vector2.Distance(new Vector2(x, y), center) > radius) continue;   // outside the cluster radius
+                    if (Random.value > 0.7f) continue;   // skip randomly, denser near the centre
+
+                    Vector2Int cell = new Vector2Int(x, y);
+                    if (!TryClaimCell(room, content, blocked, solid, cell)) continue;
+
+                    PlaceProp(room, content, cell);
+                }
+            }
+        }
     }
 
     // -------- Connectivity (flood fill) --------
@@ -929,6 +1021,19 @@ public class DungeonGenerator : MonoBehaviour
                 return true;
         }
         return false;
+    }
+    // Claims a cell for a prop. Returns false if the cell can't be used.
+    bool TryClaimCell(RoomData room, RoomContent content, HashSet<Vector2Int> blocked, HashSet<Vector2Int> solid, Vector2Int cell)
+    {
+        if (blocked.Contains(cell) || solid.Contains(cell)) return false;
+
+        if (content.walkable)
+        {
+            blocked.Add(cell);    // used, so nothing else goes here, but still walkable
+            return true;
+        }
+
+        return TryAddSolid(room, solid, cell);
     }
     // Returns the quad's renderer, so its color can be changed later (treasure rooms, looted chests)
     Renderer CreateMapQuad(Vector2Int slot, float x, float y, float w, float h, Material mat, Transform parent, float heightOffset = 0f)

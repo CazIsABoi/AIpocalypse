@@ -2469,9 +2469,15 @@ MonoBehaviour:
   slotSize: 23
   laneDepth: 4
   contentSets:
-  - {fileID: 11400000, guid: b7097f32d975056468ee51d741779488, type: 2}
-  - {fileID: 11400000, guid: f06b02bda94b4fa468f3ebb0400886bc, type: 2}
   - {fileID: 11400000, guid: 5a62153c6c3821d40b81b168690b7763, type: 2}
+  - {fileID: 11400000, guid: 5f2dc907ff2b9e74c9cf2fb8a5537679, type: 2}
+  - {fileID: 11400000, guid: 84138b6049a70a440995d3f903707666, type: 2}
+  - {fileID: 11400000, guid: b7097f32d975056468ee51d741779488, type: 2}
+  - {fileID: 11400000, guid: e55e0eca0cc440046bd6bb81edd86992, type: 2}
+  - {fileID: 11400000, guid: 6a37122657d0dc244abba3edd7e1a46b, type: 2}
+  - {fileID: 11400000, guid: f06b02bda94b4fa468f3ebb0400886bc, type: 2}
+  - {fileID: 11400000, guid: aebaf70167940674389d1e88409c8f25, type: 2}
+  - {fileID: 11400000, guid: 6d86e96a2f508d5429fee84e1148f044, type: 2}
   coreContent: {fileID: 11400000, guid: 95fe484283766f5459447a005c9225f1, type: 2}
   treasureContent: {fileID: 11400000, guid: fec8eab308186bf43954eb2ec1732cbb, type: 2}
   treasureRooms: 2
@@ -2482,9 +2488,9 @@ MonoBehaviour:
   fogFadeTime: 0.5
   mapHeight: 2.5
   obstacleMapOffset: 0.2
-  showBlocked: 1
-  showSolid: 1
-  showFill: 1
+  showBlocked: 0
+  showSolid: 0
+  showFill: 0
   debugRoomSlot: {x: 0, y: 0}
   fillStepDelay: 0.02
 --- !u!4 &841289498
