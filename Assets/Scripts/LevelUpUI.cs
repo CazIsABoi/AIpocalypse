@@ -45,11 +45,12 @@ public class LevelUpUI : MonoBehaviour
         Time.timeScale = 0;
     }
 
-    public void ShowChest(RewardPool chestPool)
+    public bool ShowChest(RewardPool chestPool)
     {
-        if (isOpen) return;
+        if (isOpen) return false;          
         showingLevelUp = false;
         ShowChoices(chestPool);
+        return true;
     }
 
     void Choose(RewardData reward)

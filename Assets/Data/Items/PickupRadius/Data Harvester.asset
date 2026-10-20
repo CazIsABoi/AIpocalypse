@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4a43f53720f8737468d4afd219df44c2, type: 3}
-  m_Name: Kill Switch
+  m_Name: Data Harvester
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
-  Title: Kill Switch
-  Description: +3 damage
+  Title: Data Harvester
+  Description: Collect tokens from much further away. +2.5 pickup range
   Icon: {fileID: 0}
-  Weight: 10
-  Stat: 2
-  Amount: 3
+  Weight: 3
+  Stat: 5
+  Amount: 2.5

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4a43f53720f8737468d4afd219df44c2, type: 3}
-  m_Name: Data Harvester
+  m_Name: Ad Blocker
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
-  Title: Data Harvester
-  Description: Collect tokens from much further away. +2.5 pickup range
+  Title: Adblocker
+  Description: +5 damage
   Icon: {fileID: 0}
-  Weight: 3
+  Weight: 5
   Stat: 3
-  Amount: 2.5
+  Amount: 5

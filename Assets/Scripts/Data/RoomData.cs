@@ -15,4 +15,5 @@ class RoomData
 
     public WearSurface surface;           // the room's floor + wear texture
     public Renderer fog;
+    public Renderer mapQuad;              // the room's rectangle on the minimap
 }

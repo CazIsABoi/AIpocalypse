@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4a43f53720f8737468d4afd219df44c2, type: 3}
-  m_Name: Packet Sniffer
+  m_Name: Off Switch
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
-  Title: Packet Sniffer
-  Description: Collect tokens from further away. +1 pickup range
+  Title: Off Switch
+  Description: +12 damage
   Icon: {fileID: 0}
-  Weight: 8
+  Weight: 4
   Stat: 3
-  Amount: 1
+  Amount: 12

@@ -264,7 +264,7 @@ public class DungeonGenerator : MonoBehaviour
         room.root = roomObj.transform;
         Vector2Int offset = RoomOffset(room);
         Material mat = room.slot == Vector2Int.zero ? mapStartMaterial : mapRoomMaterial;
-        CreateMapQuad(room.slot, offset.x, offset.y, room.width, room.height, mat, room.root);
+        room.mapQuad = CreateMapQuad(room.slot, offset.x, offset.y, room.width, room.height, mat, room.root);
 
         BuildRoomFloor(room);
 
@@ -546,12 +546,18 @@ public class DungeonGenerator : MonoBehaviour
         if (room.slot != Vector2Int.zero)   // start room stays empty
         {
             RoomContent content = PickContent(room);
+
+            // Special rooms (e.g. treasure) get their own color on the minimap
+            if (content != null && content.mapRoomMaterial != null)
+                room.mapQuad.sharedMaterial = content.mapRoomMaterial;
+
             if (content != null && content.props.Length > 0)
             {
                 switch (content.pattern)
                 {
                     case PlacementPattern.Scatter: PlaceScatter(room, content, blocked, solid); break;
                     case PlacementPattern.PillarGrid: PlacePillarGrid(room, content, blocked, solid); break;
+                    case PlacementPattern.Center: PlaceCenter(room, content, blocked, solid); break;
                 }
             }
         }
@@ -595,9 +601,14 @@ public class DungeonGenerator : MonoBehaviour
         GameObject prefab = content.props[Random.Range(0, content.props.Length)];
         Vector3 pos = CellToWorld(RoomOrigin(room), cell.x, cell.y);
         Quaternion rot = Quaternion.Euler(0, 90 * Random.Range(0, 4), 0);
-        Instantiate(prefab, pos, rot, room.root);
+        GameObject prop = Instantiate(prefab, pos, rot, room.root);
         Vector2Int offset = RoomOffset(room);
-        CreateMapQuad(room.slot, offset.x + cell.x, offset.y + cell.y, 1, 1, mapObstacleMaterial, room.root, obstacleMapOffset);
+        Material mapMat = content.mapMaterial != null ? content.mapMaterial : mapObstacleMaterial;
+        Renderer mapIcon = CreateMapQuad(room.slot, offset.x + cell.x, offset.y + cell.y, 1, 1, mapMat, room.root, obstacleMapOffset);
+
+        // Chests recolor their map icon and room when looted, so tell them which quads are theirs
+        if (prop.TryGetComponent(out Chest chest))
+            chest.SetMapMarkers(mapIcon, room.mapQuad);
     }
 
     void PlaceScatter(RoomData room, RoomContent content, HashSet<Vector2Int> blocked, HashSet<Vector2Int> solid)
@@ -641,6 +652,15 @@ public class DungeonGenerator : MonoBehaviour
                 PlaceProp(room, content, cell);
             }
         }
+    }
+    void PlaceCenter(RoomData room, RoomContent content, HashSet<Vector2Int> blocked, HashSet<Vector2Int> solid)
+    {
+        Vector2Int cell = new Vector2Int(room.width / 2, room.height / 2);
+
+        if (blocked.Contains(cell) || solid.Contains(cell)) return;
+        if (!TryAddSolid(room, solid, cell)) return;
+
+        PlaceProp(room, content, cell);
     }
 
     // -------- Connectivity (flood fill) --------
@@ -824,12 +844,15 @@ public class DungeonGenerator : MonoBehaviour
         }
         return false;
     }
-    void CreateMapQuad(Vector2Int slot, float x, float y, float w, float h, Material mat, Transform parent, float heightOffset = 0f)
+    // Returns the quad's renderer, so its color can be changed later (treasure rooms, looted chests)
+    Renderer CreateMapQuad(Vector2Int slot, float x, float y, float w, float h, Material mat, Transform parent, float heightOffset = 0f)
     {
         Vector3 center = new Vector3((slot.x * slotSize + x + w / 2f) * cellSize, mapHeight + heightOffset, (slot.y * slotSize + y + h / 2f) * cellSize);
         GameObject quad = Instantiate(mapQuadPrefab, center, Quaternion.Euler(90, 0, 0), parent);
         quad.transform.localScale = new Vector3(w * cellSize, h * cellSize, 1);
-        quad.GetComponent<Renderer>().sharedMaterial = mat;
+        Renderer quadRenderer = quad.GetComponent<Renderer>();
+        quadRenderer.sharedMaterial = mat;
+        return quadRenderer;
     }
 
     // -------- Debug --------
