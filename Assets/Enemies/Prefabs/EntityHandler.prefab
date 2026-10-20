@@ -44,6 +44,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50b9cc2a3f37d8b498ac0cf0844584c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  dungeon: {fileID: 0}
   enemies:
   - {fileID: 11400000, guid: 137573ea11e2ab44fbd614afd5b90acc, type: 2}
+  - {fileID: 11400000, guid: 9ca6cbc36d8b229459148abae103e275, type: 2}
   GameTime: 0
+  CurrentSpawnCD: 0
+  MinSpawnCount: 0
+  MaxSpawnCount: 0
+  spawnedEnemies: []
