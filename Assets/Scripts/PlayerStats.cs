@@ -3,8 +3,15 @@ using UnityEngine;
 public class PlayerStats : MonoBehaviour
 {
     public float MaxHealth = 100f;
-    public float speed;
-    public float damage = 10f;
+    public float BaseSpeed = 8f;
+    public float flatSpeed;
+    public float speedPercent;
+    public float Speed => (BaseSpeed + flatSpeed) * (1f + speedPercent);
+    public float baseDamage = 10f;
+    private float flatDamage;        // sum of all "+X damage" upgrades
+    private float damagePercent;     // sum of all "+X% damage" upgrades (0.1 = 10%)
+    public float Damage => (baseDamage + flatDamage) * (1f + damagePercent);
+
     public float pickupRange = 3;
     public event System.Action<StatType> StatsChanged;
 
@@ -16,7 +23,7 @@ public class PlayerStats : MonoBehaviour
 
     public void AddXp(int amount)
     {
-        Debug.Log($"AddXp({amount}) → {Xp + amount}/{XpToNext}");
+        // Debug.Log($"AddXp({amount}) → {Xp + amount}/{XpToNext}");
         Xp += amount;
         while (Xp >= XpToNext)
         {
@@ -34,16 +41,19 @@ public class PlayerStats : MonoBehaviour
         switch (type)
         {
             case (StatType.MoveSpeed):
-                speed += amount;
+                flatSpeed += amount;
+                break;
+            case StatType.MoveSpeedPercent:
+                speedPercent += amount;
                 break;
             case StatType.MaxHealth:
                 MaxHealth += amount;
                 break;
             case StatType.Damage:
-                damage += amount;
+                flatDamage += amount;
                 break;
             case StatType.DamagePercent:
-                damage += damage * amount;
+                damagePercent += amount;
                 break;
             case StatType.PickupRadius:
                 pickupRange += amount;
