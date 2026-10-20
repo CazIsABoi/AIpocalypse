@@ -117,11 +117,18 @@ public class EnemyController : MonoBehaviour
         hpSlider.transform.parent.transform.rotation = Quaternion.Euler(45f, 0f, 0f);
     }
 
-    public void TakeDamage(float Amount)
+    public void TakeDamage(float Amount, float CritChance, float CritDamage)
     {
+        float CritRoll = Random.Range(0f, 100f);
+        bool IsCrit = false;
+        if (CritChance*100f >= CritRoll) IsCrit = true;
+
+        if(IsCrit) Amount *= CritDamage;
         Health -= Amount;
+        
         GameObject spawnedPopup = Instantiate(DamagePopup, transform.position, Quaternion.identity);
         spawnedPopup.GetComponent<DamagePopup>().TargetPosition = transform.position + new Vector3(0, 1.5f, 0);
+        if(IsCrit) spawnedPopup.GetComponent<DamagePopup>().IsCrit = true;
         spawnedPopup.GetComponent<DamagePopup>().PopupDisplayContent = ((int)Amount).ToString();
     }
 }

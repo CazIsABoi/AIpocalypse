@@ -80,7 +80,7 @@ public class EntityHandler : MonoBehaviour
         {
             for (int i = 0; i < spawnedEnemies.Count; i++)
             {
-                spawnedEnemies[i].GetComponent<EnemyController>().SpeedBoostIncrease = true;
+                if(spawnedEnemies[i] != null) spawnedEnemies[i].GetComponent<EnemyController>().SpeedBoostIncrease = true;
             }
         }
     }
