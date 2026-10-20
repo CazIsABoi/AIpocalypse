@@ -40,11 +40,11 @@ public class PlayerCombat : MonoBehaviour
         Debug.DrawLine(transform.position, transform.position + CalculateAimingDirection() * 1.25f);
 
         MeleeCooldown = MeleeBaseCooldown;  // Add all multipliers here
+        MeleeDamage = stats.Damage;         // Add melee damage multipliers here
         if (CurrentMeleeCooldown > 0) CurrentMeleeCooldown -= Time.deltaTime;
 
         if (RightClick.action.IsPressed())
         {
-            Debug.Log("Holding Button");
             if (CurrentMeleeCooldown <= 0)
             {
                 CurrentMeleeCooldown = MeleeCooldown;
@@ -56,15 +56,16 @@ public class PlayerCombat : MonoBehaviour
                 Collider[] hits = Physics.OverlapSphere(transform.position + CalculateAimingDirection() * 1.25f, 1.5f, EnemyLayer);
                 foreach (Collider hit in hits)
                 {
-                    if (hit.gameObject.GetComponent<EnemyController>()) hit.gameObject.GetComponent<EnemyController>().TakeDamage(MeleeDamage, stats.CritChance, stats.CritDamage);
-                   // if(hit.gameObject.GetComponent<EnemyController>()) hit.gameObject.GetComponent<EnemyController>().TakeDamage(stats.Damage);
+                    if (hit.TryGetComponent(out EnemyController enemy))
+                        enemy.TakeDamage(MeleeDamage, stats.CritChance, stats.CritDamage);   // enemies: with crits
+                    else if (hit.TryGetComponent(out IDamageable target))
+                        target.TakeDamage(MeleeDamage);                                     // anything else hittable, e.g. the core
                 }
                 
             }
         }
         else if (!RightClick.action.IsPressed())
         {
-            Debug.Log("Holding Button False");
             if (CurrentMeleeCooldown < 0) CurrentMeleeCooldown = 0;
             RiflePivot.GetComponentInChildren<Animator>().SetBool("IsSlashing", false);
         }

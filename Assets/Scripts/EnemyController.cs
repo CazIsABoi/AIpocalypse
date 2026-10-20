@@ -132,6 +132,12 @@ public class EnemyController : MonoBehaviour, IDamageable
         hpSlider.transform.parent.transform.rotation = Quaternion.Euler(45f, 0f, 0f);
     }
 
+    // IDamageable entry point (hazards etc.) — no crit
+    public void TakeDamage(float Amount)
+    {
+        TakeDamage(Amount, 0f, 1f);
+    }
+
     public void TakeDamage(float Amount, float CritChance, float CritDamage)
     {
         float CritRoll = Random.Range(0f, 100f);

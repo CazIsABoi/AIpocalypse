@@ -6,25 +6,40 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private string MainSceneName = "MainScene";
 
     [SerializeField] private GameObject creditsPanel;
+    [SerializeField] private GameObject settingsPanel;
     public void StartGame()
     {
         // Load the main game scene
         SceneManager.LoadScene(MainSceneName);
     }
 
-    public void ShowCredits()
+    public void ToggleCredits()
     {
         if (creditsPanel != null)
         {
-            creditsPanel.SetActive(true);
+            if (creditsPanel.activeSelf)
+            {
+                creditsPanel.SetActive(false);
+            }
+            else
+            {
+                creditsPanel.SetActive(true);
+            }
         }
     }
 
-    public void HideCredits()
+    public void ToggleSettings()
     {
-        if (creditsPanel != null)
+        if (settingsPanel != null)
         {
-            creditsPanel.SetActive(false);
+            if (settingsPanel.activeSelf)
+            {
+                settingsPanel.SetActive(false);
+            }
+            else
+            {
+                settingsPanel.SetActive(true);
+            }
         }
     }
 
