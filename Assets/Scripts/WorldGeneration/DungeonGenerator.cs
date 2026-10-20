@@ -66,7 +66,8 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private float fillStepDelay = 0.02f;      // seconds per step
 
     Dictionary<Vector2Int, RoomData> rooms = new Dictionary<Vector2Int, RoomData>();
-    HashSet<RoomData> dirtyRooms = new HashSet<RoomData>();    // rooms whose floor texture changed this frame
+    List<WearSurface> corridorSurfaces = new List<WearSurface>();
+    HashSet<WearSurface> dirtySurfaces = new HashSet<WearSurface>();   // floors whose wear texture changed this frame
     public event System.Action Generated;
     public bool IsReady { get; private set; }
     public Vector3 StartPosition => SlotCenter(Vector2Int.zero) + Vector3.up * 1f;
@@ -89,10 +90,10 @@ public class DungeonGenerator : MonoBehaviour
     void LateUpdate()
     {
         // Upload changed floor textures once per frame, however many cells changed
-        if (dirtyRooms.Count == 0) return;
-        foreach (RoomData room in dirtyRooms)
-            if (room.trailTex != null) room.trailTex.Apply();
-        dirtyRooms.Clear();
+        if (dirtySurfaces.Count == 0) return;
+        foreach (WearSurface surface in dirtySurfaces)
+            if (surface.Texture != null) surface.Texture.Apply();
+        dirtySurfaces.Clear();
     }
 
     void OnDestroy()
@@ -263,7 +264,7 @@ public class DungeonGenerator : MonoBehaviour
         room.root = roomObj.transform;
         Vector2Int offset = RoomOffset(room);
         Material mat = room.slot == Vector2Int.zero ? mapStartMaterial : mapRoomMaterial;
-        CreateMapQuad(room.slot, offset.x, offset.y, room.width, room.height, mat, room.root);
+        room.mapQuad = CreateMapQuad(room.slot, offset.x, offset.y, room.width, room.height, mat, room.root);
 
         BuildRoomFloor(room);
 
@@ -317,32 +318,46 @@ public class DungeonGenerator : MonoBehaviour
 
     void BuildRoomFloor(RoomData room)
     {
-        Vector2Int origin = RoomOrigin(room);
-        Vector3 corner = new Vector3(origin.x * cellSize, 0, origin.y * cellSize);    // bottom-left corner, world
-        Vector3 size = new Vector3(room.width * cellSize, 0, room.height * cellSize);
+        room.surface = CreateSurface(RoomOrigin(room), room.width, room.height, room.root, "Floor");
+    }
 
-        // One floor object, scaled to cover the whole room
-        GameObject floor = Instantiate(floorTile, corner + size / 2f, Quaternion.identity, room.root);
-        floor.name = "Floor";
+    // One floor object covering a rectangle of cells, with its own wear texture.
+    // Used for both rooms and corridors.
+    WearSurface CreateSurface(Vector2Int origin, int width, int height, Transform parent, string name)
+    {
+        Vector3 corner = new Vector3(origin.x * cellSize, 0, origin.y * cellSize);    // bottom-left corner, world
+        Vector3 size = new Vector3(width * cellSize, 0, height * cellSize);
+
+        // One floor object, scaled to cover the whole rectangle
+        GameObject floor = Instantiate(floorTile, corner + size / 2f, Quaternion.identity, parent);
+        floor.name = name;
         floor.transform.localScale = new Vector3(size.x, floorTile.transform.localScale.y, size.z);
-        room.floor = floor.GetComponentInChildren<Renderer>();
-        room.floor.sharedMaterial = roomFloorMaterial;
+        Renderer floorRenderer = floor.GetComponentInChildren<Renderer>();
+        floorRenderer.sharedMaterial = roomFloorMaterial;
 
         // Tiny texture: pixel (x, y) = cell (x, y). Starts all black = no wear.
-        room.trailTex = new Texture2D(room.width, room.height, TextureFormat.RGBA32, false)
+        Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, false)
         {
             filterMode = smoothPath ? FilterMode.Bilinear : FilterMode.Point,
             wrapMode = TextureWrapMode.Clamp
         };
-        room.trailTex.SetPixels32(new Color32[room.width * room.height]);
-        room.trailTex.Apply();
-        room.wear = new float[room.width, room.height];
+        texture.SetPixels32(new Color32[width * height]);
+        texture.Apply();
 
         // Give THIS renderer its own texture and position, without copying the material
         var block = new MaterialPropertyBlock();
-        block.SetTexture("_TrailTex", room.trailTex);
+        block.SetTexture("_TrailTex", texture);
         block.SetVector("_RoomRect", new Vector4(corner.x, corner.z, size.x, size.z));
-        room.floor.SetPropertyBlock(block);
+        floorRenderer.SetPropertyBlock(block);
+
+        return new WearSurface
+        {
+            Origin = origin,
+            Width = width,
+            Height = height,
+            Texture = texture,
+            Wear = new float[width, height]
+        };
     }
 
     void BuildCorridors()
@@ -371,23 +386,27 @@ public class DungeonGenerator : MonoBehaviour
 
         GameObject corridorObj = new GameObject($"Corridor {room.slot} {(horizontal ? "E" : "N")}");
         corridorObj.transform.SetParent(transform);
-        if (horizontal)
-            CreateMapQuad(room.slot, start, gapStart, end - start, doorWidth, mapCorridorMaterial, corridorObj.transform);
-        else
-            CreateMapQuad(room.slot, gapStart, start, doorWidth, end - start, mapCorridorMaterial, corridorObj.transform);
+
+        // The walkable part of the corridor as a rectangle (slot coordinates of room A)
+        Vector2Int localCorner = horizontal ? new Vector2Int(start, gapStart) : new Vector2Int(gapStart, start);
+        int w = horizontal ? end - start : doorWidth;
+        int h = horizontal ? doorWidth : end - start;
+
+        CreateMapQuad(room.slot, localCorner.x, localCorner.y, w, h, mapCorridorMaterial, corridorObj.transform);
+
+        // One floor with its own wear texture, like a room
+        corridorSurfaces.Add(CreateSurface(origin + localCorner, w, h, corridorObj.transform, "CorridorFloor"));
+
+        // With fill on, the fill boxes already form the corridor's side walls
+        if (fillBetweenRooms) return;
+
         for (int along = start; along < end; along++)
         {
-            for (int across = gapStart - 1; across <= gapEnd; across++)
+            foreach (int across in new[] { gapStart - 1, gapEnd })
             {
                 int x = horizontal ? along : across;
                 int y = horizontal ? across : along;
-                Vector3 position = CellToWorld(origin, x, y);
-                GameObject floorTileInstance = Instantiate(floorTile, position, Quaternion.identity, corridorObj.transform);
-                floorTileInstance.GetComponentInChildren<Renderer>().sharedMaterial = roomFloorMaterial;
-
-                // With fill on, the fill boxes already form the corridor's side walls
-                if (!fillBetweenRooms && (across == gapStart - 1 || across == gapEnd))
-                    Instantiate(wallTile, position, Quaternion.identity, corridorObj.transform);
+                Instantiate(wallTile, CellToWorld(origin, x, y), Quaternion.identity, corridorObj.transform);
             }
         }
     }
@@ -527,12 +546,18 @@ public class DungeonGenerator : MonoBehaviour
         if (room.slot != Vector2Int.zero)   // start room stays empty
         {
             RoomContent content = PickContent(room);
+
+            // Special rooms (e.g. treasure) get their own color on the minimap
+            if (content != null && content.mapRoomMaterial != null)
+                room.mapQuad.sharedMaterial = content.mapRoomMaterial;
+
             if (content != null && content.props.Length > 0)
             {
                 switch (content.pattern)
                 {
                     case PlacementPattern.Scatter: PlaceScatter(room, content, blocked, solid); break;
                     case PlacementPattern.PillarGrid: PlacePillarGrid(room, content, blocked, solid); break;
+                    case PlacementPattern.Center: PlaceCenter(room, content, blocked, solid); break;
                 }
             }
         }
@@ -576,9 +601,14 @@ public class DungeonGenerator : MonoBehaviour
         GameObject prefab = content.props[Random.Range(0, content.props.Length)];
         Vector3 pos = CellToWorld(RoomOrigin(room), cell.x, cell.y);
         Quaternion rot = Quaternion.Euler(0, 90 * Random.Range(0, 4), 0);
-        Instantiate(prefab, pos, rot, room.root);
+        GameObject prop = Instantiate(prefab, pos, rot, room.root);
         Vector2Int offset = RoomOffset(room);
-        CreateMapQuad(room.slot, offset.x + cell.x, offset.y + cell.y, 1, 1, mapObstacleMaterial, room.root, obstacleMapOffset);
+        Material mapMat = content.mapMaterial != null ? content.mapMaterial : mapObstacleMaterial;
+        Renderer mapIcon = CreateMapQuad(room.slot, offset.x + cell.x, offset.y + cell.y, 1, 1, mapMat, room.root, obstacleMapOffset);
+
+        // Chests recolor their map icon and room when looted, so tell them which quads are theirs
+        if (prop.TryGetComponent(out Chest chest))
+            chest.SetMapMarkers(mapIcon, room.mapQuad);
     }
 
     void PlaceScatter(RoomData room, RoomContent content, HashSet<Vector2Int> blocked, HashSet<Vector2Int> solid)
@@ -622,6 +652,15 @@ public class DungeonGenerator : MonoBehaviour
                 PlaceProp(room, content, cell);
             }
         }
+    }
+    void PlaceCenter(RoomData room, RoomContent content, HashSet<Vector2Int> blocked, HashSet<Vector2Int> solid)
+    {
+        Vector2Int cell = new Vector2Int(room.width / 2, room.height / 2);
+
+        if (blocked.Contains(cell) || solid.Contains(cell)) return;
+        if (!TryAddSolid(room, solid, cell)) return;
+
+        PlaceProp(room, content, cell);
     }
 
     // -------- Connectivity (flood fill) --------
@@ -697,30 +736,28 @@ public class DungeonGenerator : MonoBehaviour
                               Mathf.FloorToInt(worldPos.z / cellSize));
     }
 
-    /// Wears down the floor cell under worldPos by 'amount' (0..1). Does nothing outside rooms.
+    /// Wears down the floor cell under worldPos by 'amount' (0..1). Works in rooms and corridors.
     public void AddWear(Vector3 worldPos, float amount)
     {
-        if (!TryGetRoomCell(worldPos, out RoomData room, out Vector2Int cell)) return;
-        if (room.trailTex == null) return;
+        Vector2Int cell = WorldToGlobalCell(worldPos);
+        WearSurface surface = FindSurface(worldPos, cell);
+        if (surface == null) return;
 
-        float old = room.wear[cell.x, cell.y];
-        float now = Mathf.Min(1f, old + amount);
-        if (now == old) return;                   // already fully worn
-
-        room.wear[cell.x, cell.y] = now;
-        room.trailTex.SetPixel(cell.x, cell.y, new Color(now, 0, 0, 1));
-        dirtyRooms.Add(room);                     // uploaded in LateUpdate
+        if (surface.AddWear(cell, amount)) dirtySurfaces.Add(surface);   // uploaded in LateUpdate
     }
 
-    bool TryGetRoomCell(Vector3 worldPos, out RoomData room, out Vector2Int cell)
+    WearSurface FindSurface(Vector3 worldPos, Vector2Int cell)
     {
-        Vector2Int global = WorldToGlobalCell(worldPos);
-        Vector2Int slot = WorldToSlot(worldPos);
-        cell = default;
-        if (!rooms.TryGetValue(slot, out room)) return false;
+        // Rooms first: a quick dictionary lookup by slot
+        if (rooms.TryGetValue(WorldToSlot(worldPos), out RoomData room)
+            && room.surface != null && room.surface.Contains(cell))
+            return room.surface;
 
-        cell = global - RoomOrigin(room);
-        return cell.x >= 0 && cell.x < room.width && cell.y >= 0 && cell.y < room.height;
+        // Otherwise check the corridors (only runs when stepping onto a new cell, so a loop is fine)
+        foreach (WearSurface corridor in corridorSurfaces)
+            if (corridor.Contains(cell)) return corridor;
+
+        return null;
     }
     Vector2Int WorldToSlot(Vector3 worldPos)
     {
@@ -732,8 +769,12 @@ public class DungeonGenerator : MonoBehaviour
     void FreeFloorTextures()
     {
         foreach (var room in rooms.Values)
-            if (room.trailTex != null) Destroy(room.trailTex);
-        dirtyRooms.Clear();
+            if (room.surface?.Texture != null) Destroy(room.surface.Texture);
+        foreach (WearSurface corridor in corridorSurfaces)
+            if (corridor.Texture != null) Destroy(corridor.Texture);
+
+        corridorSurfaces.Clear();
+        dirtySurfaces.Clear();
     }
     void TrackPlayer()
     {
@@ -803,12 +844,15 @@ public class DungeonGenerator : MonoBehaviour
         }
         return false;
     }
-    void CreateMapQuad(Vector2Int slot, float x, float y, float w, float h, Material mat, Transform parent, float heightOffset = 0f)
+    // Returns the quad's renderer, so its color can be changed later (treasure rooms, looted chests)
+    Renderer CreateMapQuad(Vector2Int slot, float x, float y, float w, float h, Material mat, Transform parent, float heightOffset = 0f)
     {
         Vector3 center = new Vector3((slot.x * slotSize + x + w / 2f) * cellSize, mapHeight + heightOffset, (slot.y * slotSize + y + h / 2f) * cellSize);
         GameObject quad = Instantiate(mapQuadPrefab, center, Quaternion.Euler(90, 0, 0), parent);
         quad.transform.localScale = new Vector3(w * cellSize, h * cellSize, 1);
-        quad.GetComponent<Renderer>().sharedMaterial = mat;
+        Renderer quadRenderer = quad.GetComponent<Renderer>();
+        quadRenderer.sharedMaterial = mat;
+        return quadRenderer;
     }
 
     // -------- Debug --------

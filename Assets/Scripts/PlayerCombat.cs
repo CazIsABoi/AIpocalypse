@@ -8,11 +8,11 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private InputActionReference RightClick;
 
     [SerializeField] private LayerMask EnemyLayer;
+    private PlayerStats stats;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
-        
+        stats = GetComponent<PlayerStats>();
     }
 
     // Update is called once per frame
@@ -27,7 +27,7 @@ public class PlayerCombat : MonoBehaviour
             Collider[] hits = Physics.OverlapSphere(transform.position + CalculateAimingDirection() * 1.25f, 1.5f, EnemyLayer);
             foreach (Collider hit in hits)
             {
-                if(hit.gameObject.GetComponent<EnemyController>()) hit.gameObject.GetComponent<EnemyController>().TakeDamage(10f);
+                if(hit.gameObject.GetComponent<EnemyController>()) hit.gameObject.GetComponent<EnemyController>().TakeDamage(stats.Damage);
             }
         }
     }
