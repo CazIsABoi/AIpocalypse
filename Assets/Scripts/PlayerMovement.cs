@@ -16,7 +16,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private void Start()
     {
-        Speed = BaseSpeed;
+        
     }
 
     // Update is called once per frame

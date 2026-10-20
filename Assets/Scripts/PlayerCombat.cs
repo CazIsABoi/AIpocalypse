@@ -20,11 +20,9 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private List<GameObject> hitEnemies = new List<GameObject>();
 
     public float MeleeDamage;
-    public float CritChance = 0.1f;        // 0 -> 1, aka 0 -> 100%, 10% by default
-    public float CritDamage = 2f;          // Multiplies Damage Upright, 2f is 2x damage, 3f is 3x damage
+    //public float CritChance = 0.1f;        // 0 -> 1, aka 0 -> 100%, 10% by default
+    //public float CritDamage = 2f;          // Multiplies Damage Upright, 2f is 2x damage, 3f is 3x damage
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
     void Awake()
     {
         stats = GetComponent<PlayerStats>();
@@ -58,8 +56,8 @@ public class PlayerCombat : MonoBehaviour
                 Collider[] hits = Physics.OverlapSphere(transform.position + CalculateAimingDirection() * 1.25f, 1.5f, EnemyLayer);
                 foreach (Collider hit in hits)
                 {
-                    if (hit.gameObject.GetComponent<EnemyController>()) hit.gameObject.GetComponent<EnemyController>().TakeDamage(MeleeDamage, CritChance, CritDamage);
-                    if(hit.gameObject.GetComponent<EnemyController>()) hit.gameObject.GetComponent<EnemyController>().TakeDamage(stats.Damage);
+                    if (hit.gameObject.GetComponent<EnemyController>()) hit.gameObject.GetComponent<EnemyController>().TakeDamage(MeleeDamage, stats.CritChance, stats.CritDamage);
+                   // if(hit.gameObject.GetComponent<EnemyController>()) hit.gameObject.GetComponent<EnemyController>().TakeDamage(stats.Damage);
                 }
                 
             }

@@ -12,6 +12,9 @@ public class PlayerStats : MonoBehaviour
     private float damagePercent;     // sum of all "+X% damage" upgrades (0.1 = 10%)
     public float Damage => (baseDamage + flatDamage) * (1f + damagePercent);
 
+    public float CritDamage;    // 2f is 2x damage, a 100% damage increase.
+    public float CritChance;    // 0 -> 1 is 0% -> 100% crit chance
+
     public float pickupRange = 3;
     public event System.Action<StatType> StatsChanged;
 
