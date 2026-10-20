@@ -1,10 +1,12 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Windows;
 
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private InputActionReference move;
     private CharacterController controller;
+    [SerializeField] private float fallSpeed = 10f;   // constant downward push, keeps the player on the floor
     [SerializeField] private float BaseSpeed;
     [SerializeField] private float Speed;
 
@@ -18,8 +20,11 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 moveDir = new Vector3(move.action.ReadValue<Vector2>().x, 0, move.action.ReadValue<Vector2>().y);
-        controller.Move(moveDir * Time.deltaTime * Speed);
+        Vector2 input = move.action.ReadValue<Vector2>();
+        Vector3 moveDir = new Vector3(input.x, 0, input.y);
+
+        Vector3 velocity = moveDir * Speed + Vector3.down * fallSpeed;
+        controller.Move(velocity * Time.deltaTime);
     }
 
     public void Teleport(Vector3 newPosition)

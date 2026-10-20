@@ -15,6 +15,7 @@ MonoBehaviour:
   weight: 3
   minRoomSize: 15
   pattern: 1
-  props: []
+  props:
+  - {fileID: 820827969279677616, guid: 4fe32f9edc7fcce49aea801b098dbb62, type: 3}
   density: 0.05
   spacing: 4

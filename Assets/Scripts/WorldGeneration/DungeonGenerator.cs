@@ -18,6 +18,11 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private GameObject wallTile;
     [SerializeField] private Material roomFloorMaterial;   // uses the RoomFloor shader graph
     [SerializeField] GameObject fogPrefab;
+    [SerializeField] GameObject mapQuadPrefab;
+    [SerializeField] Material mapRoomMaterial;
+    [SerializeField] Material mapStartMaterial;
+    [SerializeField] Material mapCorridorMaterial;
+    [SerializeField] Material mapObstacleMaterial;
 
     [Header("Layout Settings")]
     [SerializeField] private int maxRooms = 10; // Maximum number of rooms to generate
@@ -50,6 +55,8 @@ public class DungeonGenerator : MonoBehaviour
     [Header("Fog")]
     [SerializeField] float fogHeight = 3f;
     [SerializeField] float fogFadeTime = 0.5f;
+    [SerializeField] float mapHeight = 2.5f;   // must be lower than fogHeight, so the fog covers it
+    [SerializeField] float obstacleMapOffset = 0.2f;
 
     [Header("Debug")]
     [SerializeField] private bool showBlocked = true;
@@ -254,6 +261,9 @@ public class DungeonGenerator : MonoBehaviour
         GameObject roomObj = new GameObject($"Room {room.slot}");
         roomObj.transform.SetParent(transform);
         room.root = roomObj.transform;
+        Vector2Int offset = RoomOffset(room);
+        Material mat = room.slot == Vector2Int.zero ? mapStartMaterial : mapRoomMaterial;
+        CreateMapQuad(room.slot, offset.x, offset.y, room.width, room.height, mat, room.root);
 
         BuildRoomFloor(room);
 
@@ -361,6 +371,10 @@ public class DungeonGenerator : MonoBehaviour
 
         GameObject corridorObj = new GameObject($"Corridor {room.slot} {(horizontal ? "E" : "N")}");
         corridorObj.transform.SetParent(transform);
+        if (horizontal)
+            CreateMapQuad(room.slot, start, gapStart, end - start, doorWidth, mapCorridorMaterial, corridorObj.transform);
+        else
+            CreateMapQuad(room.slot, gapStart, start, doorWidth, end - start, mapCorridorMaterial, corridorObj.transform);
         for (int along = start; along < end; along++)
         {
             for (int across = gapStart - 1; across <= gapEnd; across++)
@@ -562,6 +576,8 @@ public class DungeonGenerator : MonoBehaviour
         Vector3 pos = CellToWorld(RoomOrigin(room), cell.x, cell.y);
         Quaternion rot = Quaternion.Euler(0, 90 * Random.Range(0, 4), 0);
         Instantiate(prefab, pos, rot, room.root);
+        Vector2Int offset = RoomOffset(room);
+        CreateMapQuad(room.slot, offset.x + cell.x, offset.y + cell.y, 1, 1, mapObstacleMaterial, room.root, obstacleMapOffset);
     }
 
     void PlaceScatter(RoomData room, RoomContent content, HashSet<Vector2Int> blocked, HashSet<Vector2Int> solid)
@@ -785,6 +801,13 @@ public class DungeonGenerator : MonoBehaviour
                 return true;
         }
         return false;
+    }
+    void CreateMapQuad(Vector2Int slot, float x, float y, float w, float h, Material mat, Transform parent, float heightOffset = 0f)
+    {
+        Vector3 center = new Vector3((slot.x * slotSize + x + w / 2f) * cellSize, mapHeight + heightOffset, (slot.y * slotSize + y + h / 2f) * cellSize);
+        GameObject quad = Instantiate(mapQuadPrefab, center, Quaternion.Euler(90, 0, 0), parent);
+        quad.transform.localScale = new Vector3(w * cellSize, h * cellSize, 1);
+        quad.GetComponent<Renderer>().sharedMaterial = mat;
     }
 
     // -------- Debug --------
