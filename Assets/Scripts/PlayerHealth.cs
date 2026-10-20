@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
-    [SerializeField] private float maxHealth = 100f;
     [SerializeField] private float invulnerableTime = 0.3f;   // short protection after a hit
 
-    [SerializeField] private UnityEngine.UI.Slider slider;   
+    [SerializeField] private UnityEngine.UI.Slider slider;
+    private PlayerStats stats;
 
     public float Health { get; private set; }
-    public float MaxHealth => maxHealth;
+    public float MaxHealth => stats.MaxHealth;
     public bool IsDead => Health <= 0;
 
     public event System.Action<float, float> HealthChanged;   // (current, max)
@@ -16,16 +16,17 @@ public class PlayerHealth : MonoBehaviour
 
     private float invulnerableTimer;
 
-    void Awake() { Health = maxHealth; invulnerableTimer = 0f; UpdateBar(Health, maxHealth); }
+    void Awake() { stats = GetComponent<PlayerStats>(); Health = stats.MaxHealth; invulnerableTimer = 0f; UpdateBar(Health, stats.MaxHealth);  }
     void Update() { invulnerableTimer = Mathf.Max(0f, invulnerableTimer - Time.deltaTime); }
+
 
     public void TakeDamage(float amount)
     {
         if (IsDead || invulnerableTimer > 0f) return;
         Health = Mathf.Max(0f, Health - amount);
         invulnerableTimer = invulnerableTime;
-        HealthChanged?.Invoke(Health, maxHealth);
-        UpdateBar(Health, maxHealth);
+        HealthChanged?.Invoke(Health, stats.MaxHealth);
+        UpdateBar(Health, stats.MaxHealth);
         if (IsDead) Died?.Invoke();
     }
     void UpdateBar(float current, float max)
@@ -34,5 +35,5 @@ public class PlayerHealth : MonoBehaviour
         slider.value = current;
     }
 
-    public void ResetHealth() { Health = maxHealth; invulnerableTimer = 0f; HealthChanged?.Invoke(Health, maxHealth); UpdateBar(Health, maxHealth); }
+    public void ResetHealth() { Health = stats.MaxHealth; invulnerableTimer = 0f; HealthChanged?.Invoke(Health, stats.MaxHealth); UpdateBar(Health, stats.MaxHealth); }
 }

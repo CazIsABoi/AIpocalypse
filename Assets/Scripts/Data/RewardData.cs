@@ -1,0 +1,12 @@
+using UnityEngine;
+
+public abstract class RewardData : ScriptableObject
+{
+    public string Title;
+    [TextArea] public string Description;
+    public Sprite Icon;
+    public int Weight = 10;          // how often it appears
+
+    public abstract void Apply(PlayerStats stats);
+}
+public enum StatType { MoveSpeed, MaxHealth, Damage, PickupRadius }
