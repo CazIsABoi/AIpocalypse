@@ -2383,6 +2383,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b7097f32d975056468ee51d741779488, type: 2}
   - {fileID: 11400000, guid: f06b02bda94b4fa468f3ebb0400886bc, type: 2}
   - {fileID: 11400000, guid: 5a62153c6c3821d40b81b168690b7763, type: 2}
+  - {fileID: 11400000, guid: fec8eab308186bf43954eb2ec1732cbb, type: 2}
   fillBetweenRooms: 1
   fillMargin: 1
   smoothPath: 1
@@ -2862,10 +2863,10 @@ RectTransform:
   - {fileID: 1827229033}
   m_Father: {fileID: 1034513975}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1158743793
 GameObject:
@@ -3765,8 +3766,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   MaxHealth: 100
-  speed: 0
-  damage: 10
+  BaseSpeed: 8
+  flatSpeed: 0
+  speedPercent: 0
+  baseDamage: 10
   pickupRange: 0.5
 --- !u!1 &1681579538
 GameObject:
@@ -4243,8 +4246,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 810.0001, y: 390.21106}
-  m_SizeDelta: {x: 200, y: 200}
+  m_AnchoredPosition: {x: -150, y: -150}
+  m_SizeDelta: {x: 300, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1891384530
 CanvasRenderer:
@@ -4761,8 +4764,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.00030517578, y: -0.00012207031}
-  m_SizeDelta: {x: 200, y: 200}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 300, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2061543639
 MonoBehaviour:
