@@ -583,7 +583,7 @@ MonoBehaviour:
   navMeshSurface: {fileID: 841289499}
   floorTile: {fileID: 5810459312312200726, guid: c711593bafa7b524baaaa48a4f092e6f, type: 3}
   wallTile: {fileID: 374521644867712513, guid: 49910f3e537ed564ebfe2a525ca09520, type: 3}
-  roomFloorMaterial: {fileID: 2100000, guid: 95207d0537ac7e84b9f4e76d07393601, type: 2}
+  roomFloorMaterial: {fileID: 2100000, guid: 7be04d36049c78f489d01086d92d887e, type: 2}
   fogPrefab: {fileID: 2747383078252880347, guid: 76c4ebdce64c1e643a3d165a7eab90cc, type: 3}
   mapQuadPrefab: {fileID: 2156917677801359908, guid: 16efafd5087aa0c4b908a30c897b7e06, type: 3}
   mapRoomMaterial: {fileID: 2100000, guid: f175475c6e8683143bd30968f1820af4, type: 2}
@@ -872,7 +872,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5970814220684614354, guid: c8d59da36b19cab46b90c8da22a2d66d, type: 3}
   m_PrefabInstance: {fileID: 1138386431}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1583679625}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b374eb79712996469f7130062d52a1b, type: 3}
@@ -947,10 +947,32 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4225567227736019386, guid: c8d59da36b19cab46b90c8da22a2d66d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1583679632}
     - targetCorrespondingSourceObject: {fileID: 4689252316886958462, guid: c8d59da36b19cab46b90c8da22a2d66d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 898638961}
   m_SourcePrefab: {fileID: 100100000, guid: c8d59da36b19cab46b90c8da22a2d66d, type: 3}
+--- !u!1 &1583679625 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4225567227736019386, guid: c8d59da36b19cab46b90c8da22a2d66d, type: 3}
+  m_PrefabInstance: {fileID: 1138386431}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1583679632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1583679625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52bca3b01b0329c4fae2e2a08c138a13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FloorTrail
+  dungeon: {fileID: 841289497}
+  wearPerStep: 0.1
 --- !u!1 &1737038330
 GameObject:
   m_ObjectHideFlags: 0

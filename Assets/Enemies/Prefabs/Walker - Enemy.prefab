@@ -331,6 +331,7 @@ GameObject:
   - component: {fileID: 7394757999035450669}
   - component: {fileID: 8503369225443525376}
   - component: {fileID: 7000668719919852536}
+  - component: {fileID: 8626435081194244577}
   m_Layer: 8
   m_Name: Walker - Enemy
   m_TagString: Untagged
@@ -511,6 +512,20 @@ NavMeshAgent:
   m_BaseOffset: 0.5
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 1
+--- !u!114 &8626435081194244577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5333901100499698115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52bca3b01b0329c4fae2e2a08c138a13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FloorTrail
+  dungeon: {fileID: 0}
+  wearPerStep: 0.1
 --- !u!1 &6098720431619477486
 GameObject:
   m_ObjectHideFlags: 0

@@ -50,7 +50,7 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private int fillMargin = 1;           // extra ring of solid slots around the whole map
 
     [Header("Floor Path")]
-    [SerializeField] private bool smoothPath = true; // true = soft blend between cells, false = sharp squares
+    [SerializeField] private bool smoothPath = true; 
 
     [Header("Fog")]
     [SerializeField] float fogHeight = 3f;
@@ -382,7 +382,8 @@ public class DungeonGenerator : MonoBehaviour
                 int x = horizontal ? along : across;
                 int y = horizontal ? across : along;
                 Vector3 position = CellToWorld(origin, x, y);
-                Instantiate(floorTile, position, Quaternion.identity, corridorObj.transform);
+                GameObject floorTileInstance = Instantiate(floorTile, position, Quaternion.identity, corridorObj.transform);
+                floorTileInstance.GetComponentInChildren<Renderer>().sharedMaterial = roomFloorMaterial;
 
                 // With fill on, the fill boxes already form the corridor's side walls
                 if (!fillBetweenRooms && (across == gapStart - 1 || across == gapEnd))
