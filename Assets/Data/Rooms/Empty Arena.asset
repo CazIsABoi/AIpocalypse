@@ -16,5 +16,12 @@ MonoBehaviour:
   minRoomSize: 11
   pattern: 0
   props: []
+  walkable: 0
   density: 0.05
   spacing: 4
+  mapMaterial: {fileID: 0}
+  mapRoomMaterial: {fileID: 0}
+  rotation: 0
+  randomScale: 0
+  tintFloor: 0
+  floorColor: {r: 1, g: 1, b: 1, a: 1}

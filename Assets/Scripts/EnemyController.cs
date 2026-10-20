@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 
-public class EnemyController : MonoBehaviour
+public class EnemyController : MonoBehaviour, IDamageable
 {
     [SerializeField] private GameObject PlayerTarget;   // Always gonna be the player
     [SerializeField] private PlayerHealth playerHealth; // Always gonna be the player health script
@@ -56,7 +56,7 @@ public class EnemyController : MonoBehaviour
         }
 
         if (died) {
-            GameObject spawnedXp = Instantiate(xpPrefab, transform.position, Quaternion.identity);
+            GameObject spawnedXp = Instantiate(xpPrefab, transform.position, Quaternion.identity, transform.parent);
             spawnedXp.GetComponent<XpOrb>().Amount = Xp;
             Destroy(gameObject); return;  
             } // Enemy died, destroy the gameobject and exit the update loop.
@@ -90,7 +90,7 @@ public class EnemyController : MonoBehaviour
                     IsAttacking = true;
                     AttackCD = 1.5f;
                     AttackWindow = 0.5f;
-                    Debug.Log("attacked");
+                    // Debug.Log("attacked");
                 }
             }
             if(!IsAttacking)
@@ -112,7 +112,7 @@ public class EnemyController : MonoBehaviour
 
                 if (AttackWindow <= 0)
                 {
-                    Debug.Log("Attack Finished");
+                    // Debug.Log("Attack Finished");
                     Vector3 offset = PlayerTarget.transform.position - transform.position;
                     if (offset.sqrMagnitude <= AttackRange * AttackRange) // If the player is still in range, apply damage
                     {

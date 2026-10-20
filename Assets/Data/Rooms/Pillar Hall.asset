@@ -12,10 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f48cf5d16e685e498a1355c26a6403d, type: 3}
   m_Name: Pillar Hall
   m_EditorClassIdentifier: Assembly-CSharp::RoomContent
-  weight: 3
+  weight: 2
   minRoomSize: 15
   pattern: 1
   props:
   - {fileID: 820827969279677616, guid: 4fe32f9edc7fcce49aea801b098dbb62, type: 3}
+  walkable: 0
   density: 0.05
   spacing: 4
+  mapMaterial: {fileID: 0}
+  mapRoomMaterial: {fileID: 0}
+  rotation: 0
+  randomScale: 0
+  tintFloor: 1
+  floorColor: {r: 0.8392157, g: 0.8392157, b: 0.8392157, a: 1}

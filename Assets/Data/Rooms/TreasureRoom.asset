@@ -17,7 +17,12 @@ MonoBehaviour:
   pattern: 2
   props:
   - {fileID: 7994357927709008900, guid: 3a7e9241afabd194da5965b0e17fc738, type: 3}
+  walkable: 0
   density: 0.05
   spacing: 4
   mapMaterial: {fileID: 2100000, guid: 465014fb07cfbf34f9a9c67f8fe30670, type: 2}
   mapRoomMaterial: {fileID: 2100000, guid: ada290ba58bd62e478f0a9efd98e886d, type: 2}
+  rotation: 0
+  randomScale: 0
+  tintFloor: 1
+  floorColor: {r: 0.91764706, g: 0.85882354, b: 0.6901961, a: 1}
