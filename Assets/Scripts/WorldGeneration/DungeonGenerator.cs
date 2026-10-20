@@ -66,7 +66,8 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private float fillStepDelay = 0.02f;      // seconds per step
 
     Dictionary<Vector2Int, RoomData> rooms = new Dictionary<Vector2Int, RoomData>();
-    HashSet<RoomData> dirtyRooms = new HashSet<RoomData>();    // rooms whose floor texture changed this frame
+    List<WearSurface> corridorSurfaces = new List<WearSurface>();
+    HashSet<WearSurface> dirtySurfaces = new HashSet<WearSurface>();   // floors whose wear texture changed this frame
     public event System.Action Generated;
     public bool IsReady { get; private set; }
     public Vector3 StartPosition => SlotCenter(Vector2Int.zero) + Vector3.up * 1f;
@@ -89,10 +90,10 @@ public class DungeonGenerator : MonoBehaviour
     void LateUpdate()
     {
         // Upload changed floor textures once per frame, however many cells changed
-        if (dirtyRooms.Count == 0) return;
-        foreach (RoomData room in dirtyRooms)
-            if (room.trailTex != null) room.trailTex.Apply();
-        dirtyRooms.Clear();
+        if (dirtySurfaces.Count == 0) return;
+        foreach (WearSurface surface in dirtySurfaces)
+            if (surface.Texture != null) surface.Texture.Apply();
+        dirtySurfaces.Clear();
     }
 
     void OnDestroy()
@@ -317,32 +318,46 @@ public class DungeonGenerator : MonoBehaviour
 
     void BuildRoomFloor(RoomData room)
     {
-        Vector2Int origin = RoomOrigin(room);
-        Vector3 corner = new Vector3(origin.x * cellSize, 0, origin.y * cellSize);    // bottom-left corner, world
-        Vector3 size = new Vector3(room.width * cellSize, 0, room.height * cellSize);
+        room.surface = CreateSurface(RoomOrigin(room), room.width, room.height, room.root, "Floor");
+    }
 
-        // One floor object, scaled to cover the whole room
-        GameObject floor = Instantiate(floorTile, corner + size / 2f, Quaternion.identity, room.root);
-        floor.name = "Floor";
+    // One floor object covering a rectangle of cells, with its own wear texture.
+    // Used for both rooms and corridors.
+    WearSurface CreateSurface(Vector2Int origin, int width, int height, Transform parent, string name)
+    {
+        Vector3 corner = new Vector3(origin.x * cellSize, 0, origin.y * cellSize);    // bottom-left corner, world
+        Vector3 size = new Vector3(width * cellSize, 0, height * cellSize);
+
+        // One floor object, scaled to cover the whole rectangle
+        GameObject floor = Instantiate(floorTile, corner + size / 2f, Quaternion.identity, parent);
+        floor.name = name;
         floor.transform.localScale = new Vector3(size.x, floorTile.transform.localScale.y, size.z);
-        room.floor = floor.GetComponentInChildren<Renderer>();
-        room.floor.sharedMaterial = roomFloorMaterial;
+        Renderer floorRenderer = floor.GetComponentInChildren<Renderer>();
+        floorRenderer.sharedMaterial = roomFloorMaterial;
 
         // Tiny texture: pixel (x, y) = cell (x, y). Starts all black = no wear.
-        room.trailTex = new Texture2D(room.width, room.height, TextureFormat.RGBA32, false)
+        Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, false)
         {
             filterMode = smoothPath ? FilterMode.Bilinear : FilterMode.Point,
             wrapMode = TextureWrapMode.Clamp
         };
-        room.trailTex.SetPixels32(new Color32[room.width * room.height]);
-        room.trailTex.Apply();
-        room.wear = new float[room.width, room.height];
+        texture.SetPixels32(new Color32[width * height]);
+        texture.Apply();
 
         // Give THIS renderer its own texture and position, without copying the material
         var block = new MaterialPropertyBlock();
-        block.SetTexture("_TrailTex", room.trailTex);
+        block.SetTexture("_TrailTex", texture);
         block.SetVector("_RoomRect", new Vector4(corner.x, corner.z, size.x, size.z));
-        room.floor.SetPropertyBlock(block);
+        floorRenderer.SetPropertyBlock(block);
+
+        return new WearSurface
+        {
+            Origin = origin,
+            Width = width,
+            Height = height,
+            Texture = texture,
+            Wear = new float[width, height]
+        };
     }
 
     void BuildCorridors()
@@ -371,23 +386,27 @@ public class DungeonGenerator : MonoBehaviour
 
         GameObject corridorObj = new GameObject($"Corridor {room.slot} {(horizontal ? "E" : "N")}");
         corridorObj.transform.SetParent(transform);
-        if (horizontal)
-            CreateMapQuad(room.slot, start, gapStart, end - start, doorWidth, mapCorridorMaterial, corridorObj.transform);
-        else
-            CreateMapQuad(room.slot, gapStart, start, doorWidth, end - start, mapCorridorMaterial, corridorObj.transform);
+
+        // The walkable part of the corridor as a rectangle (slot coordinates of room A)
+        Vector2Int localCorner = horizontal ? new Vector2Int(start, gapStart) : new Vector2Int(gapStart, start);
+        int w = horizontal ? end - start : doorWidth;
+        int h = horizontal ? doorWidth : end - start;
+
+        CreateMapQuad(room.slot, localCorner.x, localCorner.y, w, h, mapCorridorMaterial, corridorObj.transform);
+
+        // One floor with its own wear texture, like a room
+        corridorSurfaces.Add(CreateSurface(origin + localCorner, w, h, corridorObj.transform, "CorridorFloor"));
+
+        // With fill on, the fill boxes already form the corridor's side walls
+        if (fillBetweenRooms) return;
+
         for (int along = start; along < end; along++)
         {
-            for (int across = gapStart - 1; across <= gapEnd; across++)
+            foreach (int across in new[] { gapStart - 1, gapEnd })
             {
                 int x = horizontal ? along : across;
                 int y = horizontal ? across : along;
-                Vector3 position = CellToWorld(origin, x, y);
-                GameObject floorTileInstance = Instantiate(floorTile, position, Quaternion.identity, corridorObj.transform);
-                floorTileInstance.GetComponentInChildren<Renderer>().sharedMaterial = roomFloorMaterial;
-
-                // With fill on, the fill boxes already form the corridor's side walls
-                if (!fillBetweenRooms && (across == gapStart - 1 || across == gapEnd))
-                    Instantiate(wallTile, position, Quaternion.identity, corridorObj.transform);
+                Instantiate(wallTile, CellToWorld(origin, x, y), Quaternion.identity, corridorObj.transform);
             }
         }
     }
@@ -697,30 +716,28 @@ public class DungeonGenerator : MonoBehaviour
                               Mathf.FloorToInt(worldPos.z / cellSize));
     }
 
-    /// Wears down the floor cell under worldPos by 'amount' (0..1). Does nothing outside rooms.
+    /// Wears down the floor cell under worldPos by 'amount' (0..1). Works in rooms and corridors.
     public void AddWear(Vector3 worldPos, float amount)
     {
-        if (!TryGetRoomCell(worldPos, out RoomData room, out Vector2Int cell)) return;
-        if (room.trailTex == null) return;
+        Vector2Int cell = WorldToGlobalCell(worldPos);
+        WearSurface surface = FindSurface(worldPos, cell);
+        if (surface == null) return;
 
-        float old = room.wear[cell.x, cell.y];
-        float now = Mathf.Min(1f, old + amount);
-        if (now == old) return;                   // already fully worn
-
-        room.wear[cell.x, cell.y] = now;
-        room.trailTex.SetPixel(cell.x, cell.y, new Color(now, 0, 0, 1));
-        dirtyRooms.Add(room);                     // uploaded in LateUpdate
+        if (surface.AddWear(cell, amount)) dirtySurfaces.Add(surface);   // uploaded in LateUpdate
     }
 
-    bool TryGetRoomCell(Vector3 worldPos, out RoomData room, out Vector2Int cell)
+    WearSurface FindSurface(Vector3 worldPos, Vector2Int cell)
     {
-        Vector2Int global = WorldToGlobalCell(worldPos);
-        Vector2Int slot = WorldToSlot(worldPos);
-        cell = default;
-        if (!rooms.TryGetValue(slot, out room)) return false;
+        // Rooms first: a quick dictionary lookup by slot
+        if (rooms.TryGetValue(WorldToSlot(worldPos), out RoomData room)
+            && room.surface != null && room.surface.Contains(cell))
+            return room.surface;
 
-        cell = global - RoomOrigin(room);
-        return cell.x >= 0 && cell.x < room.width && cell.y >= 0 && cell.y < room.height;
+        // Otherwise check the corridors (only runs when stepping onto a new cell, so a loop is fine)
+        foreach (WearSurface corridor in corridorSurfaces)
+            if (corridor.Contains(cell)) return corridor;
+
+        return null;
     }
     Vector2Int WorldToSlot(Vector3 worldPos)
     {
@@ -732,8 +749,12 @@ public class DungeonGenerator : MonoBehaviour
     void FreeFloorTextures()
     {
         foreach (var room in rooms.Values)
-            if (room.trailTex != null) Destroy(room.trailTex);
-        dirtyRooms.Clear();
+            if (room.surface?.Texture != null) Destroy(room.surface.Texture);
+        foreach (WearSurface corridor in corridorSurfaces)
+            if (corridor.Texture != null) Destroy(corridor.Texture);
+
+        corridorSurfaces.Clear();
+        dirtySurfaces.Clear();
     }
     void TrackPlayer()
     {

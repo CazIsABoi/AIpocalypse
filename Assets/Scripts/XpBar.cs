@@ -19,6 +19,7 @@ public class XpBar : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (stats == null) return;
         stats.XpChanged -= UpdateXpText;
         stats.XpChanged -= UpdateXpBar;
     }

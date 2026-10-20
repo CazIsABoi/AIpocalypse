@@ -42,6 +42,9 @@ public class PlayerStats : MonoBehaviour
             case StatType.Damage:
                 damage += amount;
                 break;
+            case StatType.DamagePercent:
+                damage += damage * amount;
+                break;
             case StatType.PickupRadius:
                 pickupRange += amount;
                 break;
