@@ -163,7 +163,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   move: {fileID: -4560233393525643125, guid: b95bd1b77317cc740a7589d3ab8ae8d5, type: 3}
-  BaseSpeed: 8
+  fallSpeed: 10
+  BaseSpeed: 7
   Speed: 0
 --- !u!143 &3948554149600697170
 CharacterController:

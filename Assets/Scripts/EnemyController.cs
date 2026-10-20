@@ -27,7 +27,9 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private Slider hpSlider;
     [SerializeField] private Gradient HpColor;
 
-    [SerializeField] private bool TEMP;
+    public EntityHandler handler;
+    public bool SpeedBoostIncrease;     // if cap is reached 
+    private float SpeedMax;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -36,13 +38,12 @@ public class EnemyController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         PlayerTarget = GameObject.Find("Player");
         playerHealth = PlayerTarget.GetComponent<PlayerHealth>();
+        SpeedMax = Speed * 3;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (TEMP) TakeDamage(10);
-
         if (Health <= 0) { Destroy(gameObject); return; } // Enemy died, destroy the gameobject and exit the update loop.
         if (AttackInterval > 0) AttackInterval -= Time.deltaTime;
         if (AttackCD > 0) AttackCD -= Time.deltaTime;
@@ -50,6 +51,14 @@ public class EnemyController : MonoBehaviour
         hpSlider.value = Health;
         hpSlider.maxValue = MaxHealth;
         hpSlider.fillRect.GetComponent<Image>().color = HpColor.Evaluate(Health / MaxHealth);
+
+        if(SpeedBoostIncrease)
+        {
+            if(Speed < SpeedMax)
+            {
+                Speed += SpeedMax * 0.04f * Time.deltaTime;
+            }
+        }
 
         if (AiType == 0)
         {
@@ -71,13 +80,20 @@ public class EnemyController : MonoBehaviour
             }
             if(!IsAttacking)
             {
+                
                 TargetPosition = PlayerTarget.transform.position;
-                if(agent.isActiveAndEnabled) agent.SetDestination(TargetPosition);
+                if (agent.isActiveAndEnabled)
+                {
+                    agent.isStopped = false;
+                    agent.SetDestination(TargetPosition);
+                }
             }
             else if(IsAttacking)
             {
                 AttackWindow -= Time.deltaTime;
                 agent.speed = 0;
+
+                if (agent.isActiveAndEnabled) agent.isStopped = true;
 
                 if (AttackWindow <= 0)
                 {
@@ -103,7 +119,6 @@ public class EnemyController : MonoBehaviour
 
     public void TakeDamage(float Amount)
     {
-        TEMP = false;
         Health -= Amount;
         GameObject spawnedPopup = Instantiate(DamagePopup, transform.position, Quaternion.identity);
         spawnedPopup.GetComponent<DamagePopup>().TargetPosition = transform.position + new Vector3(0, 1.5f, 0);

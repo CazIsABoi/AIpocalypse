@@ -489,7 +489,8 @@ MonoBehaviour:
     m_ColorSpace: 0
     m_NumColorKeys: 4
     m_NumAlphaKeys: 2
-  TEMP: 0
+  handler: {fileID: 0}
+  SpeedBoostIncrease: 0
 --- !u!195 &7000668719919852536
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -499,11 +500,11 @@ NavMeshAgent:
   m_GameObject: {fileID: 5333901100499698115}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.4
+  m_Radius: 0.3
   m_Speed: 4
-  m_Acceleration: 12
+  m_Acceleration: 20
   avoidancePriority: 50
-  m_AngularSpeed: 360
+  m_AngularSpeed: 720
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
