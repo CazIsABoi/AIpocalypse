@@ -23,6 +23,7 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] Material mapStartMaterial;
     [SerializeField] Material mapCorridorMaterial;
     [SerializeField] Material mapObstacleMaterial;
+    [SerializeField] Material mapCutoutMaterial;
 
     [Header("Layout Settings")]
     [SerializeField] private int maxRooms = 10; // Maximum number of rooms to generate
@@ -579,7 +580,7 @@ public class DungeonGenerator : MonoBehaviour
                 farthest.Add(room);
             }
         }
-        if (farthest.Count > 0) farthest[Random.Range(0, farthest.Count)].role = RoomRole.Core;
+        if (farthest.Count > 0) { farthest[Random.Range(0, farthest.Count)].role = RoomRole.Core; }
 
 
         // 3. Treasure = the farthest dead ends
@@ -606,10 +607,10 @@ public class DungeonGenerator : MonoBehaviour
         //    so the floor (built in BuildRoom) already knows which room type it is
         foreach (RoomData room in rooms.Values)
         {
-            if (room.role == RoomRole.Start) room.content = null;
-            else if (room.role == RoomRole.Core) room.content = coreContent;
-            else if (room.role == RoomRole.Treasure) room.content = treasureContent;
-            else room.content = PickContent(room);
+            if (room.role == RoomRole.Start) { room.content = null; room.shape = RoomShape.Rectangle; }
+            else if (room.role == RoomRole.Core) { room.content = coreContent; room.shape = RoomShape.Rectangle; }
+            else if (room.role == RoomRole.Treasure) { room.content = treasureContent; room.shape = RoomShape.Rectangle; }
+            else { room.content = PickContent(room); room.shape = PickShape(room); }
         }
     }
 
@@ -634,6 +635,8 @@ public class DungeonGenerator : MonoBehaviour
         if (room.doors[1]) BlockRect(blocked, room.width - 1 - laneDepth, DoorStart(room.height), laneDepth, doorWidth); // east
         if (room.doors[2]) BlockRect(blocked, DoorStart(room.width), 1, doorWidth, laneDepth);                          // south
         if (room.doors[3]) BlockRect(blocked, 1, DoorStart(room.height), laneDepth, doorWidth);                         // west
+
+        ApplyShape(room, blocked, solid); // shape can block more cells, e.g. L-shaped rooms
 
         RoomContent content = room.content;   // decided in AssignRoles
 
@@ -687,6 +690,26 @@ public class DungeonGenerator : MonoBehaviour
         }
 
         return null;
+    }
+
+    RoomShape PickShape(RoomData room)
+    {
+        if (room.content != null && room.content.pattern == PlacementPattern.Center)
+            return RoomShape.Rectangle;
+
+        RoomShape[] shapes = { RoomShape.Rectangle, RoomShape.L, RoomShape.Half, RoomShape.Cross, RoomShape.Diagonal, RoomShape.Donut };
+        int[] weights = { 10, 3, 3, 2, 2, 2 };
+
+        int total = 0;
+        foreach (int w in weights) total += w;
+
+        int roll = Random.Range(0, total);
+        for (int i = 0; i < shapes.Length; i++)
+        {
+            roll -= weights[i];
+            if (roll < 0) return shapes[i];
+        }
+        return RoomShape.Rectangle;
     }
 
     void PlaceProp(RoomData room, RoomContent content, Vector2Int cell)
@@ -834,6 +857,48 @@ public class DungeonGenerator : MonoBehaviour
             }
         }
     }
+    void ApplyShape(RoomData room, HashSet<Vector2Int> blocked, HashSet<Vector2Int> solid)
+    {
+        if (room.shape == RoomShape.Rectangle) return;
+
+        // ---- Donut: one block in the middle ----
+        if (room.shape == RoomShape.Donut)
+        {
+            int margin = laneDepth + 2;                    // keep door lanes + a walkway around the block free
+            int w = room.width - 2 * margin;
+            int h = room.height - 2 * margin;
+            if (w >= 1 && h >= 1) CutBlock(room, margin, margin, w, h, blocked, solid);
+            return;
+        }
+
+        // ---- Corner shapes: how big may a cut be? (step 2) ----
+        int maxCutX = DoorStart(room.width) - 1;
+        int maxCutY = DoorStart(room.height) - 1;
+        if (maxCutX < 3 || maxCutY < 3) return;            // too small, stays a rectangle
+
+        int cutX = Random.Range(3, maxCutX + 1);
+        int cutY = Random.Range(3, maxCutY + 1);
+
+        List<int> corners = new List<int>();
+        int first = Random.Range(0, 4);
+        switch (room.shape)
+        {
+            case RoomShape.L: corners.Add(first); break;
+            case RoomShape.Half: corners.Add(first); corners.Add((first + 1) % 4); break;   // neighbours = one side
+            case RoomShape.Diagonal: corners.Add(first); corners.Add((first + 2) % 4); break;   // opposite corners
+            case RoomShape.Cross: corners.AddRange(new[] { 0, 1, 2, 3 }); break;
+        }
+
+        // ---- Cut each chosen corner ----
+        foreach (int corner in corners)
+        {
+            bool left = corner == 0 || corner == 3;      // SW and NW
+            bool bottom = corner == 0 || corner == 1;      // SW and SE
+            int x = left ? 0 : room.width - cutX;
+            int y = bottom ? 0 : room.height - cutY;
+            CutBlock(room, x, y, cutX, cutY, blocked, solid);
+        }
+    }
 
     // -------- Connectivity (flood fill) --------
 
@@ -875,7 +940,27 @@ public class DungeonGenerator : MonoBehaviour
         // 3. Did we reach everything?
         return visited.Count == total;
     }
+    void CutBlock(RoomData room, int x, int y, int w, int h, HashSet<Vector2Int> blocked, HashSet<Vector2Int> solid)
+    {
+        BlockRect(blocked, x, y, w, h);       // no props here
+        BlockRect(solid, x, y, w, h);         // nobody walks here
 
+        Vector2Int origin = RoomOrigin(room);
+        Vector3 center = new Vector3((origin.x + x + w / 2f) * cellSize, 0,
+                                     (origin.y + y + h / 2f) * cellSize);
+
+        GameObject box = Instantiate(wallTile, center, Quaternion.identity, room.root);
+        Vector3 scale = wallTile.transform.localScale;
+        box.transform.localScale = new Vector3(scale.x * w, scale.y, scale.z * h);
+        box.GetComponentInChildren<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        var modifier = box.AddComponent<NavMeshModifier>();
+        modifier.overrideArea = true;
+        modifier.area = NavMesh.GetAreaFromName("Not Walkable");
+        modifier.applyToChildren = true;
+
+        Vector2Int offset = RoomOffset(room);
+        CreateMapQuad(room.slot, offset.x + x, offset.y + y, w, h, mapCutoutMaterial, room.root, obstacleMapOffset);
+    }
     bool IsWalkable(RoomData room, HashSet<Vector2Int> solid, Vector2Int c)
     {
         bool inside = c.x >= 1 && c.x < room.width - 1 && c.y >= 1 && c.y < room.height - 1;
@@ -994,6 +1079,7 @@ public class DungeonGenerator : MonoBehaviour
     {
         return (length - doorWidth) / 2;
     }
+
     int DoorCount(RoomData room)
     {
         int count = 0;

@@ -6,6 +6,7 @@ class RoomData
     public Vector2Int slot;
     public int width;
     public int height;
+    public RoomShape shape;
     public Transform root;
     public bool[] doors = new bool[4]; // 0 = N, 1 = E, 2 = S, 3 = W
     public int distance;
@@ -21,3 +22,4 @@ class RoomData
     public Renderer mapQuad;              // the room's rectangle on the minimap
 }
 public enum RoomRole { Normal, Start, Core, Treasure }
+public enum RoomShape { Rectangle, L, Half, Cross, Diagonal, Donut }
