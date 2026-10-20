@@ -74,6 +74,7 @@ public class EntityHandler : MonoBehaviour
                 {
                     enemy.MaxHealth = enemies[rolledEnemy].BaseHealth * 25f;    //10f
                 }
+                enemy.Xp = enemies[rolledEnemy].XpValue;
             }
         }
         else if(spawnedEnemies.Count >= 100)
