@@ -13,7 +13,14 @@ public class FirewallEvent : GameEvent
 
     public override void Begin(EventContext ctx)
     {
-        if (ctx.Dungeon.TryGetPlayerRoomDoors(out var doors))
+        // In a corridor? Pull the player into the nearest room first, then lock that one
+        if (!ctx.Dungeon.TryGetPlayerRoomDoors(out var doors)
+            && ctx.Dungeon.TryGetNearestRoomEntry(ctx.Player.position, out Vector3 entry))
+        {
+            ctx.Movement.Teleport(entry);
+        }
+
+        if (doors.Count > 0 || ctx.Dungeon.TryGetPlayerRoomDoors(out doors))
         {
             foreach (var door in doors)
             {
@@ -25,6 +32,7 @@ public class FirewallEvent : GameEvent
         }
         else
         {
+            Debug.LogWarning($"Lockdown: player not in a room and no room to teleport to (player at {ctx.Player.position})");
             failed = true;
             Duration = 0f;
         }

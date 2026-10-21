@@ -23,7 +23,8 @@ public class EventDirector : MonoBehaviour
 
     private void Awake()
     {
-        ctx = new EventContext { Spawner = spawner, Stats = stats, Dungeon = dungeon, Rewards = rewards, Player = player };
+        ctx = new EventContext { Spawner = spawner, Stats = stats, Dungeon = dungeon, Rewards = rewards, Player = player,
+                                 Movement = player.GetComponent<PlayerMovement>() };
     }
     public void OnFloorChanged(int floor)
     {

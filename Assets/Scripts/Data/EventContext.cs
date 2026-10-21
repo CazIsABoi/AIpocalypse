@@ -7,4 +7,5 @@ public class EventContext
     public DungeonGenerator Dungeon;
     public LevelUpUI Rewards;
     public Transform Player;
+    public PlayerMovement Movement;
 }

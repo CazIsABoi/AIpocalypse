@@ -24,6 +24,6 @@ public class HealthText : MonoBehaviour
 
     private void UpdateHealthText(float currentHealth, float maxHealth)
     {
-        healthText.text = $"Health: {currentHealth}/{maxHealth}";
+        healthText.text = $"Health: {Mathf.RoundToInt(currentHealth)}/{Mathf.RoundToInt(maxHealth)}";
     }
 }

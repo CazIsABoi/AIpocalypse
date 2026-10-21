@@ -15,6 +15,7 @@ public class PlayerHealth : MonoBehaviour
 
     public event System.Action<float, float> HealthChanged;   // (current, max)
     public event System.Action Died;
+    public event System.Action<float> Damaged;
 
     private float invulnerableTimer;
     private float lastMaxHealth;                               
@@ -46,6 +47,7 @@ public class PlayerHealth : MonoBehaviour
         invulnerableTimer = invulnerableTime;
         regenTimer = regenDelay;
         SetHealth(Health - amount);
+        Damaged?.Invoke(amount);
         if (IsDead) Died?.Invoke();
     }
 

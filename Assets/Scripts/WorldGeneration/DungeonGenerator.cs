@@ -180,6 +180,39 @@ public class DungeonGenerator : MonoBehaviour
         return true;
     }
 
+    /// The closest spot just inside a door of an explored room, at player height. Used to pull the
+    /// player out of a corridor into a room (door lanes are always kept free, so the spot is walkable).
+    public bool TryGetNearestRoomEntry(Vector3 from, out Vector3 point)
+    {
+        point = default;
+        float best = float.MaxValue;
+        const int inset = 2;   // cells inside the wall
+
+        foreach (RoomData room in rooms.Values)
+        {
+            if (!room.explored) continue;   // never teleport into fog
+            Vector2Int origin = RoomOrigin(room);
+            int midX = DoorStart(room.width) + doorWidth / 2;
+            int midY = DoorStart(room.height) + doorWidth / 2;
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (!room.doors[i]) continue;
+                Vector2Int cell = i switch
+                {
+                    0 => new Vector2Int(midX, room.height - 1 - inset),   // N
+                    1 => new Vector2Int(room.width - 1 - inset, midY),    // E
+                    2 => new Vector2Int(midX, inset),                     // S
+                    _ => new Vector2Int(inset, midY),                     // W
+                };
+                Vector3 pos = CellToWorld(origin, cell.x, cell.y) + Vector3.up * 1f;   // same height as StartPosition
+                float dist = (pos - from).sqrMagnitude;
+                if (dist < best) { best = dist; point = pos; }
+            }
+        }
+        return best < float.MaxValue;
+    }
+
     // -------- Generation --------
 
     public IEnumerator GenerateRoutine()
