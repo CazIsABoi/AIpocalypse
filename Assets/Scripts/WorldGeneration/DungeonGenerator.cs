@@ -31,6 +31,8 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private float branchChance = 0.5f; // Chance to create a branch from the current room
     [SerializeField] private float maxNeighbors = 1; // Maximum number of neighboring rooms allowed for a new room
     [SerializeField] private float loopChance = 0.3f; // Chance to create a loop between rooms
+    [SerializeField] private int extraRoomsPerFloor = 1;
+    [SerializeField] private int roomCap = 20;
     public int seed = 0; // Seed for random number generation
     [SerializeField] private bool useRandomSeed = true; // Whether to use a random seed or the specified seed
 
@@ -105,6 +107,11 @@ public class DungeonGenerator : MonoBehaviour
         foreach (WearSurface surface in dirtySurfaces)
             if (surface.Texture != null) surface.Texture.Apply();
         dirtySurfaces.Clear();
+    }
+    public void SetFloor(int floor)
+    {
+        minRooms = Mathf.Min(minRooms + (floor - 1) * extraRoomsPerFloor, roomCap);
+        maxRooms = Mathf.Max(maxRooms, minRooms);
     }
 
     void OnDestroy()

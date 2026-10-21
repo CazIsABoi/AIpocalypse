@@ -25,9 +25,12 @@ public class BountyEvent : GameEvent
         bounty = ctx.Spawner.SpawnEnemy(type, spawnPos);
         bounty.MaxHealth *= healthMultiplier;
         bounty.Xp *= xpMultiplier;
-        if (markerPrefab != null) marker = Instantiate(markerPrefab, bounty.transform);
-        marker.transform.position = bounty.transform.position + Vector3.up * 1.5f;
-        marker.transform.localScale = Vector3.one * 2.5f;
+        if (markerPrefab != null) 
+        {
+            marker = Instantiate(markerPrefab, bounty.transform);
+            marker.transform.position = bounty.transform.position + Vector3.up * 1.5f;
+            marker.transform.localScale = Vector3.one * 2.5f;
+        }
         timeLeft = timeLimit;
     }
 
@@ -35,6 +38,7 @@ public class BountyEvent : GameEvent
     {
         timeLeft -= Time.deltaTime;
     }
+    public override float TimeLeft(float elapsed) => timeLeft;
 
     public override bool IsDone(EventContext ctx) => bounty == null || timeLeft <= 0;
 

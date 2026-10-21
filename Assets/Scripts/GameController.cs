@@ -70,6 +70,7 @@ public class GameController : MonoBehaviour
 
         Floor++;
         FloorChanged?.Invoke(Floor);
+        dungeon.SetFloor(Floor);
         dungeon.Regenerate();
         yield return new WaitUntil(() => dungeon.IsReady);     // wait for generation to finish
 

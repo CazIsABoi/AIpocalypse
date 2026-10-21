@@ -10,4 +10,5 @@ public abstract class GameEvent : ScriptableObject
     public virtual void End(EventContext ctx) { }
     public virtual bool IsDone(EventContext ctx) => true;
     public virtual void Tick(EventContext ctx) { }
+    public virtual float TimeLeft(float elapsed) => Duration - elapsed;
 }

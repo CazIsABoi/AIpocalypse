@@ -9,7 +9,6 @@ public class EventDirector : MonoBehaviour
     [SerializeField] private DungeonGenerator dungeon;
     [SerializeField] private LevelUpUI rewards;
     [SerializeField] private Transform player;
-    [SerializeField] private TMPro.TextMeshProUGUI bannerText;
     private EventContext ctx;
     private Coroutine loop;
 
@@ -20,6 +19,9 @@ public class EventDirector : MonoBehaviour
     [SerializeField] private float textShowDuration;
     private bool firstEvent = true;
     private GameEvent current;
+    public float NextEventIn { get; private set; }     
+    public float EventTimeLeft { get; private set; }   
+    public GameEvent Current => current;
 
     private void Awake()
     {
@@ -30,7 +32,6 @@ public class EventDirector : MonoBehaviour
     {
         StopAllCoroutines();                 // stops the loop AND the running event
         if (current != null) { current.End(ctx); Destroy(current); current = null; }
-        bannerText.gameObject.SetActive(false);
         loop = null;                    
     }
 
@@ -38,13 +39,13 @@ public class EventDirector : MonoBehaviour
     {
         current = e;
         e.Begin(ctx);
-        yield return StartCoroutine(ShowBanner(e.Title, textShowDuration));
         if (e.Duration > 0) {
             float t = 0f;
             while (t < e.Duration)
             {
                 e.Tick(ctx);
                 t += Time.deltaTime;
+                EventTimeLeft = e.TimeLeft(t);
                 yield return null;       // next frame
             }
         }
@@ -57,6 +58,7 @@ public class EventDirector : MonoBehaviour
             }
         }
         e.End(ctx);
+        EventTimeLeft = e.TimeLeft(0f);
         Destroy(e);
         current = null;
     }
@@ -68,23 +70,20 @@ public class EventDirector : MonoBehaviour
             if (firstEvent)
             {
                 firstEvent = false;
-                yield return new WaitForSeconds(Random.Range(minWaitTime / 2, maxWaitTime / 2)); // first event happens sooner
+                NextEventIn = Random.Range(minWaitTime / 2, maxWaitTime / 2);
             }
-            else yield return new WaitForSeconds(Random.Range(minWaitTime, maxWaitTime));
+            else
+            {
+                NextEventIn = Random.Range(minWaitTime, maxWaitTime);
+            }
+            while (NextEventIn > 0f) { NextEventIn -= Time.deltaTime; yield return null; }
+
             Debug.Log("EventDirector starting next event...");
             GameEvent picked = Pick();
             if (picked == null) continue;
             Debug.Log($"EventDirector picked event: {picked.Title}");
             yield return StartCoroutine(RunEvent(Instantiate(picked)));
         }
-    }
-
-    IEnumerator ShowBanner(string text, float duration)
-    {
-        bannerText.text = text;
-        bannerText.gameObject.SetActive(true);
-        yield return new WaitForSeconds(duration);
-        bannerText.gameObject.SetActive(false);
     }
 
     public void StartLoop()
