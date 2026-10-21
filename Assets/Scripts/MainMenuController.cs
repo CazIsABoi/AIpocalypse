@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 public class MainMenuController : MonoBehaviour
 {
     [SerializeField] private string MainSceneName = "MainScene";
+    [SerializeField] private UnityEngine.Audio.AudioMixer mixer;
 
     [SerializeField] private GameObject creditsPanel;
     [SerializeField] private GameObject settingsPanel;
@@ -11,6 +12,11 @@ public class MainMenuController : MonoBehaviour
     {
         // Load the main game scene
         SceneManager.LoadScene(MainSceneName);
+    }
+    private void Start()
+    {
+        GameSettings.ApplyAudio(mixer);
+        Screen.fullScreen = GameSettings.Fullscreen != 0;
     }
 
     public void ToggleCredits()
@@ -24,21 +30,6 @@ public class MainMenuController : MonoBehaviour
             else
             {
                 creditsPanel.SetActive(true);
-            }
-        }
-    }
-
-    public void ToggleSettings()
-    {
-        if (settingsPanel != null)
-        {
-            if (settingsPanel.activeSelf)
-            {
-                settingsPanel.SetActive(false);
-            }
-            else
-            {
-                settingsPanel.SetActive(true);
             }
         }
     }

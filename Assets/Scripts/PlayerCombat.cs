@@ -42,7 +42,7 @@ public class PlayerCombat : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (Time.timeScale == 0f) return;
         Vector3 direction = CalculateAimingDirection();
         Quaternion rotation = Quaternion.LookRotation(-direction);
         RiflePivot.transform.rotation = rotation;

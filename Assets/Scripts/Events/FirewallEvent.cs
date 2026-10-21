@@ -38,7 +38,8 @@ public class FirewallEvent : GameEvent
         }
     }
 
-    public override bool IsDone(EventContext ctx) => failed;   
+    public override bool IsDone(EventContext ctx) => failed;
+    public override bool Started => !failed;   // couldn't lock a room → skipped without alarm/title   
 
     public override void End(EventContext ctx)
     {

@@ -39,7 +39,14 @@ public class EventDirector : MonoBehaviour
     {
         current = e;
         e.Begin(ctx);
-        AudioManager.Instance.Play(Sfx.EventStart);
+        if (!e.Started)   // e.g. no spot for the bounty: no alarm, no HUD title, just clean up
+        {
+            e.End(ctx);
+            Destroy(e);
+            current = null;
+            yield break;
+        }
+        AudioManager.Instance?.Play(Sfx.EventStart);
         if (e.Duration > 0) {
             float t = 0f;
             while (t < e.Duration)
@@ -55,11 +62,12 @@ public class EventDirector : MonoBehaviour
             while (!e.IsDone(ctx))
             {
                 e.Tick(ctx);
+                EventTimeLeft = e.TimeLeft(0f);   // events without a Duration report their own time (Bounty)
                 yield return null;       // next frame
             }
         }
         e.End(ctx);
-        EventTimeLeft = e.TimeLeft(0f);
+        EventTimeLeft = 0f;
         Destroy(e);
         current = null;
     }

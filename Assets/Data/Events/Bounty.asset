@@ -20,3 +20,5 @@ MonoBehaviour:
   xpMultiplier: 5
   timeLimit: 45
   bountyPool: {fileID: 11400000, guid: fbb8fe16f97a95347ae41eab23a7e331, type: 2}
+  mapIconMaterial: {fileID: 2100000, guid: 2278f061552a416ea1d3697612177545, type: 2}
+  mapIconScale: 2

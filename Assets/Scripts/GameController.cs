@@ -54,6 +54,7 @@ public class GameController : MonoBehaviour
     }
     public void NextFloor()
     {
+        if (playerHealth.IsDead) return;
         director.OnFloorChanged(Floor);   // stop any running event
         StartCoroutine(NextFloorRoutine());
     }

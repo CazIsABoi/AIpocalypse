@@ -55,6 +55,36 @@
                     "interactions": "",
                     "initialStateCheck": false,
                     "priority": 0
+                },
+                {
+                    "name": "OpenMapWebGL",
+                    "type": "Button",
+                    "id": "8013a7ec-2b1f-420d-8a06-7eecb2f240c5",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "OpenSettings",
+                    "type": "Button",
+                    "id": "14579e9c-52cf-4ba5-b233-e567b9917c66",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "OpenSettingsWebGL",
+                    "type": "Button",
+                    "id": "46e5240d-9566-40cd-97ed-3f0cf7da056d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -154,6 +184,39 @@
                     "processors": "",
                     "groups": "",
                     "action": "OpenMap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "95fae506-7ede-498b-a878-801252e5e6ff",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenSettings",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f19d1f04-4ef7-4c88-9bc3-64b7d7ed999a",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenSettingsWebGL",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ec933aa1-53c1-4129-bda9-9d6a27c650ec",
+                    "path": "<Keyboard>/m",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenMapWebGL",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

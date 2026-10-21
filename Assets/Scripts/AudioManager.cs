@@ -62,6 +62,7 @@ public enum Sfx
 partial class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
+    [SerializeField] private UnityEngine.Audio.AudioMixer mixer;
 
     [System.Serializable]
     public class Entry
@@ -91,6 +92,11 @@ partial class AudioManager : MonoBehaviour
             var src = Instantiate(source3DPrefab, transform);
             pool[i] = src;
         }
+    }
+    private void Start()
+    {
+        GameSettings.ApplyAudio(mixer);
+        Screen.fullScreen = GameSettings.Fullscreen != 0;
     }
 
     public void Play(Sfx id)

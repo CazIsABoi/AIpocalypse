@@ -11,4 +11,5 @@ public abstract class GameEvent : ScriptableObject
     public virtual bool IsDone(EventContext ctx) => true;
     public virtual void Tick(EventContext ctx) { }
     public virtual float TimeLeft(float elapsed) => Duration - elapsed;
+    public virtual bool Started => true;   // false = Begin couldn't set it up, so the director skips it silently
 }

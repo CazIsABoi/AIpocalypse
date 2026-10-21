@@ -134,9 +134,27 @@ public class DungeonGenerator : MonoBehaviour
                 if (room.explored && room.slot != lastPlayerSlot) candidates.Add(room);
 
         // still nothing? then there's nowhere to spawn this time
+        return TryPickSpot(candidates, out position);
+    }
+
+    /// Spawn spot for something the player should find (e.g. a bounty): an explored room the player
+    /// isn't in, so it's never hidden under fog. Falls back to the normal frontier rooms.
+    public bool TryGetVisibleSpawnPosition(out Vector3 position)
+    {
+        var candidates = new List<RoomData>();
+        foreach (RoomData room in rooms.Values)
+            if (room.explored && room.slot != lastPlayerSlot) candidates.Add(room);
+
+        if (TryPickSpot(candidates, out position)) return true;
+        return TryGetSpawnPosition(out position);   // only the start room explored yet
+    }
+
+    // A random walkable cell in one of the candidate rooms
+    bool TryPickSpot(List<RoomData> candidates, out Vector3 position)
+    {
+        position = default;
         if (candidates.Count == 0) return false;
 
-        // 3. try a few random spots
         for (int attempt = 0; attempt < 20; attempt++)
         {
             RoomData room = candidates[Random.Range(0, candidates.Count)];
