@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b7883f06f34994b90b46678c70c3dd, type: 3}
+  m_Name: Bounty
+  m_EditorClassIdentifier: Assembly-CSharp::BountyEvent
+  Title: Bounty Target
+  Weight: 10
+  Duration: 0
+  markerPrefab: {fileID: 2957225081585083003, guid: 6646b5c7b870cb945b42ec5d95460b7c, type: 3}
+  healthMultiplier: 5
+  xpMultiplier: 5
+  timeLimit: 45
+  bountyPool: {fileID: 11400000, guid: fbb8fe16f97a95347ae41eab23a7e331, type: 2}

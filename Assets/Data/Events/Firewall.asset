@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7221c47512de9d345aa0404ee2fb60ca, type: 3}
+  m_Name: Firewall
+  m_EditorClassIdentifier: Assembly-CSharp::FirewallEvent
+  Title: Lockdown
+  Weight: 10
+  Duration: 30
+  barrierPrefab: {fileID: 5046058109914628148, guid: 43e086f4120aa8547a457e845797519a, type: 3}
+  spawnMultiplier: 2
+  firewallPool: {fileID: 11400000, guid: 422f2269c8a6b214787d1a66b9a1e076, type: 2}

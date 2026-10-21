@@ -20,8 +20,13 @@ public class StatText : MonoBehaviour
     void OnEnable() { stats.StatsChanged += Refresh; Refresh(default); }
     void OnDisable() { stats.StatsChanged -= Refresh; }
 
-    void Refresh(StatType _)   
+    void Refresh(StatType _)
     {
-        text.text = $"{label}: {stats.Get(stat):0.#}";
+        string value = StatNames.Format(stat, stats.Get(stat));
+        if (stat == StatType.CritDamage)
+        {
+            value += $" ({stats.CritHitDamage:0.#} on crit)";
+        }
+        text.text = $"{label}: {value}";
     }
 }

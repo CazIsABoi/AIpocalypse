@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private PlayerMovement player;
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private EntityHandler spawner;
+    [SerializeField] private EventDirector director;
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private CanvasGroup fade;
     public int Floor { get; private set; } = 1;
@@ -34,6 +35,7 @@ public class GameController : MonoBehaviour
         spawner.ClearEnemies();
         playerHealth.Heal(playerHealth.MaxHealth * 0.25f);   // heal a bit on floor change
         player.Teleport(dungeon.StartPosition);
+        director.StartLoop();
     }
 
     void OnPlayerDied()
@@ -52,6 +54,7 @@ public class GameController : MonoBehaviour
     }
     public void NextFloor()
     {
+        director.OnFloorChanged(Floor);   // stop any running event
         StartCoroutine(NextFloorRoutine());
     }
 
@@ -85,4 +88,5 @@ public class GameController : MonoBehaviour
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+
 }

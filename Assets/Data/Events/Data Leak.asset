@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e515a805851c649429b87b9b2a59c06c, type: 3}
+  m_Name: Data Leak
+  m_EditorClassIdentifier: Assembly-CSharp::DataLeakEvent
+  Title: 'Data Leak '
+  Weight: 10
+  Duration: 20
+  orbPrefab: {fileID: 3957824135530364909, guid: eb7898f8ac8f44b48bb2046fb762bc38, type: 3}
+  count: 15
+  radius: 6
+  xpPerOrb: 15
