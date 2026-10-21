@@ -11,6 +11,7 @@ public class PlayerCombat : MonoBehaviour
 
     [SerializeField] private LayerMask EnemyLayer;
     private PlayerStats stats;
+    private PlayerHealth health;
 
     [SerializeField] private GameObject RiflePivot;
     [SerializeField] private GameObject RifleMuzzle;        // Its shooting Point.
@@ -35,6 +36,7 @@ public class PlayerCombat : MonoBehaviour
     void Awake()
     {
         stats = GetComponent<PlayerStats>();
+        health = GetComponent<PlayerHealth>();
     }
 
     // Update is called once per frame
@@ -47,12 +49,12 @@ public class PlayerCombat : MonoBehaviour
 
         //Debug.DrawLine(transform.position, GetMouseWorldPosition(), Color.red);
         Debug.DrawLine(transform.position, transform.position + CalculateAimingDirection() * 1.25f);
-
-        MeleeCooldown = MeleeBaseCooldown;  // Add all multipliers here
+        
+        MeleeCooldown = MeleeBaseCooldown / (1f + stats.AttackSpeed);  // Add all multipliers here
         MeleeDamage = stats.Damage * 4;         // Add melee damage multipliers here
         if (CurrentMeleeCooldown > 0) CurrentMeleeCooldown -= Time.deltaTime;
 
-        FirearmCooldown = FirearmBaseCooldown;  // Add all multipliers here
+        FirearmCooldown = FirearmBaseCooldown / (1f + stats.AttackSpeed);  // Add all multipliers here
         RangedDamage = stats.Damage;         // Add melee damage multipliers here. 5 dmg per bullet by default, 25 dps, melee is 40.
         if (CurrentFirearmCooldown > 0) CurrentFirearmCooldown -= Time.deltaTime;
 
@@ -72,8 +74,15 @@ public class PlayerCombat : MonoBehaviour
                 Collider[] hits = Physics.OverlapSphere(transform.position + CalculateAimingDirection() * 1.25f, 1.5f, EnemyLayer);
                 foreach (Collider hit in hits)
                 {
+                    float amount = 0f;
+                    float healthBefore = 0f;
                     if (hit.TryGetComponent(out EnemyController enemy))
-                        enemy.TakeDamage(MeleeDamage, stats.CritChance, stats.CritDamage);   // enemies: with crits
+                    {
+                        healthBefore = enemy.Health;
+                        amount = enemy.TakeDamage(MeleeDamage, stats.CritChance, stats.CritDamage);   // enemies: with crits
+                        amount = amount * stats.Lifesteal; // Lifesteal: heal for a percentage of the damage dealt
+                        health.Heal(Mathf.Min(amount, healthBefore)); // Don't heal for more than the enemy's health before the attack
+                    }
                     else if (hit.TryGetComponent(out IDamageable target))
                         target.TakeDamage(MeleeDamage);                                     // anything else hittable, e.g. the core
                 }
@@ -91,9 +100,7 @@ public class PlayerCombat : MonoBehaviour
             if (CurrentFirearmCooldown <= 0)
             {
                 CurrentFirearmCooldown = FirearmCooldown;
-                for(int i = 0; i < BulletAmount; i++) Invoke(nameof(ShootGun), i * 0.08f);
-
-
+                for(int i = 0; i < BulletAmount; i++) Invoke(nameof(ShootGun), (i * 0.08f) / (1f + stats.AttackSpeed));
             }
         }
         else if (!LeftClick.action.IsPressed())
@@ -109,6 +116,8 @@ public class PlayerCombat : MonoBehaviour
         c.Damage = RangedDamage;
         c.CritChance = stats.CritChance;
         c.CritDamage = stats.CritDamage;
+        c.Owner = health;
+        c.Lifesteal = stats.Lifesteal;
     }
     private Vector3 CalculateAimingDirection()
     {

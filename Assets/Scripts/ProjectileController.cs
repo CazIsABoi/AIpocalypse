@@ -14,12 +14,8 @@ public class ProjectileController : MonoBehaviour
     public int BulletPierce;
 
     public float Lifetime = 1f;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public float Lifesteal;
+    public PlayerHealth Owner;
 
     // Update is called once per frame
     void Update()
@@ -32,12 +28,17 @@ public class ProjectileController : MonoBehaviour
             bool hitSomething = false;
             foreach (Collider c in hits)
             {
+                float amount = 0f;
+                float healthBefore = 0f;
                 if (BulletPierce > 0)
                 {
                     if (c.TryGetComponent(out EnemyController enemy))
                     {
                         hitSomething = true;
-                        enemy.TakeDamage(Damage, CritChance, CritDamage);   // enemies: with crits
+                        healthBefore = enemy.Health;
+                        amount = enemy.TakeDamage(Damage, CritChance, CritDamage);   // enemies: with crits
+                        amount = amount * Lifesteal; // Lifesteal: heal for a percentage of the damage dealt
+                        Owner?.Heal(Mathf.Min(amount, healthBefore)); // Don't heal for more than the enemy's health before the attack
                     }
                     else if (c.TryGetComponent(out IDamageable target))
                     {

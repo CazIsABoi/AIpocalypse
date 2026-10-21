@@ -22,6 +22,9 @@ public class PlayerStats : MonoBehaviour
     public float pickupRange = 3;
     public float regenAmount = 0.01f; // fraction of max HP per second (0.01 = 1%/s)
     public event System.Action<StatType> StatsChanged;
+    public float AttackSpeed;
+    public float Lifesteal; // fraction of damage dealt that is returned as health (0.01 = 1% of damage dealt)
+    [SerializeField] private float lifestealCap = 0.3f; // cap at 30% lifesteal
 
     public int Level { get; private set; } = 1;
     public int Xp { get; private set; }
@@ -81,6 +84,12 @@ public class PlayerStats : MonoBehaviour
             case StatType.RegenAmount:
                 regenAmount += amount;
                 break;
+            case StatType.AttackSpeed:
+                AttackSpeed += amount;
+                break;
+            case StatType.Lifesteal:
+                Lifesteal = Mathf.Min(lifestealCap, Lifesteal + amount);
+                break;
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 break;
@@ -114,6 +123,10 @@ public class PlayerStats : MonoBehaviour
                 return BulletPierce;
             case StatType.RegenAmount:
                 return regenAmount;
+            case StatType.AttackSpeed:
+                return AttackSpeed;
+            case StatType.Lifesteal:
+                return Lifesteal;
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 return 0f;
@@ -146,6 +159,10 @@ public class PlayerStats : MonoBehaviour
                 return BulletPierce + amount;
             case StatType.RegenAmount:
                 return regenAmount + amount;
+            case StatType.AttackSpeed:
+                return AttackSpeed + amount;
+            case StatType.Lifesteal:
+                return Mathf.Min(lifestealCap, Lifesteal + amount);
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 return 0f;

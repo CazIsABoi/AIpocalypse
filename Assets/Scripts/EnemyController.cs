@@ -346,7 +346,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         TakeDamage(Amount, 0f, 1f);
     }
 
-    public void TakeDamage(float Amount, float CritChance, float CritDamage)
+    public float TakeDamage(float Amount, float CritChance, float CritDamage)
     {
         float CritRoll = Random.Range(0f, 100f);
         bool IsCrit = false;
@@ -359,5 +359,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         spawnedPopup.GetComponent<DamagePopup>().TargetPosition = transform.position + new Vector3(0, 1.5f, 0);
         if(IsCrit) spawnedPopup.GetComponent<DamagePopup>().IsCrit = true;
         spawnedPopup.GetComponent<DamagePopup>().PopupDisplayContent = ((int)Amount).ToString();
+
+        return Amount;
     }
 }
