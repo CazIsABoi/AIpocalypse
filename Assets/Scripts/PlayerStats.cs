@@ -20,6 +20,7 @@ public class PlayerStats : MonoBehaviour
     public int BulletPierce;
 
     public float pickupRange = 3;
+    public float regenAmount = 0.01f; // fraction of max HP per second (0.01 = 1%/s)
     public event System.Action<StatType> StatsChanged;
 
     public int Level { get; private set; } = 1;
@@ -77,6 +78,9 @@ public class PlayerStats : MonoBehaviour
             case StatType.BulletPierce:
                 BulletPierce += (int) amount;
                 break;
+            case StatType.RegenAmount:
+                regenAmount += amount;
+                break;
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 break;
@@ -108,6 +112,8 @@ public class PlayerStats : MonoBehaviour
                 return BulletAmount;
             case StatType.BulletPierce:
                 return BulletPierce;
+            case StatType.RegenAmount:
+                return regenAmount;
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 return 0f;
@@ -138,6 +144,8 @@ public class PlayerStats : MonoBehaviour
                 return BulletAmount + amount;
             case StatType.BulletPierce:
                 return BulletPierce + amount;
+            case StatType.RegenAmount:
+                return regenAmount + amount;
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 return 0f;

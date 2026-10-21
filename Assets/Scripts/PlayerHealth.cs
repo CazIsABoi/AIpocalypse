@@ -3,6 +3,8 @@ using UnityEngine;
 public class PlayerHealth : MonoBehaviour
 {
     [SerializeField] private float invulnerableTime = 0.3f;   // short protection after a hit
+    [SerializeField] private float regenDelay = 3f;    // pause after taking damage
+    private float regenTimer;
 
     [SerializeField] private UnityEngine.UI.Slider slider;
     private PlayerStats stats;
@@ -27,12 +29,22 @@ public class PlayerHealth : MonoBehaviour
     void OnEnable() { stats.StatsChanged += OnStatsChanged; }  
     void OnDisable() { stats.StatsChanged -= OnStatsChanged; }   
 
-    void Update() { invulnerableTimer = Mathf.Max(0f, invulnerableTimer - Time.deltaTime); }
+    void Update() 
+    {
+        invulnerableTimer = Mathf.Max(0f, invulnerableTimer - Time.deltaTime);
+
+        regenTimer = Mathf.Max(0f, regenTimer - Time.deltaTime);
+        if (regenTimer <= 0f && !IsDead && Health < MaxHealth)
+        {
+            Heal(stats.MaxHealth * Time.deltaTime * stats.regenAmount);   
+        }
+    }
 
     public void TakeDamage(float amount)
     {
         if (IsDead || invulnerableTimer > 0f) return;
         invulnerableTimer = invulnerableTime;
+        regenTimer = regenDelay;
         SetHealth(Health - amount);
         if (IsDead) Died?.Invoke();
     }

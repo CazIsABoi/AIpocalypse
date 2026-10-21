@@ -27,7 +27,7 @@ public abstract class RewardData : ScriptableObject
 }
 
 // Assets store these as numbers: only ever add new values at the END, never in between
-public enum StatType { MoveSpeed, MoveSpeedPercent, MaxHealth, Damage, DamagePercent, PickupRadius, BulletAmount, CritDamage, CritChance, BulletPierce}
+public enum StatType { MoveSpeed, MoveSpeedPercent, MaxHealth, Damage, DamagePercent, PickupRadius, BulletAmount, CritDamage, CritChance, BulletPierce, RegenAmount}
 public enum Rarity { Auto, Common, Uncommon, Rare, Epic, Legendary }
 
 public static class StatNames
@@ -54,6 +54,8 @@ public static class StatNames
                 return "Bullets";
             case StatType.BulletPierce:
                 return "Pierce";
+            case StatType.RegenAmount:
+                return "Health Regen";
             default:
                 return type.ToString();  
         }
@@ -67,6 +69,8 @@ public static class StatNames
                 return $"{value * 100f:0.#}%";      // 0.2 → "20%", 1.1 → "110%                                         
             case StatType.MaxHealth:
                 return $"{value:0}";                // 100.5 → "100",
+            case StatType.RegenAmount:
+                return $"{value * 100f:0.#}%/s"; // 0.2 → "20%/s", 1.1 → "110%/s"
             default:
                 return $"{value:0.#}";
         }
