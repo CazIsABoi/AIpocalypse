@@ -1481,6 +1481,7 @@ MonoBehaviour:
   CritDamage: 0
   DamageCD: 0
   BulletPierce: 1
+  Lifetime: 1
 --- !u!135 &483265918
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -5006,7 +5007,11 @@ PrefabInstance:
       objectReference: {fileID: 841289497}
     - target: {fileID: 7221705215083545504, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
       propertyPath: baseDamage
-      value: 20
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7221705215083545504, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
+      propertyPath: pickupRange
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 7401390857028715494, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
       propertyPath: slider

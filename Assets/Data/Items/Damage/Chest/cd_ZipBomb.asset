@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a43f53720f8737468d4afd219df44c2, type: 3}
   m_Name: cd_ZipBomb
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
-  Title: Accurate Algorithm
-  Description: +25% Crit Chance
+  Title: Zip Bomb
+  Description: +100% Crit Damage
   Icon: {fileID: 0}
   Weight: 4
-  Stat: 8
-  Amount: 0.25
+  Stat: 7
+  Amount: 1
