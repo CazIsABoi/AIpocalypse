@@ -18,6 +18,7 @@ public class EventDirector : MonoBehaviour
     [SerializeField] private float minWaitTime = 60f;
     [SerializeField] private float maxWaitTime = 90f;
     [SerializeField] private float textShowDuration;
+    private bool firstEvent = true;
     private GameEvent current;
 
     private void Awake()
@@ -63,7 +64,12 @@ public class EventDirector : MonoBehaviour
         while (true)
         {
             Debug.Log("EventDirector waiting for next event...");
-            yield return new WaitForSeconds(Random.Range(minWaitTime, maxWaitTime));
+            if (firstEvent)
+            {
+                firstEvent = false;
+                yield return new WaitForSeconds(Random.Range(minWaitTime / 2, maxWaitTime / 2)); // first event happens sooner
+            }
+            else yield return new WaitForSeconds(Random.Range(minWaitTime, maxWaitTime));
             Debug.Log("EventDirector starting next event...");
             GameEvent picked = Pick();
             if (picked == null) continue;
