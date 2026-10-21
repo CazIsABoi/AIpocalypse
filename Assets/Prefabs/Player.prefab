@@ -377,7 +377,7 @@ MonoBehaviour:
   BaseSpeed: 8
   flatSpeed: 0
   speedPercent: 0
-  baseDamage: 10
+  baseDamage: 20
   CritDamage: 2
   CritChance: 0.1
   pickupRange: 0.5
@@ -406,7 +406,7 @@ Transform:
   m_GameObject: {fileID: 4300784283819191719}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -12.63}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
