@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Firewall
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Firewall
-  Description: +20 max health
+  Description: +25 max HP
   Icon: {fileID: 0}
-  Weight: 10
-  Rarity: 1
+  Weight: 7
+  Rarity: 2
   Stat: 2
-  Amount: 20
+  Amount: 25

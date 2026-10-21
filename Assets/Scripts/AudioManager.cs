@@ -56,6 +56,11 @@ public enum Sfx
     BossSpawn,        // boss appears                                             → needs a sound
     BossDeath,        // boss killed                                              → needs a sound
     OvertimeStart,    // endless mode begins                                      → needs a sound
+
+    // --- reward cards (added at the END on purpose: enums are saved as numbers) ---
+    CardFlip,         // card starts flipping over                                → needs a sound
+    CardFlyIn,        // each card sliding up into place (plays 3x, keep it short) → needs a sound
+    CardReveal,       // front shows (Common/Uncommon/Rare; Epic+ use RareCardReveal) → needs a sound
 }
 
 [AutoStaticsCleanup]

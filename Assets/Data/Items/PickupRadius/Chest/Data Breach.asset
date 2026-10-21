@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Data Breach
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Data Breach
-  Description: +4 pickup range
+  Description: +3 pickup range
   Icon: {fileID: 0}
-  Weight: 7
-  Rarity: 2
+  Weight: 4
+  Rarity: 3
   Stat: 5
-  Amount: 4
+  Amount: 3

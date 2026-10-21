@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: bullets_Dual Channel
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Dual Channel
-  Description: +2 bullets
+  Description: +1 bullet
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4
   Stat: 6
-  Amount: 2
+  Amount: 1

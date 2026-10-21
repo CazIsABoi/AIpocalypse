@@ -13,11 +13,9 @@ MonoBehaviour:
   m_Name: cr_Better Randomization
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Better Randomization
-  Description: '+ 10% Crit Chance
-
-'
+  Description: +8% crit chance
   Icon: {fileID: 0}
   Weight: 7
   Rarity: 2
   Stat: 8
-  Amount: 0.1
+  Amount: 0.08

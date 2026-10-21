@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: bullets_TrojanHorse
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Trojan Horse
-  Description: +2 Bullet Pierce
+  Description: +2 bullet pierce
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4

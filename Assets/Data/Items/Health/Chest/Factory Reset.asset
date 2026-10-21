@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Factory Reset
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Factory Reset
-  Description: +75 max health
+  Description: +75 max HP
   Icon: {fileID: 0}
-  Weight: 4
-  Rarity: 3
+  Weight: 2
+  Rarity: 4
   Stat: 2
   Amount: 75

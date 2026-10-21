@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Liquid Cooling
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Liquid Cooling
-  Description: +50% attack speed
+  Description: +60% attack speed
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4
   Stat: 11
-  Amount: 0.5
+  Amount: 0.6

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: cd_Sharper GPU
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Sharper CPU
-  Description: + 30% Crit Damage
+  Description: +35% crit damage
   Icon: {fileID: 0}
   Weight: 7
   Rarity: 2
   Stat: 7
-  Amount: 0.3
+  Amount: 0.35

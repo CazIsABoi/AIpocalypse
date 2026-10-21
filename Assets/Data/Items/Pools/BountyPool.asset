@@ -13,14 +13,20 @@ MonoBehaviour:
   m_Name: BountyPool
   m_EditorClassIdentifier: Assembly-CSharp::RewardPool
   Rewards:
+  - {fileID: 11400000, guid: 94966e5c2ede11e4b8c0acc11571a4a2, type: 2}
   - {fileID: 11400000, guid: 82fb3da6c969b27428458be05d4dfd34, type: 2}
   - {fileID: 11400000, guid: 51173cc005d58ae4787475ba55ceb7e8, type: 2}
   - {fileID: 11400000, guid: 8a8060006b39dba41a21712a6f82550b, type: 2}
-  - {fileID: 11400000, guid: 5e8c400b17d9e3d4486a9a80a301c1ba, type: 2}
-  - {fileID: 11400000, guid: 161180cdd95a6014eb76e5c560af01f2, type: 2}
-  - {fileID: 11400000, guid: 1dab8713668525647a4a410b2ca45bcf, type: 2}
-  - {fileID: 11400000, guid: f424a930ac8348be82fc5cb22fa18150, type: 2}
-  - {fileID: 11400000, guid: c4f6e61bcbe1494ca6c4460906b6ebfa, type: 2}
+  - {fileID: 11400000, guid: ed37c034cae84ffb9458ad59ffda5ac1, type: 2}
+  - {fileID: 11400000, guid: 2efab9073dfe43389d692f3310b153f0, type: 2}
+  - {fileID: 11400000, guid: b57cdeab5a3575f4bba6c0272433873d, type: 2}
+  - {fileID: 11400000, guid: 6e61abad4c644baeafaf9c2ecef14cd0, type: 2}
+  - {fileID: 11400000, guid: 9369d8b6a9b94bf498d7e5695adbac23, type: 2}
+  - {fileID: 11400000, guid: 7a5520bef7b53a54f9fbe7315a342a80, type: 2}
+  - {fileID: 11400000, guid: 34c587f8118728242b056cdaf6c47220, type: 2}
+  - {fileID: 11400000, guid: 22e3ba0667cd4b59b13dfaabac06d4b6, type: 2}
+  - {fileID: 11400000, guid: 2567923a5dba42c1b01b827cec9896f2, type: 2}
+  - {fileID: 11400000, guid: df6b8280270b3824790681c2197f4bdc, type: 2}
+  - {fileID: 11400000, guid: f8c3596cd86540c0bebd80de11c49fbf, type: 2}
   - {fileID: 11400000, guid: ac2e5c14463a4ff3819a4a7900306dc8, type: 2}
-  - {fileID: 11400000, guid: 43673bacd8c344fdac745271d27cd146, type: 2}
-  - {fileID: 11400000, guid: b84331b7aaae4bae961f3ad50b013618, type: 2}
+  - {fileID: 11400000, guid: 68c0670ec2a44953a032a547b721f0a1, type: 2}

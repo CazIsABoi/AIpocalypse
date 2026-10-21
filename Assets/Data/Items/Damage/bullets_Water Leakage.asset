@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: bullets_Water Leakage
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Water Leakage
-  Description: +1 Bullet
+  Description: +1 bullet
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4

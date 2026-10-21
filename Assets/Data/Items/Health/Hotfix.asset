@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Hotfix
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Hotfix
-  Description: +10 max health
+  Description: +15 max HP
   Icon: {fileID: 0}
   Weight: 10
   Rarity: 1
   Stat: 2
-  Amount: 10
+  Amount: 15

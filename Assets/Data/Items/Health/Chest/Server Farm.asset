@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Server Farm
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Server Farm
-  Description: +100 max health
+  Description: +150 max HP
   Icon: {fileID: 0}
-  Weight: 2
-  Rarity: 4
+  Weight: 1
+  Rarity: 5
   Stat: 2
-  Amount: 100
+  Amount: 150

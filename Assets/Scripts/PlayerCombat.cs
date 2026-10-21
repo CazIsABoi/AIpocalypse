@@ -84,9 +84,10 @@ public class PlayerCombat : MonoBehaviour
                         amount = enemy.TakeDamage(MeleeDamage, stats.CritChance, stats.CritDamage);   // enemies: with crits
                         amount = amount * stats.Lifesteal; // Lifesteal: heal for a percentage of the damage dealt
                         health.Heal(Mathf.Min(amount, healthBefore)); // Don't heal for more than the enemy's health before the attack
+                        CameraShake.Instance?.Add(0.1f);
                     }
                     else if (hit.TryGetComponent(out IDamageable target))
-                        target.TakeDamage(MeleeDamage);                                     // anything else hittable, e.g. the core
+                        { target.TakeDamage(MeleeDamage); CameraShake.Instance?.Add(0.1f); }                                    // anything else hittable, e.g. the core
                 }
                 
             }

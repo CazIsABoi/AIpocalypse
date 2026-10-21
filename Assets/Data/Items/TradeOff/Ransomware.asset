@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Ransomware
   m_EditorClassIdentifier: Assembly-CSharp::TradeOffUpgrade
   Title: Ransomware
-  Description: +2 bullets, -25% damage
+  Description: +1 bullet, -20% damage
   Icon: {fileID: 0}
-  Weight: 4
-  Rarity: 3
+  Weight: 2
+  Rarity: 4
   Changes:
   - Stat: 6
-    Amount: 2
+    Amount: 1
   - Stat: 4
-    Amount: -0.25
+    Amount: -0.2

@@ -23,7 +23,7 @@ public class TradeOffUpgrade : RewardData
         {
             float before = stats.Get(change.Stat);
             float after = stats.Preview(change.Stat, change.Amount);
-            preview += $"{StatNames.Get(change.Stat)}: {StatNames.Format(change.Stat, before)} -> {StatNames.Format(change.Stat, after)}\n";
+            preview += $"{StatNames.Get(change.Stat)}: {StatNames.Change(change.Stat, before, after)}\n";
         }
         return preview.TrimEnd('\n');
     }

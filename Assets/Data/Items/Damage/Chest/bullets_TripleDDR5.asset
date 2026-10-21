@@ -13,11 +13,9 @@ MonoBehaviour:
   m_Name: bullets_TripleDDR5
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Triple DDR5 Sticks
-  Description: 'Geez Thats Expensive.
-
-    +3 Bullets'
+  Description: 'Geez, that''s expensive. +2 bullets'
   Icon: {fileID: 0}
   Weight: 1
   Rarity: 5
   Stat: 6
-  Amount: 3
+  Amount: 2

@@ -8,7 +8,14 @@ public class RaritySettings : ScriptableObject
     {
         public Rarity rarity;
         public Gradient gradient;           
-        public GameObject revealEffect;     
+        public GameObject revealEffect;
+        public Sfx revealSfx;
+        public Color glowColor;
+        public float shakeStrength;
+        public float rowShake;          // pixels the whole card row shakes on reveal (0 = none, Legendary only)
+        public float punchScale;        // card jumps to this size on reveal and eases back (0/1 = none)
+        public float flashAlpha;        // white screen flash strength on reveal (0 = none, keep <= 0.8)
+        public float revealHold;        // seconds the card stays closed before opening (anticipation, 0 = none)
     }
 
     public Style[] styles;

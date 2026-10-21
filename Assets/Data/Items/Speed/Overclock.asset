@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Overclock
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Overclock
-  Description: Move faster. +0.5 speed
+  Description: +0.5 speed
   Icon: {fileID: 0}
   Weight: 10
   Rarity: 1

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Data Harvester
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Data Harvester
-  Description: Collect tokens from much further away. +2.5 pickup range
+  Description: +1.5 pickup range
   Icon: {fileID: 0}
   Weight: 7
   Rarity: 2
   Stat: 5
-  Amount: 2.5
+  Amount: 1.5

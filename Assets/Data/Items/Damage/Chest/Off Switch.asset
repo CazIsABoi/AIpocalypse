@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Off Switch
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Off Switch
-  Description: +12 damage
+  Description: +3 damage
   Icon: {fileID: 0}
-  Weight: 4
-  Rarity: 3
+  Weight: 2
+  Rarity: 4
   Stat: 3
-  Amount: 12
+  Amount: 3

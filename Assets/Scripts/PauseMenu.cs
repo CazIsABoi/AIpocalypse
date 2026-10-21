@@ -14,20 +14,20 @@ public class PauseMenu : MonoBehaviour
         if (!pauseAction.action.WasPressedThisFrame()) return;
 #endif
         if (isOpen) Resume();
-        else if (Time.timeScale > 0f) Open();     // someone else already paused (level-up, death, floor) → ignore
+        else if (!GamePause.IsPaused) Open();     // someone else already paused (level-up, death, floor) → ignore
     }
 
     public void Open()
     {
         isOpen = true;
         pauseMenuUI.SetActive(true);
-        Time.timeScale = 0f;
+        GamePause.Add(PauseReason.PauseMenu);
     }
 
     public void Resume()
     {
         isOpen = false;
         pauseMenuUI.SetActive(false);
-        Time.timeScale = 1f;
+        GamePause.Remove(PauseReason.PauseMenu);
     }
 }

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Packet Siphon
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Packet Siphon
-  Description: +2% lifesteal
+  Description: +1% lifesteal
   Icon: {fileID: 0}
   Weight: 7
   Rarity: 2
   Stat: 12
-  Amount: 0.02
+  Amount: 0.01

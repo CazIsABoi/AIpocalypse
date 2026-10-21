@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Leech Protocol
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Leech Protocol
-  Description: +4% lifesteal
+  Description: +2.5% lifesteal
   Icon: {fileID: 0}
   Weight: 4
   Rarity: 3
   Stat: 12
-  Amount: 0.04
+  Amount: 0.025

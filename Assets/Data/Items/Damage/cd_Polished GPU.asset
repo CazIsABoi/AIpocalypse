@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: cd_Polished GPU
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Polished GPU
-  Description: + 20% Crit Damage
+  Description: +20% crit damage
   Icon: {fileID: 0}
   Weight: 10
   Rarity: 1

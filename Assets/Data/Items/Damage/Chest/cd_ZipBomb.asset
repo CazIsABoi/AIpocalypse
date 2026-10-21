@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: cd_ZipBomb
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Zip Bomb
-  Description: +100% Crit Damage
+  Description: +100% crit damage
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4

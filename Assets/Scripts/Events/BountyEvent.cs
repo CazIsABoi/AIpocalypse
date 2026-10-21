@@ -67,6 +67,7 @@ public class BountyEvent : GameEvent
         killed = bounty == null && timeLeft > 0;
         if (killed)
         {
+            CameraShake.Instance?.Add(0.5f);
             AudioManager.Instance?.Play(Sfx.BountyKilled);
             ctx.Rewards.ShowChest(bountyPool);
         }

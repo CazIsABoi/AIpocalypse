@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Turing Fail
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Turing Fail
-  Description: +50% damage
+  Description: +60% damage
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4
   Stat: 4
-  Amount: 0.5
+  Amount: 0.6

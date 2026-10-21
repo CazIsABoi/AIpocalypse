@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Packet Sniffer
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Packet Sniffer
-  Description: Collect tokens from further away. +1 pickup range
+  Description: +0.75 pickup range
   Icon: {fileID: 0}
   Weight: 10
   Rarity: 1
   Stat: 5
-  Amount: 1
+  Amount: 0.75

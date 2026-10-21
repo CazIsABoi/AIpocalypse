@@ -3,7 +3,11 @@ using UnityEngine;
 public class PlayerHealth : MonoBehaviour
 {
     [SerializeField] private float invulnerableTime = 0.3f;   // short protection after a hit
-    [SerializeField] private float regenDelay = 3f;    // pause after taking damage
+    [SerializeField] private float regenDelay = 15f;    // pause after taking damage
+    [SerializeField, Range(0f, 1f)] float pausedRegenFactor = 0.2f;   // 20% of normal regen while paused
+    [SerializeField] private float minShake = 0.1f;    // camera shake on hit
+    [SerializeField] private float maxShake = 0.5f;    // camera shake on hit
+    [SerializeField] private float k = 2f;            // sensitivity of shake to damage
     private float regenTimer;
 
     [SerializeField] private UnityEngine.UI.Slider slider;
@@ -18,11 +22,13 @@ public class PlayerHealth : MonoBehaviour
     public event System.Action<float> Damaged;
 
     private float invulnerableTimer;
-    private float lastMaxHealth;                               
+    private float lastMaxHealth;   
+    private UnityEngine.UI.Image sliderImage;
 
     void Awake()
     {
         stats = GetComponent<PlayerStats>();
+        sliderImage = slider.fillRect.GetComponent<UnityEngine.UI.Image>();
         lastMaxHealth = stats.MaxHealth;
         SetHealth(stats.MaxHealth);
     }
@@ -35,10 +41,13 @@ public class PlayerHealth : MonoBehaviour
         invulnerableTimer = Mathf.Max(0f, invulnerableTimer - Time.deltaTime);
 
         regenTimer = Mathf.Max(0f, regenTimer - Time.deltaTime);
-        if (regenTimer <= 0f && !IsDead && Health < MaxHealth)
-        {
-            Heal(stats.MaxHealth * Time.deltaTime * stats.regenAmount);   
-        }
+        bool paused = regenTimer > 0f;
+        float rate = paused ? pausedRegenFactor : 1f;          // the ternary picks one of two values
+
+        if (!IsDead && Health < MaxHealth)
+            Heal(stats.MaxHealth * stats.regenAmount * rate * Time.deltaTime);
+
+        sliderImage.color = paused ? Color.teal : Color.white;
     }
 
     public void TakeDamage(float amount)
@@ -47,7 +56,10 @@ public class PlayerHealth : MonoBehaviour
         invulnerableTimer = invulnerableTime;
         regenTimer = regenDelay;
         SetHealth(Health - amount);
-        if (IsDead) { Died?.Invoke(); AudioManager.Instance.Play(Sfx.PlayerDeath); }
+        float fraction = amount / stats.MaxHealth;      // 0.1 = this hit took 10% of max HP
+        float shake = Mathf.Lerp(minShake, maxShake, fraction * k);
+        CameraShake.Instance?.Add(shake);
+        if (IsDead) { Died?.Invoke(); AudioManager.Instance.Play(Sfx.PlayerDeath); CameraShake.Instance?.Add(0.8f); }
         AudioManager.Instance.Play(Sfx.PlayerHurt);
         Damaged?.Invoke(amount);
     }

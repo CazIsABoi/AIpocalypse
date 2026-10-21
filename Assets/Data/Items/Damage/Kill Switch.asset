@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Kill Switch
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Kill Switch
-  Description: +8 damage
+  Description: +1.5 damage
   Icon: {fileID: 0}
   Weight: 4
   Rarity: 3
   Stat: 3
-  Amount: 8
+  Amount: 1.5

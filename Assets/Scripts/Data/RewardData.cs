@@ -64,6 +64,18 @@ public static class StatNames
                 return type.ToString();  
         }
     }
+    public const string Good = "#6CFF8A";     // green for gains
+    public const string Bad = "#FF6464";      // red for losses
+
+    // "old -> new" with the new value coloured by whether it went up or down
+    public static string Change(StatType type, float before, float after)
+    {
+        string to = Format(type, after);
+        if (after > before) to = $"<color={Good}>{to}</color>";
+        else if (after < before) to = $"<color={Bad}>{to}</color>";
+        return $"{Format(type, before)} -> {to}";
+    }
+
     public static string Format(StatType type, float value)
     {
         switch (type)

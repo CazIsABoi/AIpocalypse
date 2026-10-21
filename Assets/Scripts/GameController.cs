@@ -40,7 +40,7 @@ public class GameController : MonoBehaviour
 
     void OnPlayerDied()
     {
-        Time.timeScale = 0f;   // pause the game
+        GamePause.Add(PauseReason.Death);   // never removed: only a restart/menu clears it
         gameOverPanel.SetActive(true);
     }
 
@@ -61,7 +61,7 @@ public class GameController : MonoBehaviour
 
     IEnumerator NextFloorRoutine()
     {
-        Time.timeScale = 0f;                                   // nothing can hit the player during the switch
+        GamePause.Add(PauseReason.FloorChange);                // nothing can hit the player during the switch
 
         while (fade.alpha < 1f)
         {
@@ -82,12 +82,12 @@ public class GameController : MonoBehaviour
             yield return null;                                  // wait for next frame
         }
 
-        Time.timeScale = 1f;
+        GamePause.Remove(PauseReason.FloorChange);             // still paused if something else (death, level-up) is active
     }
 
     public void Restart()
     {
-        Time.timeScale = 1f;
+        GamePause.Clear();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 

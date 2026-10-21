@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: cr_AccurateAlgorithm
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Accurate Algorithm
-  Description: +25% Crit Chance
+  Description: +20% crit chance
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4
   Stat: 8
-  Amount: 0.25
+  Amount: 0.2

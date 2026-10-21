@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Ad Blocker
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Adblocker
-  Description: +5 damage
+  Description: +1 damage
   Icon: {fileID: 0}
   Weight: 7
   Rarity: 2
   Stat: 3
-  Amount: 5
+  Amount: 1

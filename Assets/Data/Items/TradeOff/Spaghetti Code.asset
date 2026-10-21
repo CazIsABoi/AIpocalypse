@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Spaghetti Code
   m_EditorClassIdentifier: Assembly-CSharp::TradeOffUpgrade
   Title: Spaghetti Code
-  Description: +40% attack speed, -20% damage
+  Description: +50% attack speed, -15% damage
   Icon: {fileID: 0}
   Weight: 4
   Rarity: 3
   Changes:
   - Stat: 11
-    Amount: 0.4
+    Amount: 0.5
   - Stat: 4
-    Amount: -0.2
+    Amount: -0.15

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Low Latency
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Low Latency
-  Description: Move much faster. +1 speed
+  Description: +1 speed
   Icon: {fileID: 0}
   Weight: 7
   Rarity: 2

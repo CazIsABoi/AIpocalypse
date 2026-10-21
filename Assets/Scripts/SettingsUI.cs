@@ -24,7 +24,7 @@ public class SettingsUI : MonoBehaviour
     public void OnMusic(float v) { GameSettings.Music = v; GameSettings.ApplyAudio(mixer); UpdateText(music, musicText); }
     public void OnSfx(float v) { GameSettings.Sfx = v; GameSettings.ApplyAudio(mixer); UpdateText(sfx, sfxText); }
     public void OnFullscreen(bool on) { GameSettings.Fullscreen = on ? 1 : 0; Screen.fullScreen = on; }
-    public void GoToMainMenu() { Time.timeScale = 1f; UnityEngine.SceneManagement.SceneManager.LoadScene("Menu"); }
+    public void GoToMainMenu() { GamePause.Clear(); UnityEngine.SceneManagement.SceneManager.LoadScene("Menu"); }
 
     private void UpdateText(UnityEngine.UI.Slider slider, TMPro.TextMeshProUGUI text)
     {

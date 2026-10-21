@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Redundant Backup
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Redundant Backup
-  Description: +50 max health
+  Description: +40 max HP
   Icon: {fileID: 0}
   Weight: 4
   Rarity: 3
   Stat: 2
-  Amount: 50
+  Amount: 40

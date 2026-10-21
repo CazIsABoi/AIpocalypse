@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Data Hoarder
   m_EditorClassIdentifier: Assembly-CSharp::TradeOffUpgrade
   Title: Data Hoarder
-  Description: +4 pickup range, -10% damage
+  Description: +3 pickup range, -10% damage
   Icon: {fileID: 0}
   Weight: 7
   Rarity: 2
   Changes:
   - Stat: 5
-    Amount: 4
+    Amount: 3
   - Stat: 4
     Amount: -0.1
