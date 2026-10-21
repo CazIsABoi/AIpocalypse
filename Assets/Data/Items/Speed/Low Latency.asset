@@ -15,6 +15,7 @@ MonoBehaviour:
   Title: Low Latency
   Description: Move much faster. +1 speed
   Icon: {fileID: 0}
-  Weight: 4
+  Weight: 7
+  Rarity: 2
   Stat: 0
   Amount: 1

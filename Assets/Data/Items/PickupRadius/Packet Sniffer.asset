@@ -15,6 +15,7 @@ MonoBehaviour:
   Title: Packet Sniffer
   Description: Collect tokens from further away. +1 pickup range
   Icon: {fileID: 0}
-  Weight: 8
+  Weight: 10
+  Rarity: 1
   Stat: 5
   Amount: 1

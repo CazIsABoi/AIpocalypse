@@ -15,6 +15,7 @@ MonoBehaviour:
   Title: Adblocker
   Description: +5 damage
   Icon: {fileID: 0}
-  Weight: 5
+  Weight: 7
+  Rarity: 2
   Stat: 3
   Amount: 5

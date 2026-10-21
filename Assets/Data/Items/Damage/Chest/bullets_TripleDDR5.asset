@@ -17,6 +17,7 @@ MonoBehaviour:
 
     +3 Bullets'
   Icon: {fileID: 0}
-  Weight: 3
+  Weight: 1
+  Rarity: 5
   Stat: 6
   Amount: 3

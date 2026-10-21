@@ -15,6 +15,7 @@ MonoBehaviour:
   Title: Water Leakage
   Description: +1 Bullet
   Icon: {fileID: 0}
-  Weight: 4
+  Weight: 2
+  Rarity: 4
   Stat: 6
   Amount: 1

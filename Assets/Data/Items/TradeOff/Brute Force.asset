@@ -15,7 +15,8 @@ MonoBehaviour:
   Title: Brute Force
   Description: +15% crit chance, -15% damage
   Icon: {fileID: 0}
-  Weight: 10
+  Weight: 4
+  Rarity: 3
   Changes:
   - Stat: 8
     Amount: 0.15

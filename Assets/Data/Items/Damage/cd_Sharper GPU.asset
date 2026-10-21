@@ -16,5 +16,6 @@ MonoBehaviour:
   Description: + 30% Crit Damage
   Icon: {fileID: 0}
   Weight: 7
+  Rarity: 2
   Stat: 7
   Amount: 0.3

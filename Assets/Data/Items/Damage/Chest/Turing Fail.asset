@@ -15,6 +15,7 @@ MonoBehaviour:
   Title: Turing Fail
   Description: +50% damage
   Icon: {fileID: 0}
-  Weight: 1
+  Weight: 2
+  Rarity: 4
   Stat: 4
   Amount: 0.5

@@ -15,6 +15,7 @@ MonoBehaviour:
   Title: Unsubscribe
   Description: +12% move speed
   Icon: {fileID: 0}
-  Weight: 4
+  Weight: 7
+  Rarity: 2
   Stat: 1
   Amount: 0.12

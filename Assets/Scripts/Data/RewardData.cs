@@ -6,14 +6,29 @@ public abstract class RewardData : ScriptableObject
     [TextArea] public string Description;
     public Sprite Icon;
     public int Weight = 10;          // how often it appears
+    public Rarity Rarity;
 
     public abstract void Apply(PlayerStats stats);
 
     public virtual string GetPreview(PlayerStats stats) => "";
+    public Rarity GetRarity()
+    {
+        if (Rarity != Rarity.Auto) return Rarity;
+        switch (Weight)
+        {
+            // matches the weight scale used on the items: 10 / 7 / 4 / 2 / 1
+            case >= 10: return Rarity.Common;
+            case >= 7: return Rarity.Uncommon;
+            case >= 4: return Rarity.Rare;
+            case >= 2: return Rarity.Epic;
+            default: return Rarity.Legendary;
+        }
+    }
 }
 
 // Assets store these as numbers: only ever add new values at the END, never in between
 public enum StatType { MoveSpeed, MoveSpeedPercent, MaxHealth, Damage, DamagePercent, PickupRadius, BulletAmount, CritDamage, CritChance, BulletPierce}
+public enum Rarity { Auto, Common, Uncommon, Rare, Epic, Legendary }
 
 public static class StatNames
 {
@@ -56,5 +71,4 @@ public static class StatNames
                 return $"{value:0.#}";
         }
     }
-
 }

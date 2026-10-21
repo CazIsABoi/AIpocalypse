@@ -16,5 +16,6 @@ MonoBehaviour:
   Description: Move faster. +0.5 speed
   Icon: {fileID: 0}
   Weight: 10
+  Rarity: 1
   Stat: 0
   Amount: 0.5

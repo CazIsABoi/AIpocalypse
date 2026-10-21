@@ -15,7 +15,8 @@ MonoBehaviour:
   Title: Kernel Panic
   Description: +50% damage, +20% speed, -50 max HP
   Icon: {fileID: 0}
-  Weight: 3
+  Weight: 1
+  Rarity: 5
   Changes:
   - Stat: 4
     Amount: 0.5

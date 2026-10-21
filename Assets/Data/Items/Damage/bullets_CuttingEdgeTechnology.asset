@@ -15,6 +15,7 @@ MonoBehaviour:
   Title: Cutting Edge Technology
   Description: +1 Bullet Pierce
   Icon: {fileID: 0}
-  Weight: 7
+  Weight: 4
+  Rarity: 3
   Stat: 9
   Amount: 1

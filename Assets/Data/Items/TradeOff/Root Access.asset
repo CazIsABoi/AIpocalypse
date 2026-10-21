@@ -15,7 +15,8 @@ MonoBehaviour:
   Title: Root Access
   Description: +60% damage, -30 max HP
   Icon: {fileID: 0}
-  Weight: 10
+  Weight: 2
+  Rarity: 4
   Changes:
   - Stat: 4
     Amount: 0.6

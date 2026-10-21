@@ -15,6 +15,7 @@ MonoBehaviour:
   Title: Data Breach
   Description: +4 pickup range
   Icon: {fileID: 0}
-  Weight: 4
+  Weight: 7
+  Rarity: 2
   Stat: 5
   Amount: 4

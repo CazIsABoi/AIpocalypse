@@ -16,5 +16,6 @@ MonoBehaviour:
   Description: +20 max health
   Icon: {fileID: 0}
   Weight: 10
+  Rarity: 1
   Stat: 2
   Amount: 20

@@ -15,6 +15,7 @@ MonoBehaviour:
   Title: Data Harvester
   Description: Collect tokens from much further away. +2.5 pickup range
   Icon: {fileID: 0}
-  Weight: 3
+  Weight: 7
+  Rarity: 2
   Stat: 5
   Amount: 2.5

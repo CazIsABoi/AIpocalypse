@@ -15,7 +15,8 @@ MonoBehaviour:
   Title: Data Hoarder
   Description: +4 pickup range, -10% damage
   Icon: {fileID: 0}
-  Weight: 10
+  Weight: 7
+  Rarity: 2
   Changes:
   - Stat: 5
     Amount: 4

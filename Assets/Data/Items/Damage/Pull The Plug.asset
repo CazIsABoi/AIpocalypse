@@ -16,5 +16,6 @@ MonoBehaviour:
   Description: +2 damage
   Icon: {fileID: 0}
   Weight: 10
+  Rarity: 1
   Stat: 3
   Amount: 2

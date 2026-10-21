@@ -15,6 +15,7 @@ MonoBehaviour:
   Title: Factory Reset
   Description: +75 max health
   Icon: {fileID: 0}
-  Weight: 5
+  Weight: 4
+  Rarity: 3
   Stat: 2
   Amount: 75

@@ -15,7 +15,8 @@ MonoBehaviour:
   Title: Unthrottled
   Description: +30% speed, -20 max HP
   Icon: {fileID: 0}
-  Weight: 10
+  Weight: 4
+  Rarity: 3
   Changes:
   - Stat: 1
     Amount: 0.3

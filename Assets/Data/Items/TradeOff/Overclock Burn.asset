@@ -15,7 +15,8 @@ MonoBehaviour:
   Title: Overclock Burn
   Description: +40% damage, -15% speed
   Icon: {fileID: 0}
-  Weight: 10
+  Weight: 4
+  Rarity: 3
   Changes:
   - Stat: 4
     Amount: 0.4

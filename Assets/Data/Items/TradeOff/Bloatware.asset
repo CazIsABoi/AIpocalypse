@@ -15,7 +15,8 @@ MonoBehaviour:
   Title: Bloatware
   Description: +60 max HP, -15% speed
   Icon: {fileID: 0}
-  Weight: 10
+  Weight: 7
+  Rarity: 2
   Changes:
   - Stat: 2
     Amount: 60

@@ -15,6 +15,7 @@ MonoBehaviour:
   Title: Background Process
   Description: +8% move speed
   Icon: {fileID: 0}
-  Weight: 8
+  Weight: 10
+  Rarity: 1
   Stat: 1
   Amount: 0.08

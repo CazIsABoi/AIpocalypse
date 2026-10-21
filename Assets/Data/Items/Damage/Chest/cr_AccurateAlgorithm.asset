@@ -15,6 +15,7 @@ MonoBehaviour:
   Title: Accurate Algorithm
   Description: +25% Crit Chance
   Icon: {fileID: 0}
-  Weight: 4
+  Weight: 2
+  Rarity: 4
   Stat: 8
   Amount: 0.25

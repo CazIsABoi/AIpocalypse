@@ -15,6 +15,7 @@ MonoBehaviour:
   Title: Malformed Prompt
   Description: +10% damage
   Icon: {fileID: 0}
-  Weight: 8
+  Weight: 10
+  Rarity: 1
   Stat: 4
   Amount: 0.1

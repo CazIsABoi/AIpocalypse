@@ -15,6 +15,7 @@ MonoBehaviour:
   Title: Zip Bomb
   Description: +100% Crit Damage
   Icon: {fileID: 0}
-  Weight: 4
+  Weight: 2
+  Rarity: 4
   Stat: 7
   Amount: 1

@@ -15,6 +15,7 @@ MonoBehaviour:
   Title: Kill Switch
   Description: +8 damage
   Icon: {fileID: 0}
-  Weight: 3
+  Weight: 4
+  Rarity: 3
   Stat: 3
   Amount: 8
