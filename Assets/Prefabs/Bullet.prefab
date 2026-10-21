@@ -130,6 +130,7 @@ MonoBehaviour:
   hittableLayers:
     serializedVersion: 2
     m_Bits: 320
+  ProjectileType: Player Bullet
   BulletSpeed: 15
   Damage: 0
   CritChance: 0
