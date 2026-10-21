@@ -25,6 +25,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     private bool IsAttacking;
     private float AttackWindow;
+    [SerializeField] private float DamageWindow;      // An interval in which the attack deals any damage, can only deal one instance of damage.
 
     [SerializeField] private GameObject DamagePopup;
     [SerializeField] private Slider hpSlider;
@@ -36,6 +37,11 @@ public class EnemyController : MonoBehaviour, IDamageable
     private float SpeedMax;
    
     private bool died;
+
+    [SerializeField] private LayerMask PlayerLayer;
+    [SerializeField] private GameObject TripodBulletPrefab;
+    [SerializeField] private GameObject TripodShootPivot;
+    [SerializeField] private GameObject DroneExplosionPrefab;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -64,6 +70,7 @@ public class EnemyController : MonoBehaviour, IDamageable
             } // Enemy died, destroy the gameobject and exit the update loop.
         if (AttackInterval > 0) AttackInterval -= Time.deltaTime;
         if (AttackCD > 0) AttackCD -= Time.deltaTime;
+        if (DamageWindow > 0) DamageWindow -= Time.deltaTime;
 
         hpSlider.value = Health;
         hpSlider.maxValue = MaxHealth;
@@ -92,6 +99,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     IsAttacking = true;
                     AttackCD = 1.5f;
                     AttackWindow = 0.5f;
+                    DamageWindow = 0.5f;
                     // Debug.Log("attacked");
                 }
             }
@@ -112,16 +120,23 @@ public class EnemyController : MonoBehaviour, IDamageable
 
                 if (agent.isActiveAndEnabled) agent.isStopped = true;
 
+                if(DamageWindow > 0.1f && DamageWindow < 0.2f)
+                {
+                    Debug.DrawLine(transform.position, transform.position + transform.forward * 1.25f, Color.purple);
+                    Debug.DrawLine(transform.position + transform.forward * 1.25f, transform.position + transform.forward * 1.25f + new Vector3(0, 2, 0), Color.green);
+                    Collider[] hits = Physics.OverlapSphere(transform.position + transform.forward * 1.15f, 0.8f, PlayerLayer);
+                    foreach (Collider hit in hits)
+                    {
+                        if(hit.gameObject.GetComponent<PlayerHealth>())
+                        {
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage);
+                            DamageWindow = 5;
+                        }
+                    }
+                }
                 if (AttackWindow <= 0)
                 {
-                    // Debug.Log("Attack Finished");
-                    Vector3 offset = PlayerTarget.transform.position - transform.position;
-                    if (offset.sqrMagnitude <= AttackRange * AttackRange) // If the player is still in range, apply damage
-                    {
-                        playerHealth.TakeDamage(Damage);
-                        // Debug.Log($"Player hit for {Damage}");
-                    }
-
+                   
                     agent.speed = Speed;
                     IsAttacking = false;
                 }
@@ -140,9 +155,11 @@ public class EnemyController : MonoBehaviour, IDamageable
                 if (offset.sqrMagnitude <= AttackRange * AttackRange)
                 {
                     IsAttacking = true;
-                    AttackCD = 1.5f;
-                    AttackWindow = 0.5f;
-                    // Debug.Log("attacked");
+                    AttackCD = 9f;
+                    AttackWindow = 6f;
+                    DamageWindow = 0.7f;
+                    Debug.Log("attacked");
+                    GetComponentInChildren<Animator>().SetBool("IsAttacking", true);
                 }
             }
             if (!IsAttacking)
@@ -157,11 +174,35 @@ public class EnemyController : MonoBehaviour, IDamageable
             }
             else if (IsAttacking)
             {
+                float spinSpeed = 1;
+                if (AttackWindow <= 6f && AttackWindow > 4.5f) spinSpeed = Mathf.InverseLerp(6f, 4.5f, AttackWindow);
+                else if (AttackWindow <= 4.5f && AttackWindow > 1.5f) spinSpeed = 1;
+                else spinSpeed = Mathf.InverseLerp(0f, 1.5f, AttackWindow);
+                GetComponentInChildren<Animator>().SetFloat("SpinSpeed", spinSpeed); 
+
+                if(DamageWindow < 0.1f)
+                {
+                    Collider[] hits = Physics.OverlapSphere(transform.position, 2.2f, PlayerLayer);
+                    foreach (Collider hit in hits)
+                    {
+                        if (hit.gameObject.GetComponent<PlayerHealth>())
+                        {
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage);
+                            DamageWindow = 0.54f;
+                        }
+                    }
+                }
 
                 AttackWindow -= Time.deltaTime;
-                agent.speed = 0;
+                TargetPosition = PlayerTarget.transform.position;
+                if (agent.isActiveAndEnabled)
+                {
+                    agent.isStopped = false;
+                    agent.SetDestination(TargetPosition);
+                }
+                agent.speed = 1.5f;
 
-                if (agent.isActiveAndEnabled) agent.isStopped = true;
+                //if (agent.isActiveAndEnabled) agent.isStopped = true;
 
                 if (AttackWindow <= 0)
                 {
@@ -173,6 +214,8 @@ public class EnemyController : MonoBehaviour, IDamageable
                         // Debug.Log($"Player hit for {Damage}");
                     }
 
+                    GetComponentInChildren<Animator>().SetBool("IsAttacking", false);
+                    GetComponentInChildren<Animator>().Play("Walk");
                     agent.speed = Speed;
                     IsAttacking = false;
                 }
@@ -192,7 +235,8 @@ public class EnemyController : MonoBehaviour, IDamageable
                     IsAttacking = true;
                     AttackCD = 2f;
                     AttackWindow = 1.2f;
-                    // Debug.Log("attacked");
+                    DamageWindow = 1.2f;
+                    Debug.Log("attacked");
                 }
             }
             if (!IsAttacking)
@@ -208,7 +252,7 @@ public class EnemyController : MonoBehaviour, IDamageable
             else if (IsAttacking)
             {
                 TargetPosition = PlayerTarget.transform.position;
-                if (agent.isActiveAndEnabled && AttackWindow > 0.35f)
+                if (agent.isActiveAndEnabled && AttackWindow > 0.41f)
                 {
                     agent.isStopped = false;
                     agent.SetDestination(TargetPosition);
@@ -216,18 +260,27 @@ public class EnemyController : MonoBehaviour, IDamageable
 
                 AttackWindow -= Time.deltaTime;
                 if (AttackWindow >= 1.0f && AttackWindow < 1.1f) GetComponentInChildren<Animator>().Play("Explode");
-                if (AttackWindow <= 1 && AttackWindow > 0.15f) agent.speed = Mathf.Lerp(15, 0, 22 * Time.deltaTime);
+                if (AttackWindow <= 1 && AttackWindow > 0.16f) agent.speed = Mathf.Lerp(15, 0, 23 * Time.deltaTime);
                 else if (AttackWindow <= 0.15) agent.speed = 0;
+
+                if(DamageWindow < 0.08f)
+                {
+                    GameObject spawnedExplosion = Instantiate(DroneExplosionPrefab, transform.position, Quaternion.identity);
+                    DamageWindow = 5;
+                }
 
                 if (AttackWindow <= 0)
                 {
-                    // Debug.Log("Attack Finished");
-                    Vector3 offset = PlayerTarget.transform.position - transform.position;
-                    if (offset.sqrMagnitude <= (AttackRange/3f) * (AttackRange/3f)) // If the player is still in range, apply damage
+                    Collider[] hits = Physics.OverlapSphere(transform.position, 2.65f, PlayerLayer);
+                    foreach (Collider hit in hits)
                     {
-                        playerHealth.TakeDamage(Damage);
-                        // Debug.Log($"Player hit for {Damage}");
+                        if (hit.gameObject.GetComponent<PlayerHealth>())
+                        {
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage);
+                            //DamageWindow = 5;
+                        }
                     }
+                    //GameObject spawnedExplosion = Instantiate(DroneExplosionPrefab, transform.position, Quaternion.identity);
 
                     Destroy(gameObject);
                 }
@@ -241,7 +294,9 @@ public class EnemyController : MonoBehaviour, IDamageable
                 AttackInterval = 0.05f;
                 IsAttacking = true;
                 AttackWindow = 1f;
+                DamageWindow = 1f;
                 AttackCD = 2f;
+                GetComponentInChildren<Animator>().Play("Hop");
             }
             if (!IsAttacking)
             {
@@ -263,15 +318,21 @@ public class EnemyController : MonoBehaviour, IDamageable
 
                 if (agent.isActiveAndEnabled) agent.isStopped = false;
 
+                if(DamageWindow > 0.05f && DamageWindow < 0.65f)
+                {
+                    Collider[] hits = Physics.OverlapSphere(transform.position, 1f, PlayerLayer);
+                    foreach (Collider hit in hits)
+                    {
+                        if (hit.gameObject.GetComponent<PlayerHealth>())
+                        {
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage);
+                            DamageWindow = 5;
+                        }
+                    }
+                }
+
                 if (AttackWindow <= 0)
                 {
-                    // Debug.Log("Attack Finished");
-                    Vector3 offset = PlayerTarget.transform.position - transform.position;
-                    if (offset.sqrMagnitude <= AttackRange * AttackRange) // If the player is still in range, apply damage
-                    {
-                        playerHealth.TakeDamage(Damage);
-                        // Debug.Log($"Player hit for {Damage}");
-                    }
 
                     agent.speed = Speed;
                     IsAttacking = false;
@@ -290,15 +351,18 @@ public class EnemyController : MonoBehaviour, IDamageable
 
                 if (offset.sqrMagnitude <= AttackRange * AttackRange)
                 {
+                    GetComponentInChildren<Animator>().SetBool("IsFiring", true);
+                    GetComponentInChildren<Animator>().Play("TripodShoot");
                     IsAttacking = true;
                     AttackCD = 9f;
                     AttackWindow = 6f;
-                    // Debug.Log("attacked");
+                    DamageWindow = 0f;
+                    Debug.Log("attacked");
+                    
                 }
             }
             if (!IsAttacking)
             {
-
                 TargetPosition = PlayerTarget.transform.position;
                 if (agent.isActiveAndEnabled)
                 {
@@ -318,6 +382,13 @@ public class EnemyController : MonoBehaviour, IDamageable
 
                 if (agent.isActiveAndEnabled) agent.isStopped = true;
 
+                if(DamageWindow <= 0)
+                {
+                    GameObject spawnedBullet = Instantiate(TripodBulletPrefab, TripodShootPivot.transform.position, Quaternion.identity);
+                    spawnedBullet.GetComponent<ProjectileController>().Direction = direction.normalized;
+                    spawnedBullet.GetComponent<ProjectileController>().Damage = Damage;
+                    DamageWindow = 0.958f;
+                }
                 if (AttackWindow <= 0)
                 {
                     // Debug.Log("Attack Finished");
@@ -328,10 +399,30 @@ public class EnemyController : MonoBehaviour, IDamageable
                         // Debug.Log($"Player hit for {Damage}");
                     }
 
+                    GetComponentInChildren<Animator>().SetBool("IsFiring", false);
                     agent.speed = Speed;
                     IsAttacking = false;
                 }
             }
+        }
+    }
+    private void OnDrawGizmos()
+    {
+        if (AiType == 0)
+        {
+            Gizmos.DrawWireSphere(transform.position + transform.forward * 1.1f, 0.8f);
+        }
+        if (AiType == 1)
+        {
+            Gizmos.DrawWireSphere(transform.position, 2.2f);
+        }
+        if (AiType == 2)
+        {
+            Gizmos.DrawWireSphere(transform.position, 2.65f);
+        }
+        if (AiType == 3)
+        {
+            Gizmos.DrawWireSphere(transform.position, 1f);
         }
     }
 
