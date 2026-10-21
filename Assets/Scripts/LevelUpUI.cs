@@ -33,7 +33,7 @@ public class LevelUpUI : MonoBehaviour
             if (i < choices.Count)
             {
                 cards[i].gameObject.SetActive(true);
-                cards[i].Setup(choices[i], Choose);
+                cards[i].Setup(choices[i], Choose, stats);
             }
             else
             {

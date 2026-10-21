@@ -8,5 +8,7 @@ public abstract class RewardData : ScriptableObject
     public int Weight = 10;          // how often it appears
 
     public abstract void Apply(PlayerStats stats);
+
+    public virtual string GetPreview(PlayerStats stats) => "";
 }
-public enum StatType { MoveSpeed, MoveSpeedPercent, MaxHealth, Damage, DamagePercent, PickupRadius }
+public enum StatType { MoveSpeed, MoveSpeedPercent, MaxHealth, Damage, DamagePercent, PickupRadius, CritDamage, CritChance }
