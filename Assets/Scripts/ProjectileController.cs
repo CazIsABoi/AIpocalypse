@@ -5,6 +5,8 @@ public class ProjectileController : MonoBehaviour
     public Vector3 Direction;
     public LayerMask hittableLayers;
 
+    public string ProjectileType;
+
     public float BulletSpeed;
     public float Damage;
     public float CritChance;
@@ -24,27 +26,49 @@ public class ProjectileController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = Vector3.MoveTowards(transform.position, transform.position + Direction, BulletSpeed * Time.deltaTime);
+        if(ProjectileType == "Player Bullet") transform.position = Vector3.MoveTowards(transform.position, transform.position + Direction, BulletSpeed * Time.deltaTime);
+        else if(ProjectileType == "Tripod Bullet") transform.position = Vector3.MoveTowards(transform.position, transform.position + Direction, BulletSpeed * Time.deltaTime);
+
 
         if (DamageCD <= 0)
         {
-            Collider[] hits = Physics.OverlapSphere(transform.position, 1f, hittableLayers);
-            bool hitSomething = false;
-            foreach (Collider c in hits)
+            if (ProjectileType == "Player Bullet")
             {
-                if (BulletPierce > 0)
+                Collider[] hits = Physics.OverlapSphere(transform.position, 1f, hittableLayers);
+                bool hitSomething = false;
+                foreach (Collider c in hits)
                 {
-                    if (c.gameObject.GetComponent<EnemyController>())
+                    if (BulletPierce > 0)
                     {
-                        hitSomething = true;
-                        c.gameObject.GetComponent<EnemyController>().TakeDamage(Damage, CritChance, CritDamage);
-                        
+                        if (c.gameObject.GetComponent<EnemyController>())
+                        {
+                            hitSomething = true;
+                            c.gameObject.GetComponent<EnemyController>().TakeDamage(Damage, CritChance, CritDamage);
+
+                        }
                     }
+                    else Destroy(gameObject);
+                    BulletPierce--;
                 }
-                else Destroy(gameObject);
-                BulletPierce--;
+                if (hitSomething) DamageCD = 0.1f;
             }
-            if (hitSomething) DamageCD = 0.1f;
+            else if(ProjectileType == "Tripod Bullet")
+            {
+                Collider[] hits = Physics.OverlapSphere(transform.position, 0.15f, hittableLayers);
+                //bool hitSomething = false;
+                foreach (Collider c in hits)
+                {
+
+                    if (c.gameObject.GetComponent<PlayerHealth>())
+                    {
+                        //hitSomething = true;
+                        c.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage);
+
+                    }
+                    
+                    Destroy(gameObject);
+                }
+            }
         }
         else DamageCD -= Time.deltaTime;
 

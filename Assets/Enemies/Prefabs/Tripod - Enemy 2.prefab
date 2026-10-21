@@ -460,6 +460,7 @@ MonoBehaviour:
   AttackCD: 0
   AttackInterval: 0
   Speed: 2
+  DamageWindow: 0
   DamagePopup: {fileID: 3937980857255322814, guid: 0e3792d5caef44f4494d3b453acbd366, type: 3}
   hpSlider: {fileID: 6161609063163427949}
   HpColor:
@@ -495,6 +496,11 @@ MonoBehaviour:
   xpPrefab: {fileID: 3957824135530364909, guid: eb7898f8ac8f44b48bb2046fb762bc38, type: 3}
   handler: {fileID: 0}
   SpeedBoostIncrease: 0
+  PlayerLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  TripodBulletPrefab: {fileID: 2006935733718916428, guid: b5a46c53eb826734b804815eae5ab70c, type: 3}
+  TripodShootPivot: {fileID: 7957198028299024486}
 --- !u!195 &7000668719919852536
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -732,6 +738,37 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &7957198028299024486
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 377870751765237558}
+  m_Layer: 0
+  m_Name: ShootPivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &377870751765237558
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7957198028299024486}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.00002, y: 0.00783, z: 0.00031}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7072047716254749146}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &3444838845314325207
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -798,11 +835,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 5614426604631968525, guid: c318b6d46d613c544bbcd413c9923809, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 377870751765237558}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c318b6d46d613c544bbcd413c9923809, type: 3}
 --- !u!4 &5487479909085333571 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7199557380394357396, guid: c318b6d46d613c544bbcd413c9923809, type: 3}
+  m_PrefabInstance: {fileID: 3444838845314325207}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7072047716254749146 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5614426604631968525, guid: c318b6d46d613c544bbcd413c9923809, type: 3}
   m_PrefabInstance: {fileID: 3444838845314325207}
   m_PrefabAsset: {fileID: 0}

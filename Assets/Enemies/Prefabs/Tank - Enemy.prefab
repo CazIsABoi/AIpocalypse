@@ -456,10 +456,11 @@ MonoBehaviour:
   MaxHealth: 0
   Damage: 0
   Xp: 0
-  AttackRange: 4
+  AttackRange: 3.8
   AttackCD: 0
   AttackInterval: 0
   Speed: 4
+  DamageWindow: 0
   DamagePopup: {fileID: 3937980857255322814, guid: 0e3792d5caef44f4494d3b453acbd366, type: 3}
   hpSlider: {fileID: 6161609063163427949}
   HpColor:
@@ -495,6 +496,9 @@ MonoBehaviour:
   xpPrefab: {fileID: 3957824135530364909, guid: eb7898f8ac8f44b48bb2046fb762bc38, type: 3}
   handler: {fileID: 0}
   SpeedBoostIncrease: 0
+  PlayerLayer:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!195 &7000668719919852536
 NavMeshAgent:
   m_ObjectHideFlags: 0

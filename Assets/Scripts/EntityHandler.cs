@@ -65,14 +65,17 @@ public class EntityHandler : MonoBehaviour
                 if (GameTime < 20)
                 {
                     enemy.MaxHealth = enemies[rolledEnemy].BaseHealth * 1f;
+                    enemy.Damage = enemies[rolledEnemy].BaseDamage * 1f;
                 }
                 else if (GameTime < 720)
                 {
                     enemy.MaxHealth = enemies[rolledEnemy].BaseHealth * Mathf.Pow(1.0046f, GameTime - 20f); // 0.33
+                    enemy.Damage = enemies[rolledEnemy].BaseDamage * Mathf.Pow(1.0016f, GameTime - 20f);
                 }
                 else if (GameTime >= 720)
                 {
                     enemy.MaxHealth = enemies[rolledEnemy].BaseHealth * 25f;    //10f
+                    enemy.Damage = enemies[rolledEnemy].BaseDamage * 3f;
                 }
                 enemy.Xp = enemies[rolledEnemy].XpValue;
             }
