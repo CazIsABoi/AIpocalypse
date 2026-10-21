@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class HealthText : MonoBehaviour
 {
-    private void Awake()
+    [SerializeField] private TMPro.TextMeshProUGUI healthText;
+    private void Start()
     {
         PlayerHealth playerHealth = FindAnyObjectByType<PlayerHealth>();
         if (playerHealth != null)
@@ -12,8 +13,17 @@ public class HealthText : MonoBehaviour
         }
     }
 
-   private void UpdateHealthText(float currentHealth, float maxHealth)
+    private void OnDestroy()
     {
-        GetComponent<TMPro.TextMeshProUGUI>().text = $"Health: {currentHealth}/{maxHealth}";
+        PlayerHealth playerHealth = FindAnyObjectByType<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            playerHealth.HealthChanged -= UpdateHealthText;
+        }
+    }
+
+    private void UpdateHealthText(float currentHealth, float maxHealth)
+    {
+        healthText.text = $"Health: {currentHealth}/{maxHealth}";
     }
 }

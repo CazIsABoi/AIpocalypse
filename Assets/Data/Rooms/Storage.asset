@@ -10,12 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3f48cf5d16e685e498a1355c26a6403d, type: 3}
-  m_Name: Pillar Hall
+  m_Name: Storage
   m_EditorClassIdentifier: Assembly-CSharp::RoomContent
-  weight: 3
-  minRoomSize: 15
-  pattern: 1
+  weight: 2
+  minRoomSize: 11
+  pattern: 4
   props:
-  - {fileID: 820827969279677616, guid: 4fe32f9edc7fcce49aea801b098dbb62, type: 3}
-  density: 0.05
+  - {fileID: 6473399101772629000, guid: c7c2c4ad6f10bc844b8d6ff23aba685c, type: 3}
+  - {fileID: 6473399101772629000, guid: 3e0cce97e91365245a1e5c737ab7beed, type: 3}
+  walkable: 0
+  density: 0.7
   spacing: 4
+  mapMaterial: {fileID: 0}
+  mapRoomMaterial: {fileID: 0}
+  rotation: 0
+  randomScale: 1
+  tintFloor: 1
+  floorColor: {r: 0.84705883, g: 0.79607844, b: 0.72156864, a: 1}

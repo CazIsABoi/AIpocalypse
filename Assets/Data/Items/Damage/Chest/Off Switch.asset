@@ -9,12 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f48cf5d16e685e498a1355c26a6403d, type: 3}
-  m_Name: Empty Arena
-  m_EditorClassIdentifier: Assembly-CSharp::RoomContent
-  weight: 3
-  minRoomSize: 11
-  pattern: 0
-  props: []
-  density: 0.05
-  spacing: 4
+  m_Script: {fileID: 11500000, guid: 4a43f53720f8737468d4afd219df44c2, type: 3}
+  m_Name: Off Switch
+  m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
+  Title: Off Switch
+  Description: +12 damage
+  Icon: {fileID: 0}
+  Weight: 4
+  Stat: 3
+  Amount: 12

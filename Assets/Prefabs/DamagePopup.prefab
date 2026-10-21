@@ -257,3 +257,5 @@ MonoBehaviour:
   TargetPosition: {x: 0, y: 0, z: 0}
   PopupDisplayContent: 
   displayText: {fileID: 1465793750794355553}
+  IsCrit: 0
+  CritColor: {r: 0.69359434, g: 0, b: 1, a: 1}
