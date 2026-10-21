@@ -331,6 +331,7 @@ MonoBehaviour:
   RiflePivot: {fileID: 4300784283819191719}
   RifleMuzzle: {fileID: 9018459578496385662}
   BulletAmount: 1
+  BulletPierce: 1
   BulletPrefab: {fileID: 291620021740139290, guid: baaefcced4a283142a8e9170bcedb500, type: 3}
   FirearmBaseCooldown: 0.2
   FirearmCooldown: 0
@@ -385,10 +386,12 @@ MonoBehaviour:
   BaseSpeed: 8
   flatSpeed: 0
   speedPercent: 0
-  baseDamage: 20
+  baseDamage: 5
   CritDamage: 2
   CritChance: 0.1
-  pickupRange: 0.5
+  BulletAmount: 1
+  BulletPierce: 1
+  pickupRange: 1.5
 --- !u!1 &4300784283819191719
 GameObject:
   m_ObjectHideFlags: 0

@@ -56,8 +56,8 @@ public class PlayerCombat : MonoBehaviour
         RangedDamage = stats.Damage;         // Add melee damage multipliers here. 5 dmg per bullet by default, 25 dps, melee is 40.
         if (CurrentFirearmCooldown > 0) CurrentFirearmCooldown -= Time.deltaTime;
 
-        BulletAmount = 1 + stats.BulletAmount;
-        BulletPierce = 1 + stats.BulletPierce;
+        BulletAmount = stats.BulletAmount;
+        BulletPierce = stats.BulletPierce;
 
         if (RightClick.action.IsPressed())
         {

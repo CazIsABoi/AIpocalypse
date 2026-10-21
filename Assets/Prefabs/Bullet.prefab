@@ -136,7 +136,7 @@ MonoBehaviour:
   CritDamage: 0
   DamageCD: 0
   BulletPierce: 1
-  Lifetime: 1
+  Lifetime: 1.8
 --- !u!96 &-8172137948295864796
 TrailRenderer:
   serializedVersion: 4

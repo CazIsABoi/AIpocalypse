@@ -103,6 +103,10 @@ public class PlayerStats : MonoBehaviour
                 return CalcCritDamage(Damage, CritDamage);
             case StatType.CritChance:
                 return CritChance;
+            case StatType.BulletAmount:
+                return BulletAmount;
+            case StatType.BulletPierce:
+                return BulletPierce;
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 return 0f;
@@ -129,6 +133,10 @@ public class PlayerStats : MonoBehaviour
                 return CalcCritDamage(Damage, CritDamage + amount);
             case StatType.CritChance:
                 return CritChance + amount;
+            case StatType.BulletAmount:
+                return BulletAmount + amount;
+            case StatType.BulletPierce:
+                return BulletPierce + amount;
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 return 0f;
