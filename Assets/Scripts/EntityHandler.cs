@@ -136,11 +136,31 @@ public class EntityHandler : MonoBehaviour
         UpdateEnemyList();
         enemy.MaxHealth = enemies[index].BaseHealth * HealthMultiplier();
         enemy.Xp = enemies[index].XpValue;
+        enemy.Damage = enemies[index].BaseDamage * DamageMultiplier();
         return enemy;
     }
     public void SpawnSoon() 
     {
         SpawnCD = 0f;
+    }
+    float DamageMultiplier()
+    {
+        if (clock.Endless)
+            return 3f * Mathf.Pow(1.1f, clock.EndlessTime / 60f);   // +10% per minute, on top of 
+
+        if (GameTime < 20)
+        {
+            return 1f;
+        }
+        else if (GameTime < 720)
+        {
+            return Mathf.Pow(1.0016f, GameTime - 20f); // 0.33
+        }
+        else if (GameTime >= 720)
+        {
+            return 3f;    //10f
+        }
+        return 1f;
     }
 
     float HealthMultiplier()
