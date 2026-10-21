@@ -71,6 +71,8 @@ public class PlayerCombat : MonoBehaviour
                 RiflePivot.GetComponentInChildren<Animator>().SetBool("IsSlashing", true);
                 RiflePivot.GetComponentInChildren<Animator>().Play("RifleSlash");
 
+                AudioManager.Instance.Play(Sfx.Melee);
+
                 Collider[] hits = Physics.OverlapSphere(transform.position + CalculateAimingDirection() * 1.25f, 1.5f, EnemyLayer);
                 foreach (Collider hit in hits)
                 {
@@ -118,6 +120,7 @@ public class PlayerCombat : MonoBehaviour
         c.CritDamage = stats.CritDamage;
         c.Owner = health;
         c.Lifesteal = stats.Lifesteal;
+        AudioManager.Instance.Play(Sfx.Shoot);
     }
     private Vector3 CalculateAimingDirection()
     {

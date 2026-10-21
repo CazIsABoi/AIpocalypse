@@ -33,6 +33,7 @@ public class XpOrb : MonoBehaviour
         if (distance < 0.5f * 0.5f)
         {
             player.AddXp(Amount);
+            AudioManager.Instance.Play(Sfx.XpPickup);
             Destroy(gameObject);
         }
     }

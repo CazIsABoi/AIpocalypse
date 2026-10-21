@@ -39,6 +39,7 @@ public class EventDirector : MonoBehaviour
     {
         current = e;
         e.Begin(ctx);
+        AudioManager.Instance.Play(Sfx.EventStart);
         if (e.Duration > 0) {
             float t = 0f;
             while (t < e.Duration)

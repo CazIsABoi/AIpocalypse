@@ -47,8 +47,9 @@ public class PlayerHealth : MonoBehaviour
         invulnerableTimer = invulnerableTime;
         regenTimer = regenDelay;
         SetHealth(Health - amount);
+        AudioManager.Instance.Play(Sfx.PlayerHurt);
         Damaged?.Invoke(amount);
-        if (IsDead) Died?.Invoke();
+        if (IsDead) { Died?.Invoke(); AudioManager.Instance.Play(Sfx.PlayerDeath); }
     }
 
     public void Heal(float amount)

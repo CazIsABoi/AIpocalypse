@@ -60,6 +60,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         if (died) {
             GameObject spawnedXp = Instantiate(xpPrefab, transform.position, Quaternion.identity, transform.parent);
             spawnedXp.GetComponent<XpOrb>().Amount = Xp;
+            AudioManager.Instance.PlayAt(Sfx.EnemyDeath, transform.position);
             Destroy(gameObject); return;  
             } // Enemy died, destroy the gameobject and exit the update loop.
         if (AttackInterval > 0) AttackInterval -= Time.deltaTime;
@@ -360,6 +361,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         if(IsCrit) spawnedPopup.GetComponent<DamagePopup>().IsCrit = true;
         spawnedPopup.GetComponent<DamagePopup>().PopupDisplayContent = ((int)Amount).ToString();
 
+        AudioManager.Instance.PlayAt(Sfx.EnemyHit, transform.position);
         return Amount;
     }
 }

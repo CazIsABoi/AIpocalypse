@@ -20,6 +20,7 @@ public class LevelUpUI : MonoBehaviour
     {
         pendingLevelUps++;
         if (isOpen) return;
+        AudioManager.Instance.Play(Sfx.LevelUp);
         showingLevelUp = true;
         ShowChoices(levelUpPool);
     }
