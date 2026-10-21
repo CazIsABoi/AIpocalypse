@@ -1217,7 +1217,7 @@ Transform:
   m_GameObject: {fileID: 217030489}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -31.58392, y: 38.616, z: -2.87089}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4272,7 +4272,7 @@ Transform:
   m_GameObject: {fileID: 832575517}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 31.58392, y: -38.616, z: 2.87089}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9721,6 +9721,10 @@ PrefabInstance:
     - target: {fileID: 1653187248909934678, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
       propertyPath: regenDelay
       value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1653187248909934678, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
+      propertyPath: invulnerableTime
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 3581711298317858232, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
       propertyPath: dungeon
