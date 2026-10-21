@@ -83,7 +83,7 @@ public class PlayerCombat : MonoBehaviour
                         healthBefore = enemy.Health;
                         amount = enemy.TakeDamage(MeleeDamage, stats.CritChance, stats.CritDamage);   // enemies: with crits
                         amount = amount * stats.Lifesteal; // Lifesteal: heal for a percentage of the damage dealt
-                        health.Heal(Mathf.Min(amount, healthBefore)); // Don't heal for more than the enemy's health before the attack
+                        health.Heal(Mathf.Clamp(amount, 0f, Mathf.Max(0f, healthBefore))); // never more than the enemy had, never negative (enemy already dead this frame)
                         CameraShake.Instance?.Add(0.1f);
                     }
                     else if (hit.TryGetComponent(out IDamageable target))

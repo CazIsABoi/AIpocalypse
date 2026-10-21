@@ -59,14 +59,13 @@ public class PlayerHealth : MonoBehaviour
         float fraction = amount / stats.MaxHealth;      // 0.1 = this hit took 10% of max HP
         float shake = Mathf.Lerp(minShake, maxShake, fraction * k);
         CameraShake.Instance?.Add(shake);
-        if (IsDead) { Died?.Invoke(); AudioManager.Instance.Play(Sfx.PlayerDeath); CameraShake.Instance?.Add(0.8f); }
-        AudioManager.Instance.Play(Sfx.PlayerHurt);
+        if (!IsDead) AudioManager.Instance?.Play(Sfx.PlayerHurt);   // death sound is played in Die()
         Damaged?.Invoke(amount);
     }
 
     public void Heal(float amount)
     {
-        if (IsDead) return;
+        if (IsDead || amount <= 0f) return;   // a heal must never be able to hurt
         SetHealth(Health + amount);
     }
 
@@ -89,11 +88,22 @@ public class PlayerHealth : MonoBehaviour
             SetHealth(Health);             // max went down: just re-clamp to the new max
     }
 
+    // Every health change goes through here, so death is checked HERE:
+    // whatever drops HP to 0 (damage, a bad heal, a max-HP change) always fires Died exactly once.
     void SetHealth(float value)
     {
+        bool wasDead = IsDead;
         Health = Mathf.Clamp(value, 0f, stats.MaxHealth);
         HealthChanged?.Invoke(Health, stats.MaxHealth);
         UpdateBar(Health, stats.MaxHealth);
+        if (!wasDead && IsDead) Die();
+    }
+
+    void Die()
+    {
+        Died?.Invoke();
+        AudioManager.Instance?.Play(Sfx.PlayerDeath);
+        CameraShake.Instance?.Add(0.8f);
     }
 
     void UpdateBar(float current, float max)

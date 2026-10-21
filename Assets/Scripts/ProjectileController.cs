@@ -44,7 +44,7 @@ public class ProjectileController : MonoBehaviour
                             healthBefore = enemy.Health;
                             amount = enemy.TakeDamage(Damage, CritChance, CritDamage);   // enemies: with crits
                             amount = amount * Lifesteal; // Lifesteal: heal for a percentage of the damage dealt
-                            Owner?.Heal(Mathf.Min(amount, healthBefore)); // Don't heal for more than the enemy's health before the attack
+                            Owner?.Heal(Mathf.Clamp(amount, 0f, Mathf.Max(0f, healthBefore))); // never more than the enemy had, never negative (enemy already dead this frame)
                         }
                         else if (c.TryGetComponent(out IDamageable target))
                         {
