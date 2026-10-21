@@ -15,6 +15,9 @@ public class PlayerStats : MonoBehaviour
     public float CritDamage;    // 2f is 2x damage, a 100% damage increase.
     public float CritChance;    // 0 -> 1 is 0% -> 100% crit chance
 
+    public int BulletAmount;
+    public int BulletPierce;
+
     public float pickupRange = 3;
     public event System.Action<StatType> StatsChanged;
 
@@ -37,7 +40,7 @@ public class PlayerStats : MonoBehaviour
         XpChanged?.Invoke(Xp, XpToNext);
     }
 
-    int XpForLevel(int level) { return 100 + (level - 1) * 25; }
+    int XpForLevel(int level) { return 30 + (level - 1) * 15; }
 
     public void Add(StatType type, float amount)
     {
@@ -60,6 +63,18 @@ public class PlayerStats : MonoBehaviour
                 break;
             case StatType.PickupRadius:
                 pickupRange += amount;
+                break;
+            case StatType.BulletAmount:
+                BulletAmount += (int) amount;
+                break;
+            case StatType.CritDamage:
+                CritDamage += amount;
+                break;
+            case StatType.CritChance:
+                CritChance += amount;
+                break;
+            case StatType.BulletPierce:
+                BulletPierce += (int) amount;
                 break;
             default:
                 Debug.LogError($"Unknown stat type: {type}");

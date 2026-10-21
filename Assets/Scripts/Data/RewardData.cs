@@ -9,4 +9,4 @@ public abstract class RewardData : ScriptableObject
 
     public abstract void Apply(PlayerStats stats);
 }
-public enum StatType { MoveSpeed, MoveSpeedPercent, MaxHealth, Damage, DamagePercent, PickupRadius }
+public enum StatType { MoveSpeed, MoveSpeedPercent, MaxHealth, Damage, DamagePercent, PickupRadius, BulletAmount, CritDamage, CritChance, BulletPierce}

@@ -15,6 +15,6 @@ MonoBehaviour:
   Title: Jailbreak
   Description: +20% damage
   Icon: {fileID: 0}
-  Weight: 3
+  Weight: 4
   Stat: 4
   Amount: 0.2
