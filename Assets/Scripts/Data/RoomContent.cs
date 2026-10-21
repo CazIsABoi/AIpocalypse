@@ -10,6 +10,7 @@ public class RoomContent : ScriptableObject
     public bool walkable;   // e.g. floor hazards: placed on cells, but don't block movement
     public float density = 0.05f;   // props per interior cell (10e)
     public int spacing = 4;
+    [Min(1)] public int footprint = 1;   // cells per side a prop takes up (Center pattern only), odd numbers center best
     public Material mapMaterial;      // minimap color of each prop (empty = normal obstacle color)
     public Material mapRoomMaterial;  // minimap color of the whole room (empty = normal room color)
 

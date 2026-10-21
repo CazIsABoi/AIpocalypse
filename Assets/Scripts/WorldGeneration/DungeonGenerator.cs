@@ -745,7 +745,7 @@ public class DungeonGenerator : MonoBehaviour
         return RoomShape.Rectangle;
     }
 
-    void PlaceProp(RoomData room, RoomContent content, Vector2Int cell)
+    void PlaceProp(RoomData room, RoomContent content, Vector2Int cell, int mapSize = 1)
     {
         GameObject prefab = content.props[Random.Range(0, content.props.Length)];
         Vector3 pos = CellToWorld(RoomOrigin(room), cell.x, cell.y);
@@ -763,7 +763,8 @@ public class DungeonGenerator : MonoBehaviour
             prop.transform.localScale *= Random.Range(0.85f, 1.15f);
         Vector2Int offset = RoomOffset(room);
         Material mapMat = content.mapMaterial != null ? content.mapMaterial : mapObstacleMaterial;
-        Renderer mapIcon = CreateMapQuad(room.slot, offset.x + cell.x, offset.y + cell.y, 1, 1, mapMat, room.root, obstacleMapOffset);
+        int half = mapSize / 2;   // a 3x3 icon starts one cell before the centre cell
+        Renderer mapIcon = CreateMapQuad(room.slot, offset.x + cell.x - half, offset.y + cell.y - half, mapSize, mapSize, mapMat, room.root, obstacleMapOffset);
 
         // Chests recolor their map icon and room when looted, so tell them which quads are theirs
         if (prop.TryGetComponent(out Chest chest))
@@ -812,8 +813,42 @@ public class DungeonGenerator : MonoBehaviour
     {
         Vector2Int cell = new Vector2Int(room.width / 2, room.height / 2);
 
-        if (!TryClaimCell(room, content, blocked, solid, cell)) return;  
+        if (content.footprint > 1)
+        {
+            if (TryClaimFootprint(room, blocked, solid, cell, content.footprint))
+            {
+                PlaceProp(room, content, cell, content.footprint);
+                return;
+            }
+            Debug.LogWarning($"Room {room.slot}: no room for a {content.footprint}x{content.footprint} prop, claiming 1 cell");
+        }
+
+        if (!TryClaimCell(room, content, blocked, solid, cell)) return;
         PlaceProp(room, content, cell);
+    }
+
+    // Claims a size x size square centred on 'center'. Door lanes may be overlapped (in small rooms the
+    // centre touches them), walls/shape cells may not, and the room must stay connected.
+    bool TryClaimFootprint(RoomData room, HashSet<Vector2Int> blocked, HashSet<Vector2Int> solid, Vector2Int center, int size)
+    {
+        var cells = new List<Vector2Int>();
+        int start = -(size / 2);
+        for (int dx = start; dx < start + size; dx++)
+            for (int dy = start; dy < start + size; dy++)
+                cells.Add(center + new Vector2Int(dx, dy));
+
+        foreach (Vector2Int c in cells)
+            if (solid.Contains(c)) return false;
+
+        foreach (Vector2Int c in cells) solid.Add(c);
+        if (!IsConnected(room, solid))
+        {
+            foreach (Vector2Int c in cells) solid.Remove(c);   // it sealed something off, so undo
+            return false;
+        }
+
+        foreach (Vector2Int c in cells) blocked.Add(c);
+        return true;
     }
     void PlaceRows(RoomData room, RoomContent content, HashSet<Vector2Int> blocked, HashSet<Vector2Int> solid)
     {

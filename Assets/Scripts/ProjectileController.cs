@@ -34,11 +34,15 @@ public class ProjectileController : MonoBehaviour
             {
                 if (BulletPierce > 0)
                 {
-                    if (c.gameObject.GetComponent<EnemyController>())
+                    if (c.TryGetComponent(out EnemyController enemy))
                     {
                         hitSomething = true;
-                        c.gameObject.GetComponent<EnemyController>().TakeDamage(Damage, CritChance, CritDamage);
-                        
+                        enemy.TakeDamage(Damage, CritChance, CritDamage);   // enemies: with crits
+                    }
+                    else if (c.TryGetComponent(out IDamageable target))
+                    {
+                        hitSomething = true;
+                        target.TakeDamage(Damage);                          // anything else hittable, e.g. the core
                     }
                 }
                 else Destroy(gameObject);

@@ -135,8 +135,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1651cbc2d58ac6f44a45405a62155a2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  offTime: 2
-  warnTime: 0.75
+  offTime: 3
+  warnTime: 1
   onTime: 1
   playerDamage: 10
   enemyDamage: 15
