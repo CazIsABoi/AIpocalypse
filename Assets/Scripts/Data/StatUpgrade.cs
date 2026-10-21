@@ -11,6 +11,6 @@ public class StatUpgrade : RewardData
     {
         float before = stats.Get(Stat);
         float after = stats.Preview(Stat, Amount);
-        return $"{before:0.#} -> {after:0.#}";
+        return $"{StatNames.Format(Stat, before)} -> {StatNames.Format(Stat, after)}";
     }
 }

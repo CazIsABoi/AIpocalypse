@@ -14,6 +14,7 @@ public class PlayerStats : MonoBehaviour
 
     public float CritDamage;    // 2f is 2x damage, a 100% damage increase.
     public float CritChance;    // 0 -> 1 is 0% -> 100% crit chance
+    public float CritHitDamage => Damage * CritDamage;
 
     public float pickupRange = 3;
     public event System.Action<StatType> StatsChanged;
@@ -50,7 +51,7 @@ public class PlayerStats : MonoBehaviour
                 speedPercent += amount;
                 break;
             case StatType.MaxHealth:
-                MaxHealth += amount;
+                MaxHealth = Mathf.Max(1f, MaxHealth + amount);
                 break;
             case StatType.Damage:
                 flatDamage += amount;
@@ -91,7 +92,7 @@ public class PlayerStats : MonoBehaviour
             case StatType.PickupRadius:
                 return pickupRange;
             case StatType.CritDamage:
-                return CalcCritDamage(Damage, CritDamage);
+                return CritDamage;
             case StatType.CritChance:
                 return CritChance;
             default:
@@ -117,7 +118,7 @@ public class PlayerStats : MonoBehaviour
             case StatType.PickupRadius:
                 return pickupRange + amount;
             case StatType.CritDamage:
-                return CalcCritDamage(Damage, CritDamage + amount);
+                return CritDamage + amount;
             case StatType.CritChance:
                 return CritChance + amount;
             default:
@@ -127,5 +128,4 @@ public class PlayerStats : MonoBehaviour
     }
     float CalcDamage(float flat, float percent) => (baseDamage + flat) * (1f + percent);
     float CalcSpeed(float flat, float percent) => (BaseSpeed + flat) * (1f + percent);
-    float CalcCritDamage(float damage, float critMultiplier) => damage * critMultiplier;
 }

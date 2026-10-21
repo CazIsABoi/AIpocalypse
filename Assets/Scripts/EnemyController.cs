@@ -119,7 +119,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     if (offset.sqrMagnitude <= AttackRange * AttackRange) // If the player is still in range, apply damage
                     {
                         playerHealth.TakeDamage(Damage);
-                        Debug.Log($"Player hit for {Damage}");
+                        // Debug.Log($"Player hit for {Damage}");
                     }
 
                     agent.speed = Speed;
@@ -142,7 +142,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     IsAttacking = true;
                     AttackCD = 1.5f;
                     AttackWindow = 0.5f;
-                    Debug.Log("attacked");
+                    // Debug.Log("attacked");
                 }
             }
             if (!IsAttacking)
@@ -165,12 +165,12 @@ public class EnemyController : MonoBehaviour, IDamageable
 
                 if (AttackWindow <= 0)
                 {
-                    Debug.Log("Attack Finished");
+                    // Debug.Log("Attack Finished");
                     Vector3 offset = PlayerTarget.transform.position - transform.position;
                     if (offset.sqrMagnitude <= AttackRange * AttackRange) // If the player is still in range, apply damage
                     {
                         playerHealth.TakeDamage(Damage);
-                        Debug.Log($"Player hit for {Damage}");
+                        // Debug.Log($"Player hit for {Damage}");
                     }
 
                     agent.speed = Speed;
@@ -192,7 +192,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     IsAttacking = true;
                     AttackCD = 2f;
                     AttackWindow = 1.2f;
-                    Debug.Log("attacked");
+                    // Debug.Log("attacked");
                 }
             }
             if (!IsAttacking)
@@ -221,12 +221,12 @@ public class EnemyController : MonoBehaviour, IDamageable
 
                 if (AttackWindow <= 0)
                 {
-                    Debug.Log("Attack Finished");
+                    // Debug.Log("Attack Finished");
                     Vector3 offset = PlayerTarget.transform.position - transform.position;
                     if (offset.sqrMagnitude <= (AttackRange/3f) * (AttackRange/3f)) // If the player is still in range, apply damage
                     {
                         playerHealth.TakeDamage(Damage);
-                        Debug.Log($"Player hit for {Damage}");
+                        // Debug.Log($"Player hit for {Damage}");
                     }
 
                     Destroy(gameObject);
@@ -265,12 +265,12 @@ public class EnemyController : MonoBehaviour, IDamageable
 
                 if (AttackWindow <= 0)
                 {
-                    Debug.Log("Attack Finished");
+                    // Debug.Log("Attack Finished");
                     Vector3 offset = PlayerTarget.transform.position - transform.position;
                     if (offset.sqrMagnitude <= AttackRange * AttackRange) // If the player is still in range, apply damage
                     {
                         playerHealth.TakeDamage(Damage);
-                        Debug.Log($"Player hit for {Damage}");
+                        // Debug.Log($"Player hit for {Damage}");
                     }
 
                     agent.speed = Speed;
@@ -293,7 +293,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     IsAttacking = true;
                     AttackCD = 9f;
                     AttackWindow = 6f;
-                    Debug.Log("attacked");
+                    // Debug.Log("attacked");
                 }
             }
             if (!IsAttacking)
@@ -320,12 +320,12 @@ public class EnemyController : MonoBehaviour, IDamageable
 
                 if (AttackWindow <= 0)
                 {
-                    Debug.Log("Attack Finished");
+                    // Debug.Log("Attack Finished");
                     Vector3 offset = PlayerTarget.transform.position - transform.position;
                     if (offset.sqrMagnitude <= AttackRange * AttackRange) // If the player is still in range, apply damage
                     {
                         playerHealth.TakeDamage(Damage);
-                        Debug.Log($"Player hit for {Damage}");
+                        // Debug.Log($"Player hit for {Damage}");
                     }
 
                     agent.speed = Speed;

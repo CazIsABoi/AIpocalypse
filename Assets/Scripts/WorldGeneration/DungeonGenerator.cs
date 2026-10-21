@@ -147,6 +147,39 @@ public class DungeonGenerator : MonoBehaviour
         return false;
     }
 
+    /// World-space centers of the doors of the room the player is in, plus whether each is north/south.
+    public bool TryGetPlayerRoomDoors(out List<(Vector3 pos, bool northSouth)> doors)
+    {
+        doors = new List<(Vector3, bool)>();
+        if (player == null || !IsReady) return false;
+
+        Vector2Int slot = WorldToSlot(player.position);          
+        if (!rooms.TryGetValue(slot, out RoomData room)) return false;
+
+        // The slot also covers corridor cells, so make sure the player is inside the room's walls
+        Vector2Int origin = RoomOrigin(room);
+        Vector2Int local = WorldToGlobalCell(player.position) - origin;
+        if (local.x < 1 || local.x > room.width - 2 || local.y < 1 || local.y > room.height - 2) return false;
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (!room.doors[i]) continue;
+            int mid = DoorStart(i % 2 == 0 ? room.width : room.height) + doorWidth / 2;   // middle cell of the gap
+            Vector3 pos;
+            bool northSouth;
+            switch (i)
+            {
+                case 0: pos = CellToWorld(origin, mid, room.height - 1); northSouth = true; break;   // N
+                case 1: pos = CellToWorld(origin, room.width - 1, mid); northSouth = false; break;   // E
+                case 2: pos = CellToWorld(origin, mid, 0); northSouth = true; break;                 // S
+                case 3: pos = CellToWorld(origin, 0, mid); northSouth = false; break;                // W
+                default: throw new System.Exception("unreachable");
+            }
+            doors.Add((pos, northSouth));
+        }
+        return true;
+    }
+
     // -------- Generation --------
 
     public IEnumerator GenerateRoutine()

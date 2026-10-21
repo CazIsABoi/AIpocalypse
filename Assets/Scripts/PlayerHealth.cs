@@ -55,7 +55,11 @@ public class PlayerHealth : MonoBehaviour
 
         float gained = stats.MaxHealth - lastMaxHealth;
         lastMaxHealth = stats.MaxHealth;
-        SetHealth(Health + gained);          // heal by the amount max health went up
+
+        if (gained > 0)
+            SetHealth(Health + gained);    // max went up: heal by the same amount 
+        else
+            SetHealth(Health);             // max went down: just re-clamp to the new max
     }
 
     void SetHealth(float value)
