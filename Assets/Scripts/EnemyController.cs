@@ -140,9 +140,10 @@ public class EnemyController : MonoBehaviour, IDamageable
                 if (offset.sqrMagnitude <= AttackRange * AttackRange)
                 {
                     IsAttacking = true;
-                    AttackCD = 1.5f;
-                    AttackWindow = 0.5f;
+                    AttackCD = 9f;
+                    AttackWindow = 6f;
                     Debug.Log("attacked");
+                    GetComponentInChildren<Animator>().SetBool("IsAttacking", true);
                 }
             }
             if (!IsAttacking)
@@ -157,11 +158,22 @@ public class EnemyController : MonoBehaviour, IDamageable
             }
             else if (IsAttacking)
             {
+                float spinSpeed = 1;
+                if (AttackWindow <= 6f && AttackWindow > 4.5f) spinSpeed = Mathf.InverseLerp(6f, 4.5f, AttackWindow);
+                else if (AttackWindow <= 4.5f && AttackWindow > 1.5f) spinSpeed = 1;
+                else spinSpeed = Mathf.InverseLerp(0f, 1.5f, AttackWindow);
+                GetComponentInChildren<Animator>().SetFloat("SpinSpeed", spinSpeed); 
 
                 AttackWindow -= Time.deltaTime;
-                agent.speed = 0;
+                TargetPosition = PlayerTarget.transform.position;
+                if (agent.isActiveAndEnabled)
+                {
+                    agent.isStopped = false;
+                    agent.SetDestination(TargetPosition);
+                }
+                agent.speed = 1.5f;
 
-                if (agent.isActiveAndEnabled) agent.isStopped = true;
+                //if (agent.isActiveAndEnabled) agent.isStopped = true;
 
                 if (AttackWindow <= 0)
                 {
@@ -173,6 +185,8 @@ public class EnemyController : MonoBehaviour, IDamageable
                         Debug.Log($"Player hit for {Damage}");
                     }
 
+                    GetComponentInChildren<Animator>().SetBool("IsAttacking", false);
+                    GetComponentInChildren<Animator>().Play("Walk");
                     agent.speed = Speed;
                     IsAttacking = false;
                 }
@@ -242,6 +256,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                 IsAttacking = true;
                 AttackWindow = 1f;
                 AttackCD = 2f;
+                GetComponentInChildren<Animator>().Play("Hop");
             }
             if (!IsAttacking)
             {
@@ -290,6 +305,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
                 if (offset.sqrMagnitude <= AttackRange * AttackRange)
                 {
+                    GetComponentInChildren<Animator>().SetBool("IsFiring", true);
                     IsAttacking = true;
                     AttackCD = 9f;
                     AttackWindow = 6f;
@@ -328,6 +344,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                         Debug.Log($"Player hit for {Damage}");
                     }
 
+                    GetComponentInChildren<Animator>().SetBool("IsFiring", false);
                     agent.speed = Speed;
                     IsAttacking = false;
                 }
