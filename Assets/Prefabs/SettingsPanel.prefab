@@ -1736,8 +1736,8 @@ MonoBehaviour:
   musicText: {fileID: 3782989555217915999}
   sfxText: {fileID: 1834735135076113982}
   fullscreen: {fileID: 68247738018288280}
-  gunSounds: {fileID: 0}
-  hitSounds: {fileID: 0}
+  gunSounds: {fileID: 17905242544696000}
+  hitSounds: {fileID: 9019308171156745495}
 --- !u!1 &4734928145671738243
 GameObject:
   m_ObjectHideFlags: 0

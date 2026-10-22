@@ -1574,6 +1574,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &341332404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1034513974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48370c3f0a734de3a4a75b3929afb578, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonSounds
+  fallbackClip: {fileID: 8300000, guid: 24acc516bf3d52a4dac9f71f92e20fc2, type: 3}
+  fallbackOutput: {fileID: 6558778034883883272, guid: c3ba3808b322ce6429a20ce361419d7c, type: 2}
+  fallbackVolume: 0.8
 --- !u!1 &345438247
 GameObject:
   m_ObjectHideFlags: 0
@@ -2713,8 +2728,8 @@ MonoBehaviour:
     lastPlayed: 0
   - id: 28
     clips:
-    - {fileID: 8300000, guid: f5f23d2f393057d4a93544013ada7011, type: 3}
-    volume: 1
+    - {fileID: 8300000, guid: 4e900fc374e7f6544bb010fdf0f49b0b, type: 3}
+    volume: 0.8
     pitchVariance: 0
     minInterval: 0
     lastPlayed: 0
@@ -2791,8 +2806,8 @@ MonoBehaviour:
     lastPlayed: 0
   - id: 40
     clips:
-    - {fileID: 8300000, guid: 4e900fc374e7f6544bb010fdf0f49b0b, type: 3}
-    volume: 0.8
+    - {fileID: 8300000, guid: f5f23d2f393057d4a93544013ada7011, type: 3}
+    volume: 1
     pitchVariance: 0
     minInterval: 0
     lastPlayed: 0
@@ -4412,8 +4427,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 8176568060521532356, guid: c3ba3808b322ce6429a20ce361419d7c, type: 2}
-  m_audioClip: {fileID: 8300000, guid: 8a7e7c060344c0d48ae25ea262a443ef, type: 3}
-  m_Resource: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: 8a7e7c060344c0d48ae25ea262a443ef, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.8
   m_Pitch: 1
@@ -6717,7 +6732,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Build
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 47b336a8b13f8d348949d95efd4f7687, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dac967fc606795341953d13f17d68429, type: 2}
   m_sharedMaterial: {fileID: 9123858607660784415, guid: 47b336a8b13f8d348949d95efd4f7687, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -6742,8 +6757,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
-  m_fontSizeBase: 72
+  m_fontSize: 32
+  m_fontSizeBase: 32
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -6784,7 +6799,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1349834418
@@ -8114,6 +8129,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   text: {fileID: 1901676738}
   clock: {fileID: 822126394}
+  timerWarningAt: 60
+  bossWarningAt: 8
 --- !u!114 &1557980443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11273,6 +11290,10 @@ PrefabInstance:
       propertyPath: slider
       value: 
       objectReference: {fileID: 684794307}
+    - target: {fileID: 1653187248909934678, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
+      propertyPath: invulnerableTime
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 3581711298317858232, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
       propertyPath: dungeon
       value: 
@@ -11333,18 +11354,3 @@ SceneRoots:
   - {fileID: 217030490}
   - {fileID: 7492861483733216453}
   - {fileID: 1737038333}
---- !u!114 &341332404
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1034513974}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48370c3f0a734de3a4a75b3929afb578, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ButtonSounds
-  fallbackClip: {fileID: 8300000, guid: 24acc516bf3d52a4dac9f71f92e20fc2, type: 3}
-  fallbackOutput: {fileID: 6558778034883883272, guid: c3ba3808b322ce6429a20ce361419d7c, type: 2}
-  fallbackVolume: 0.8

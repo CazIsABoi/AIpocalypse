@@ -3,6 +3,7 @@ using UnityEngine;
 public class PlayerHealth : MonoBehaviour
 {
     [SerializeField] private float invulnerableTime = 0.3f;   // short protection after a hit
+    private float windowDamage;
     [SerializeField] private float regenDelay = 15f;    // pause after taking damage
     [SerializeField, Range(0f, 1f)] float pausedRegenFactor = 0.2f;   // 20% of normal regen while paused
     [SerializeField] private float minShake = 0.1f;    // camera shake on hit
@@ -55,8 +56,19 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(float amount)
     {
-        if (IsDead || invulnerableTimer > 0f) return;
-        invulnerableTimer = invulnerableTime;
+        if (IsDead) return;
+        if (invulnerableTimer > 0f)
+        {
+            if (amount <= windowDamage) return;     // smaller or equal hit: blocked, as before
+            float extra = amount - windowDamage;    // bigger hit: only the part above what you already took
+            windowDamage = amount;
+            amount = extra;                         // then continue as a normal hit with 'extra'
+        }
+        else
+        {
+            invulnerableTimer = invulnerableTime;   // a fresh window starts
+            windowDamage = amount;
+        }
         regenTimer = regenDelay;
         SetHealth(Health - amount);
         float fraction = amount / stats.MaxHealth;      // 0.1 = this hit took 10% of max HP

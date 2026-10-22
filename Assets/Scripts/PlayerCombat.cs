@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,6 +11,8 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private LayerMask EnemyLayer;
     private PlayerStats stats;
     private PlayerHealth health;
+    [SerializeField, Range(0f, 1f)] private float meleeShootLock = 1f;   // part of the melee cooldown where shooting is blocked
+    private float shootLock;
 
     [SerializeField] private GameObject RiflePivot;
     [SerializeField] private GameObject RifleMuzzle;        // Its shooting Point.
@@ -57,6 +58,7 @@ public class PlayerCombat : MonoBehaviour
         FirearmCooldown = FirearmBaseCooldown / (1f + stats.AttackSpeed);  // Add all multipliers here
         RangedDamage = stats.Damage;         // Add melee damage multipliers here. 5 dmg per bullet by default, 25 dps, melee is 40.
         if (CurrentFirearmCooldown > 0) CurrentFirearmCooldown -= Time.deltaTime;
+        if (shootLock > 0) shootLock -= Time.deltaTime;
 
         BulletAmount = stats.BulletAmount;
         BulletPierce = stats.BulletPierce;
@@ -66,6 +68,8 @@ public class PlayerCombat : MonoBehaviour
             if (CurrentMeleeCooldown <= 0)
             {
                 CurrentMeleeCooldown = MeleeCooldown;
+                shootLock = MeleeCooldown * meleeShootLock;   // no shooting during the swing (it lasts ~one cooldown)
+                CancelInvoke(nameof(ShootGun));                // and stop a burst that was already queued
 
                 RiflePivot.GetComponentInChildren<Animator>().SetFloat("MeleeSpeed", 0.5f / MeleeCooldown);
                 RiflePivot.GetComponentInChildren<Animator>().SetBool("IsSlashing", true);
@@ -84,9 +88,8 @@ public class PlayerCombat : MonoBehaviour
                         healthBefore = enemy.Health;
 
                         hitAny = true;
-                        if (amount > MeleeDamage) crit = true;
-
                         amount = enemy.TakeDamage(MeleeDamage, stats.CritChance, stats.CritDamage);   // enemies: with crits
+                        if (amount > MeleeDamage) crit = true;   // damage dealt above normal = it was a crit
                         amount = amount * stats.Lifesteal; // Lifesteal: heal for a percentage of the damage dealt
                         health.Heal(Mathf.Clamp(amount, 0f, Mathf.Max(0f, healthBefore))); // never more than the enemy had, never negative (enemy already dead this frame)
                         CameraShake.Instance?.Add(0.2f);
@@ -108,7 +111,7 @@ public class PlayerCombat : MonoBehaviour
             RiflePivot.GetComponentInChildren<Animator>().SetBool("IsSlashing", false);
         }
 
-        if (LeftClick.action.IsPressed())
+        if (LeftClick.action.IsPressed() && shootLock <= 0)
         {
             if (CurrentFirearmCooldown <= 0)
             {

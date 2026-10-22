@@ -114,7 +114,7 @@ public class RewardCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         button.interactable = false;
         visual.anchoredPosition = new Vector2(0f, -flyOffset);   // hidden below before the delay
         for (float d = 0; d < delay; d += Time.unscaledDeltaTime) yield return null;
-        AudioManager.Instance?.Play(Sfx.CardFlyIn);
+        AudioManager.Instance?.Play(style.flyInSfx);   // per rarity: Rare+ hint at what's coming
 
         for (float t = 0; t < 1f; t += Time.unscaledDeltaTime / flyTime)
         {
