@@ -8,6 +8,7 @@ public class Core : MonoBehaviour, IDamageable
     [SerializeField] private float perMinute = 0.05f;   
     [SerializeField] private float bulletDamageMultiplier = 0.1f;
     [SerializeField] private GameObject DamagePopup;
+    [SerializeField] private Vector3 popupOffset = new Vector3(2.2f, 2.5f, 0f);   // world offset: +X = screen right in the top-down view
     [SerializeField] private float popupSumWindow = 0.5f;   // hits closer together than this add onto the same number
     private DamagePopup popup;
     private float popupTotal, lastPopupTime;
@@ -41,8 +42,10 @@ public class Core : MonoBehaviour, IDamageable
         }
         else
         {
-            popup = Instantiate(DamagePopup, transform.position, Quaternion.identity).GetComponent<DamagePopup>();
-            popup.TargetPosition = transform.position + new Vector3(0, 1.5f, 0);
+            // beside the core, not inside it: the model hides anything spawned in its middle
+            Vector3 start = transform.position + popupOffset;
+            popup = Instantiate(DamagePopup, start, Quaternion.identity).GetComponent<DamagePopup>();
+            popup.TargetPosition = start + Vector3.up * 1f;
             popupTotal = amount;
         }
         popup.PopupDisplayContent = Mathf.CeilToInt(popupTotal).ToString();

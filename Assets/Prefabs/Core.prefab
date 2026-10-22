@@ -320,7 +320,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 6, y: 1, z: 6}
+  m_LocalScale: {x: 5, y: 1, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6760402780289462204}
@@ -562,6 +562,7 @@ GameObject:
   - component: {fileID: 5771509180520778293}
   - component: {fileID: 1105176511813251269}
   - component: {fileID: 2443591031242772392}
+  - component: {fileID: 7900748274156152609}
   m_Layer: 8
   m_Name: Core
   m_TagString: Untagged
@@ -686,3 +687,24 @@ MonoBehaviour:
   bulletDamageMultiplier: 0.1
   DamagePopup: {fileID: 3937980857255322814, guid: 0e3792d5caef44f4494d3b453acbd366, type: 3}
   popupSumWindow: 0.5
+--- !u!65 &7900748274156152609
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8981241667407147279}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 6.5371304, y: 3.1682785, z: 6.4378166}
+  m_Center: {x: 0, y: 1.6243988, z: 0.100079775}
