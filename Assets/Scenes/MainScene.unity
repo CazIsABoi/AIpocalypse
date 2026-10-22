@@ -881,7 +881,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 157589581}
         m_TargetAssemblyTypeName: QuitButton, Assembly-CSharp
-        m_MethodName: QuitGame
+        m_MethodName: ReturnToMainMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -941,6 +941,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 221fb5ec862673141a5fd450f52738f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  mainMenuSceneName: Menu
 --- !u!224 &170684885
 RectTransform:
   m_ObjectHideFlags: 0
