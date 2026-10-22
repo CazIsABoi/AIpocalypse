@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 672786596584608410}
   - component: {fileID: 4563423237829803555}
   - component: {fileID: 8487848392012308595}
+  - component: {fileID: 230980922110779384}
   m_Layer: 7
   m_Name: Shrine
   m_TagString: Untagged
@@ -113,6 +114,25 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.6, y: 2.1008656, z: 1.6}
   m_Center: {x: 0, y: 1.0504328, z: 0}
+--- !u!114 &230980922110779384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 48537467582771601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a30bfeef0368a542a0a5e9dabe2b7a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  activateRadius: 2
+  activateTime: 1
+  spawnRadius: 4
+  baseWave: 3
+  rewardPool: {fileID: 11400000, guid: fbb8fe16f97a95347ae41eab23a7e331, type: 2}
+  usedMaterial: {fileID: 2100000, guid: 6c6f564aabe61d547ac0a69f0146cfec, type: 2}
+  usedMapIconMaterial: {fileID: 2100000, guid: 21e312b252758cf4c995586d92c687ed, type: 2}
 --- !u!1 &201455131237233054
 GameObject:
   m_ObjectHideFlags: 0

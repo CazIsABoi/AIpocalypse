@@ -4900,6 +4900,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b720725d134e48d78051fb1184af0735, type: 2}
   - {fileID: 11400000, guid: 1c23ebfd8c7d4e829c9d4797cdbe61ea, type: 2}
   - {fileID: 11400000, guid: 1b5ce5f4d6864e9485afac93bdbad30d, type: 2}
+  - {fileID: 11400000, guid: e5df3f04fc0546d4fb4883b01285e9f6, type: 2}
   coreContent: {fileID: 11400000, guid: 95fe484283766f5459447a005c9225f1, type: 2}
   treasureContent: {fileID: 11400000, guid: fec8eab308186bf43954eb2ec1732cbb, type: 2}
   treasureRooms: 2

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
 
+public interface IMapMarked { void SetMapMarkers(Renderer icon, Renderer room); }
 public class DungeonGenerator : MonoBehaviour
 {
     [SerializeField] private InputActionReference devResetKey;
@@ -843,8 +844,8 @@ public class DungeonGenerator : MonoBehaviour
         }
 
         // Chests recolor their map icon and room when looted, so tell them which quads are theirs
-        if (prop.TryGetComponent(out Chest chest))
-            chest.SetMapMarkers(mapIcon, room.mapQuad);
+        if (prop.TryGetComponent(out IMapMarked marked))
+            marked.SetMapMarkers(mapIcon, room.mapQuad);
     }
 
     void PlaceScatter(RoomData room, RoomContent content, HashSet<Vector2Int> blocked, HashSet<Vector2Int> solid)
