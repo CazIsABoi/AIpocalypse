@@ -17,6 +17,7 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private GameObject RiflePivot;
     [SerializeField] private GameObject RifleMuzzle;        // Its shooting Point.
 
+    [SerializeField] private Animator animator;
     public int BulletAmount = 1;
     public int BulletPierce = 1;
     [SerializeField] private GameObject BulletPrefab;
@@ -45,7 +46,7 @@ public class PlayerCombat : MonoBehaviour
     {
         if (Time.timeScale == 0f) return;
         Vector3 direction = CalculateAimingDirection();
-        Quaternion rotation = Quaternion.LookRotation(-direction);
+        Quaternion rotation = Quaternion.LookRotation(direction);
         RiflePivot.transform.rotation = rotation;
 
         //Debug.DrawLine(transform.position, GetMouseWorldPosition(), Color.red);
@@ -67,13 +68,15 @@ public class PlayerCombat : MonoBehaviour
         {
             if (CurrentMeleeCooldown <= 0)
             {
+                animator.SetBool("IsAttacking", true);
                 CurrentMeleeCooldown = MeleeCooldown;
                 shootLock = MeleeCooldown * meleeShootLock;   // no shooting during the swing (it lasts ~one cooldown)
                 CancelInvoke(nameof(ShootGun));                // and stop a burst that was already queued
 
-                RiflePivot.GetComponentInChildren<Animator>().SetFloat("MeleeSpeed", 0.5f / MeleeCooldown);
-                RiflePivot.GetComponentInChildren<Animator>().SetBool("IsSlashing", true);
-                RiflePivot.GetComponentInChildren<Animator>().Play("RifleSlash");
+                animator.GetComponentInChildren<Animator>().SetFloat("SlashSpeedVisual", 0.5f / MeleeCooldown);
+                //RiflePivot.GetComponentInChildren<Animator>().SetFloat("MeleeSpeed", 0.5f / MeleeCooldown);
+                //RiflePivot.GetComponentInChildren<Animator>().SetBool("IsSlashing", true);
+                //RiflePivot.GetComponentInChildren<Animator>().Play("RifleSlash");
 
                 AudioManager.Instance.Play(Sfx.Melee);
 
@@ -108,7 +111,8 @@ public class PlayerCombat : MonoBehaviour
         else if (!RightClick.action.IsPressed())
         {
             if (CurrentMeleeCooldown < 0) CurrentMeleeCooldown = 0;
-            RiflePivot.GetComponentInChildren<Animator>().SetBool("IsSlashing", false);
+            //RiflePivot.GetComponentInChildren<Animator>().SetBool("IsSlashing", false);
+            animator.SetBool("IsAttacking", false);
         }
 
         if (LeftClick.action.IsPressed() && shootLock <= 0)
