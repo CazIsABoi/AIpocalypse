@@ -1752,6 +1752,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 345438247}
   m_CullTransparentMesh: 1
+--- !u!95 &391794164 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 6770411190671845255, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
+  m_PrefabInstance: {fileID: 7492861483733216453}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &406758676
 GameObject:
   m_ObjectHideFlags: 0
@@ -11443,6 +11448,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 525811876905921567, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
+      propertyPath: m_Name
+      value: PlayerObj
+      objectReference: {fileID: 0}
     - target: {fileID: 1653187248909934678, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
       propertyPath: slider
       value: 
@@ -11499,11 +11508,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5970814220684614354, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 391794164}
     - target: {fileID: 7221705215083545504, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
       propertyPath: lifestealCap
       value: 0.15
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2192865162061205946, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
