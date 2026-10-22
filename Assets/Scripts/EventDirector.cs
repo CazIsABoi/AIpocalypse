@@ -22,6 +22,7 @@ public class EventDirector : MonoBehaviour
     public float NextEventIn { get; private set; }     
     public float EventTimeLeft { get; private set; }   
     public GameEvent Current => current;
+    public bool Paused { get; private set; }
 
     private void Awake()
     {
@@ -39,7 +40,7 @@ public class EventDirector : MonoBehaviour
     {
         current = e;
         e.Begin(ctx);
-        if (!e.Started)   // e.g. no spot for the bounty: no alarm, no HUD title, just clean up
+        if (!e.Started) 
         {
             e.End(ctx);
             Destroy(e);
@@ -98,6 +99,7 @@ public class EventDirector : MonoBehaviour
 
     public void StartLoop()
     {
+        if (Paused) return;
         if (loop == null) loop = StartCoroutine(DirectorLoop());
         else Debug.LogWarning("EventDirector loop already running.");
     }
@@ -114,5 +116,19 @@ public class EventDirector : MonoBehaviour
             if (choice < 0) return e;
         }
         return events[0];
+    }
+    public void StopEvents()         
+    {
+        Paused = true;
+        StopAllCoroutines();         
+        if (current != null) { current.End(ctx); Destroy(current); current = null; }
+        loop = null;
+        NextEventIn = 0f; EventTimeLeft = 0f;
+    }
+
+    public void ResumeEvents()     
+    {
+        Paused = false;
+        StartLoop();
     }
 }
