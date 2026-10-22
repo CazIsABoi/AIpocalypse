@@ -67,6 +67,7 @@ public class EventDirector : MonoBehaviour
             }
         }
         e.End(ctx);
+        AudioManager.Instance?.Play(Sfx.EventEnd);
         EventTimeLeft = 0f;
         Destroy(e);
         current = null;

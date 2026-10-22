@@ -27,13 +27,14 @@ public class Core : MonoBehaviour, IDamageable
         if (health <= 0)
         {
             destroyed = true;
+            AudioManager.Instance?.Play(Sfx.CoreDestroyed);
             game.NextFloor();
         }
         GameObject spawnedPopup = Instantiate(DamagePopup, transform.position, Quaternion.identity);
         spawnedPopup.GetComponent<DamagePopup>().TargetPosition = transform.position + new Vector3(0, 1.5f, 0);
         spawnedPopup.GetComponent<DamagePopup>().PopupDisplayContent = ((int)amount).ToString();
 
-        AudioManager.Instance.Play(Sfx.CoreHit);
+        if (!destroyed) AudioManager.Instance.Play(Sfx.CoreHit);   // the killing hit plays CoreDestroyed instead
     }
 
     public void TakeBulletDamage(float amount) => TakeDamage(amount * bulletDamageMultiplier);

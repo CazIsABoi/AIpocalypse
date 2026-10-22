@@ -40,6 +40,7 @@ public class Chest : MonoBehaviour
         if (distance < openRange && levelUpUI.ShowChest(chestPool))
         {
             opened = true;
+            AudioManager.Instance?.Play(Sfx.ChestOpen);
             GetComponentInChildren<Renderer>().sharedMaterial = openedMaterial;
 
             if (mapIcon != null && lootedMapIconMaterial != null) mapIcon.sharedMaterial = lootedMapIconMaterial;

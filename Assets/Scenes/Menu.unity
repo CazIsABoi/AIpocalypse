@@ -331,6 +331,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 73405435}
   m_CullTransparentMesh: 1
+--- !u!114 &195350433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1335637750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48370c3f0a734de3a4a75b3929afb578, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonSounds
+  fallbackClip: {fileID: 8300000, guid: 24acc516bf3d52a4dac9f71f92e20fc2, type: 3}
+  fallbackOutput: {fileID: 6558778034883883272, guid: c3ba3808b322ce6429a20ce361419d7c, type: 2}
+  fallbackVolume: 0.8
 --- !u!1 &300198550
 GameObject:
   m_ObjectHideFlags: 0
@@ -1715,6 +1730,7 @@ GameObject:
   - component: {fileID: 1335637751}
   - component: {fileID: 1335637755}
   - component: {fileID: 1335637756}
+  - component: {fileID: 195350433}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -2751,9 +2767,9 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: a8f9f9db7140bdf4d8cf2e5c767f8840, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.4
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0

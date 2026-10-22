@@ -29,6 +29,7 @@ public class FirewallEvent : GameEvent
                 barriers.Add(barrier);
             }
             ctx.Spawner.SpawnMultiplier *= spawnMultiplier;
+            AudioManager.Instance?.Play(Sfx.LockdownBarrier);
         }
         else
         {

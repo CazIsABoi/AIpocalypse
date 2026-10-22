@@ -71,7 +71,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         if (died) {
             GameObject spawnedXp = Instantiate(xpPrefab, transform.position, Quaternion.identity, transform.parent);
             spawnedXp.GetComponent<XpOrb>().Amount = Xp;
-            AudioManager.Instance.PlayAt(Sfx.EnemyDeath, transform.position);
+            AudioManager.Instance.PlayAt(AiType == 2 ? Sfx.DroneDeath : Sfx.EnemyDeath, transform.position);
             handler?.RegisterKill();
             Destroy(gameObject); return;  
             } // Enemy died, destroy the gameobject and exit the update loop.
@@ -106,6 +106,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     IsAttacking = true;
                     AttackCD = 1.5f;
                     AttackWindow = 0.5f;
+                    AudioManager.Instance?.PlayAt(Sfx.EnemyAttack, transform.position);
                     DamageWindow = 0.5f;
                     // Debug.Log("attacked");
                 }
@@ -165,6 +166,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     AttackCD = 9f;
                     AttackWindow = 6f;
                     DamageWindow = 0.7f;
+                    AudioManager.Instance?.PlayAt(Sfx.EnemyAttack, transform.position);
                     Debug.Log("attacked");
                     GetComponentInChildren<Animator>().SetBool("IsAttacking", true);
                 }
@@ -242,6 +244,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     IsAttacking = true;
                     AttackCD = 2f;
                     AttackWindow = 1.2f;
+                    AudioManager.Instance?.PlayAt(Sfx.EnemyAttack, transform.position);
                     DamageWindow = 1.2f;
                     Debug.Log("attacked");
                 }
@@ -364,6 +367,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     AttackCD = 9f;
                     AttackWindow = 6f;
                     DamageWindow = 0f;
+                    AudioManager.Instance?.PlayAt(Sfx.EnemyAttack, transform.position);
                     Debug.Log("attacked");
                     
                 }
@@ -458,6 +462,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         flash?.Flash();
 
         AudioManager.Instance.PlayAt(Sfx.EnemyHit, transform.position);
+        if (IsCrit) AudioManager.Instance?.PlayAt(Sfx.CritHit, transform.position);   // extra punch layered on crits
         return Amount;
     }
 

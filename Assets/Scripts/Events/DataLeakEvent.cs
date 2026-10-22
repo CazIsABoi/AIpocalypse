@@ -16,6 +16,7 @@ public class DataLeakEvent : GameEvent
     public override void Begin(EventContext ctx)
     {
         timer = 0f;
+        AudioManager.Instance?.Play(Sfx.DataLeak);
     }
 
     public override void Tick(EventContext ctx)

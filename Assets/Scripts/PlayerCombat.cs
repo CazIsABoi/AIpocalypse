@@ -95,7 +95,11 @@ public class PlayerCombat : MonoBehaviour
                     else if (hit.TryGetComponent(out IDamageable target))
                         { target.TakeDamage(MeleeDamage); CameraShake.Instance?.Add(0.1f); }                                    // anything else hittable, e.g. the core
                 }
-                if (hitAny) Hitstop.Instance?.Stop(crit ? 0.06f : 0.03f);
+                if (hitAny)
+                {
+                    Hitstop.Instance?.Stop(crit ? 0.06f : 0.03f);
+                    AudioManager.Instance?.Play(Sfx.MeleeHit);   // the swing connected (the swing itself is Sfx.Melee)
+                }
             }
         }
         else if (!RightClick.action.IsPressed())

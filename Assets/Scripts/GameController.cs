@@ -76,6 +76,7 @@ public class GameController : MonoBehaviour
         dungeon.SetFloor(Floor);
         dungeon.Regenerate();
         yield return new WaitUntil(() => dungeon.IsReady);     // wait for generation to finish
+        AudioManager.Instance?.Play(Sfx.FloorComplete);                // new floor is ready, plays as the screen fades back in
 
         // fade alpha 1 → 0 the same way
         while (fade.alpha > 0f)

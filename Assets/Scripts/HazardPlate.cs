@@ -18,6 +18,7 @@ public class HazardPlate : MonoBehaviour
     [SerializeField] private Material offMaterial, warnMaterial, onMaterial;
 
     private float timer;
+    private int phase = -1;   // 0 off, 1 warn, 2 on: sounds only play when it CHANGES
     private PlayerHealth player;
     private readonly HashSet<IDamageable> hitThisPhase = new HashSet<IDamageable>();
 
@@ -39,6 +40,14 @@ public class HazardPlate : MonoBehaviour
         if (timer >= Cycle) timer -= Cycle;
 
         // 2. which phase?
+        int newPhase = timer < offTime ? 0 : timer < offTime + warnTime ? 1 : 2;
+        if (newPhase != phase)
+        {
+            if (newPhase == 1) AudioManager.Instance?.PlayAt(Sfx.HazardWarn, transform.position);
+            else if (newPhase == 2) AudioManager.Instance?.PlayAt(Sfx.HazardZap, transform.position);
+            phase = newPhase;
+        }
+
         if (timer < offTime)
         {
             model.sharedMaterial = offMaterial;

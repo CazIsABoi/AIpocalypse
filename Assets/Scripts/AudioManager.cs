@@ -61,6 +61,8 @@ public enum Sfx
     CardFlip,         // card starts flipping over                                → needs a sound
     CardFlyIn,        // each card sliding up into place (plays 3x, keep it short) → needs a sound
     CardReveal,       // front shows (Common/Uncommon/Rare; Epic+ use RareCardReveal) → needs a sound
+    DroneDeath,       // drone explodes (instead of EnemyDeath)
+    LegendaryReveal,  // the long reveal for Legendary cards (Epic keeps RareCardReveal)
 }
 
 [AutoStaticsCleanup]
@@ -90,7 +92,7 @@ partial class AudioManager : MonoBehaviour
 
     bool Muted(Sfx id) =>
 (!GameSettings.GunSounds && id == Sfx.Shoot) ||
-(!GameSettings.HitSounds && (id == Sfx.EnemyHit || id == Sfx.CritHit || id == Sfx.EnemyDeath));
+(!GameSettings.HitSounds && (id == Sfx.EnemyHit || id == Sfx.CritHit || id == Sfx.EnemyDeath || id == Sfx.DroneDeath));
 
     void Awake() 
     { 

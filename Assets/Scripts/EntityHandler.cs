@@ -139,6 +139,7 @@ public class EntityHandler : MonoBehaviour
         enemy.MaxHealth = enemies[index].BaseHealth * HealthMultiplier();
         enemy.Xp = enemies[index].XpValue;
         enemy.Damage = enemies[index].BaseDamage * DamageMultiplier();
+        AudioManager.Instance?.PlayAt(Sfx.EnemySpawn, pos);   // 3D + long min interval in the AudioManager, so waves don't spam
         return enemy;
     }
     public void SpawnSoon() 

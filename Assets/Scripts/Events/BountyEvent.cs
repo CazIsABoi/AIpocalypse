@@ -41,7 +41,7 @@ public class BountyEvent : GameEvent
         }
         HighlightMapIcon();
         timeLeft = timeLimit;
-        AudioManager.Instance?.PlayAt(Sfx.BountySpawn, spawnPos);
+        AudioManager.Instance?.Play(Sfx.BountySpawn);   // 2D: the bounty spawns in another room, a 3D sound there would be too far away to hear
     }
 
     // Recolour the enemy's own minimap icon, make it bigger and lift it above the fog

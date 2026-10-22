@@ -9,6 +9,8 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private float maxShake = 0.5f;    // camera shake on hit
     [SerializeField] private float k = 2f;            // sensitivity of shake to damage
     private float regenTimer;
+    [SerializeField, Range(0f, 1f)] private float lowHealthFraction = 0.25f;   // LowHealth beep below this
+    private bool lowWarned;
 
     [SerializeField] private UnityEngine.UI.Slider slider;
     private PlayerStats stats;
@@ -102,6 +104,14 @@ public class PlayerHealth : MonoBehaviour
         HealthChanged?.Invoke(Health, stats.MaxHealth);
         UpdateBar(Health, stats.MaxHealth);
         if (!wasDead && IsDead) Die();
+
+        // Low-health warning: once when dropping below the line, re-armed after healing a bit above it
+        if (!IsDead && !lowWarned && Health <= stats.MaxHealth * lowHealthFraction)
+        {
+            lowWarned = true;
+            AudioManager.Instance?.Play(Sfx.LowHealth);
+        }
+        else if (Health > stats.MaxHealth * (lowHealthFraction + 0.1f)) lowWarned = false;
     }
 
     void Die()

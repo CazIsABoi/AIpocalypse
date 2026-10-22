@@ -21,6 +21,7 @@ public class HealPopups : MonoBehaviour
             Vector3 spawnPos = transform.position + Vector3.up * 1.5f;   // spawn above the player
             DamagePopup popup = Instantiate(popupPrefab, spawnPos, Quaternion.identity);
             popup.PopupDisplayContent = "+" + pending.ToString("0");
+            AudioManager.Instance?.Play(Sfx.Heal);   // once per summed popup, not per tiny heal
             popup.TargetPosition = transform.position + Vector3.up * 2.5f;    
             pending = 0;
             timer = interval;
