@@ -6,6 +6,8 @@ public static class GameSettings
     public static float Music { get => PlayerPrefs.GetFloat("vol_music", 1f); set => PlayerPrefs.SetFloat("vol_music", value); }
     public static float Sfx { get => PlayerPrefs.GetFloat("vol_sfx", 1f); set => PlayerPrefs.SetFloat("vol_sfx", value); }
     public static int Fullscreen { get => PlayerPrefs.GetInt("fullscreen", 1); set => PlayerPrefs.SetInt("fullscreen", value); }
+    public static bool GunSounds { get => PlayerPrefs.GetInt("snd_gun", 1) == 1; set => PlayerPrefs.SetInt("snd_gun", value ? 1 : 0); }
+    public static bool HitSounds { get => PlayerPrefs.GetInt("snd_hit", 1) == 1; set => PlayerPrefs.SetInt("snd_hit", value ? 1 : 0); }
 
     public static void ApplyAudio(UnityEngine.Audio.AudioMixer mixer)
     {

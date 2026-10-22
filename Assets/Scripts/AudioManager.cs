@@ -88,6 +88,10 @@ partial class AudioManager : MonoBehaviour
     private AudioSource[] pool;
     private int next;
 
+    bool Muted(Sfx id) =>
+(!GameSettings.GunSounds && id == Sfx.Shoot) ||
+(!GameSettings.HitSounds && (id == Sfx.EnemyHit || id == Sfx.CritHit || id == Sfx.EnemyDeath));
+
     void Awake() 
     { 
         Instance = this; 
@@ -124,6 +128,7 @@ partial class AudioManager : MonoBehaviour
     bool TryGetClip(Sfx id, out Entry entry, out AudioClip clip)
     {
         entry = null; clip = null;
+        if (Muted(id)) return false;
         foreach (var e in sounds)
         {
             if (e.id != id) continue;

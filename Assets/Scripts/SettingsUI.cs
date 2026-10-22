@@ -1,17 +1,21 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SettingsUI : MonoBehaviour
 {
     [SerializeField] private UnityEngine.Audio.AudioMixer mixer;
-    [SerializeField] private UnityEngine.UI.Slider master, music, sfx;
+    [SerializeField] private Slider master, music, sfx;
     [SerializeField] private TMPro.TextMeshProUGUI masterText, musicText, sfxText;
-    [SerializeField] private UnityEngine.UI.Toggle fullscreen;
+    [SerializeField] private Toggle fullscreen;
+    [SerializeField] private Toggle gunSounds, hitSounds;
 
     void OnEnable()
     {
         master.SetValueWithoutNotify(GameSettings.Master);
         music.SetValueWithoutNotify(GameSettings.Music);
         sfx.SetValueWithoutNotify(GameSettings.Sfx);
+        gunSounds.SetIsOnWithoutNotify(GameSettings.GunSounds);
+        hitSounds.SetIsOnWithoutNotify(GameSettings.HitSounds);
         fullscreen.SetIsOnWithoutNotify(GameSettings.Fullscreen != 0);
 
         UpdateText(master, masterText);
@@ -25,8 +29,10 @@ public class SettingsUI : MonoBehaviour
     public void OnSfx(float v) { GameSettings.Sfx = v; GameSettings.ApplyAudio(mixer); UpdateText(sfx, sfxText); }
     public void OnFullscreen(bool on) { GameSettings.Fullscreen = on ? 1 : 0; Screen.fullScreen = on; }
     public void GoToMainMenu() { GamePause.Clear(); UnityEngine.SceneManagement.SceneManager.LoadScene("Menu"); }
+    public void OnGunSounds(bool on) => GameSettings.GunSounds = on;
+    public void OnHitSounds(bool on) => GameSettings.HitSounds = on;
 
-    private void UpdateText(UnityEngine.UI.Slider slider, TMPro.TextMeshProUGUI text)
+    private void UpdateText(Slider slider, TMPro.TextMeshProUGUI text)
     {
         text.text = $"{slider.value * 100:0.0}%";  
     }

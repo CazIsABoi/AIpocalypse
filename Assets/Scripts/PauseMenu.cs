@@ -28,6 +28,7 @@ public class PauseMenu : MonoBehaviour
     {
         isOpen = false;
         pauseMenuUI.SetActive(false);
+        PlayerPrefs.Save();
         GamePause.Remove(PauseReason.PauseMenu);
     }
 }
