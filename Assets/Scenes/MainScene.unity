@@ -2627,6 +2627,146 @@ MonoBehaviour:
     pitchVariance: 0.05
     minInterval: 0
     lastPlayed: 0
+  - id: 34
+    clips:
+    - {fileID: 8300000, guid: 4ea0471e8cbc159479fcc5b336f24d97, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
+  - id: 33
+    clips:
+    - {fileID: 8300000, guid: cf422be52ab9a4e4c8674e416f2c5e52, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
+  - id: 32
+    clips:
+    - {fileID: 8300000, guid: ab5d6db9c0579b74f80120a1d342d41b, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
+  - id: 23
+    clips:
+    - {fileID: 8300000, guid: 7b3c2e35f692e1f4280944ef03210a31, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
+  - id: 33
+    clips:
+    - {fileID: 8300000, guid: 855f17bc16cab2043837986682b87e22, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
+  - id: 29
+    clips:
+    - {fileID: 8300000, guid: 24acc516bf3d52a4dac9f71f92e20fc2, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
+  - id: 18
+    clips:
+    - {fileID: 8300000, guid: 0bc5d7372e04b4c4da5a27dfc7a8ea93, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
+  - id: 16
+    clips:
+    - {fileID: 8300000, guid: 9f8771a3d06b62642b1695163fdeae8e, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
+  - id: 12
+    clips:
+    - {fileID: 8300000, guid: d66be7f132a419f4989c0cef127abc29, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
+  - id: 14
+    clips:
+    - {fileID: 8300000, guid: a81f6c65d70aa314e9ac7a813aabdd30, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
+  - id: 17
+    clips:
+    - {fileID: 8300000, guid: 55cad02bdbd28eb46b1b208ca9342b65, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
+  - id: 24
+    clips:
+    - {fileID: 8300000, guid: 45faf12c8b4639748b86ebe9947eb73c, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
+  - id: 25
+    clips:
+    - {fileID: 8300000, guid: 4ecfeb7f35618ba4a868c58dcbb565ac, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
+  - id: 6
+    clips:
+    - {fileID: 8300000, guid: 4adb75841c5c7a34a889ee6c46acd46d, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
+  - id: 21
+    clips:
+    - {fileID: 8300000, guid: 379a052d3b5766443ab70ec71a789c6d, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
+  - id: 26
+    clips:
+    - {fileID: 8300000, guid: d1bf9995aa5b92c469a882a9fd4e68a4, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
+  - id: 11
+    clips:
+    - {fileID: 8300000, guid: 6e0dc96927ed07340891bd60ab9bd1c9, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
+  - id: 35
+    clips:
+    - {fileID: 8300000, guid: bcf09aed8960d3a439e3cdd0703da064, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
+  - id: 31
+    clips:
+    - {fileID: 8300000, guid: d84684898be932743acadfe86e2f681b, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
+  - id: 19
+    clips:
+    - {fileID: 8300000, guid: bd501f1365059ff46a19161882627654, type: 3}
+    volume: 0.5
+    pitchVariance: 0.05
+    minInterval: 0
+    lastPlayed: 0
   source3DPrefab: {fileID: 8424717392449550635, guid: ff9052e25d191a746b97dd6a1d345c42, type: 3}
   poolSize: 16
 --- !u!1 &557964201
