@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4a43f53720f8737468d4afd219df44c2, type: 3}
-  m_Name: bullets_TripleDDR5
+  m_Name: EMP
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
-  Title: Triple DDR5 Sticks
-  Description: 'Geez, that''s expensive. +2 bullets'
+  Title: EMP
+  Description: +3 Damage
   Icon: {fileID: 0}
   Weight: 1
   Rarity: 5
-  Stat: 6
-  Amount: 2
+  Stat: 3
+  Amount: 3
