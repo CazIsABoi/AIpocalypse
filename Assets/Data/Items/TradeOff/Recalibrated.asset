@@ -12,13 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b8a96897131b26439ead35d33a1c549, type: 3}
   m_Name: Recalibrated
   m_EditorClassIdentifier: Assembly-CSharp::TradeOffUpgrade
-  Title: Zero-Day Exploit
-  Description: +80% crit damage, -5% crit chance
+  Title: Recalibrated
+  Description: +4 Bullets, -1 Bullet Pierce, -60% Damage
   Icon: {fileID: 0}
-  Weight: 4
-  Rarity: 3
+  Weight: 2
+  Rarity: 4
   Changes:
-  - Stat: 7
-    Amount: 0.8
-  - Stat: 8
-    Amount: -0.05
+  - Stat: 4
+    Amount: -0.6
+  - Stat: 6
+    Amount: 4
+  - Stat: 9
+    Amount: -1
