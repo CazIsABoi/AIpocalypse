@@ -149,11 +149,12 @@ public class EnemyController : MonoBehaviour, IDamageable
                 if (offset.sqrMagnitude <= AttackRange * AttackRange)
                 {
                     IsAttacking = true;
-                    AttackCD = 1.5f;
-                    AttackWindow = 0.5f;
+                    AttackCD = 2f;
+                    AttackWindow = 1f;
                     AudioManager.Instance?.PlayAt(Sfx.EnemyAttack, transform.position);
                     DamageWindow = 0.5f;
                     // Debug.Log("attacked");
+                    GetComponentInChildren<Animator>().Play("Stomp");
                 }
             }
             if(!IsAttacking)
