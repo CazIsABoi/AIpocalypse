@@ -34,6 +34,9 @@ public class OverloadDischarge : MonoBehaviour
 
     public float Charge => charge;   // 0..1, e.g. for a HUD warning later
 
+    // Melee hits call this: fighting back in a crowd delays the discharge
+    public void ReduceCharge(float amount) => charge = Mathf.Max(0f, charge - amount);
+
     void Awake()
     {
         health = GetComponent<PlayerHealth>();

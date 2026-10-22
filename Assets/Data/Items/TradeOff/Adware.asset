@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b8a96897131b26439ead35d33a1c549, type: 3}
+  m_Name: Adware
+  m_EditorClassIdentifier: Assembly-CSharp::TradeOffUpgrade
+  Title: Adware
+  Description: +2 pickup range, +20 max HP, -8% damage
+  Icon: {fileID: 0}
+  Weight: 7
+  Rarity: 2
+  Changes:
+  - Stat: 5
+    Amount: 2
+  - Stat: 2
+    Amount: 20
+  - Stat: 4
+    Amount: -0.08

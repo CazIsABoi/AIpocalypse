@@ -59,7 +59,13 @@ public class RewardCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public void Setup(RewardData reward, System.Action<RewardData> onChosen, PlayerStats stats)
     {
         style = raritySettings.Get(reward.GetRarity());
-        title.text = $"{reward.Title}\n<size=60%><alpha=#B3><cspace=0.15em>{reward.GetRarity().ToString().ToUpper()}</cspace>";
+        string tag = reward.GetPath() switch   // which build path this card feeds
+        {
+            RewardPath.Melee => "  <color=#FBC270>MELEE</color>",
+            RewardPath.Gun => "  <color=#7090FF>GUN</color>",
+            _ => ""
+        };
+        title.text = $"{reward.Title}\n<size=60%><alpha=#B3><cspace=0.15em>{reward.GetRarity().ToString().ToUpper()}</cspace><alpha=#FF>{tag}";
         description.text = ColorSigns(reward.Description);
         change.text = reward.GetPreview(stats);
 

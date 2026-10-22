@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a7c1e50a114fb849889a82043f0c6bc, type: 3}
+  m_Name: ShrinePool
+  m_EditorClassIdentifier: Assembly-CSharp::RewardPool
+  Rewards:
+  - {fileID: 11400000, guid: d395adc0286ed764bb76cd48e4db1c95, type: 2}
+  - {fileID: 11400000, guid: 347a822c78ba13041a6a424e427c1b31, type: 2}
+  - {fileID: 11400000, guid: c22cc5d436a14583956c052043d6ae6a, type: 2}
+  - {fileID: 11400000, guid: 499a0cca09f6d7a4ea302be2f035cc8a, type: 2}
+  - {fileID: 11400000, guid: c0615724c72ac004dbeeb6d1798a1ebc, type: 2}
+  - {fileID: 11400000, guid: 032df6bbde3be1942b289c8f9a412c20, type: 2}
+  - {fileID: 11400000, guid: 94966e5c2ede11e4b8c0acc11571a4a2, type: 2}
+  - {fileID: 11400000, guid: 82fb3da6c969b27428458be05d4dfd34, type: 2}
+  - {fileID: 11400000, guid: f8c3596cd86540c0bebd80de11c49fbf, type: 2}
+  - {fileID: 11400000, guid: 6e61abad4c644baeafaf9c2ecef14cd0, type: 2}
+  - {fileID: 11400000, guid: 2efab9073dfe43389d692f3310b153f0, type: 2}
+  - {fileID: 11400000, guid: 7fe062ad24cbc8448b19530c691599f1, type: 2}
+  - {fileID: 11400000, guid: eafb23d2a2344a6abbba1568733ee811, type: 2}
+  - {fileID: 11400000, guid: 8a8060006b39dba41a21712a6f82550b, type: 2}
+  - {fileID: 11400000, guid: ac2e5c14463a4ff3819a4a7900306dc8, type: 2}
+  - {fileID: 11400000, guid: 9369d8b6a9b94bf498d7e5695adbac23, type: 2}
+  - {fileID: 11400000, guid: 438aadb379f742fea2c19ca1d2d6189e, type: 2}
+  - {fileID: 11400000, guid: aea3385948084307965ef70a91b99f49, type: 2}
+  - {fileID: 11400000, guid: 2f87dcdfcd1b41e38de4d1c215f4ebc2, type: 2}
+  - {fileID: 11400000, guid: 08a25b1ccaab48ce9d4046a6a07ef46d, type: 2}
+  - {fileID: 11400000, guid: 43133e60807d418cbd072afcd26720ca, type: 2}
+  - {fileID: 11400000, guid: 4de770d592be4e3bbb2400b9d8e07493, type: 2}
+  sourceText: SHRINE CLEARED

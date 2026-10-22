@@ -61,10 +61,11 @@ public class MindBarrierCore : MonoBehaviour, IDamageable
             Instantiate(ExplodePrefab, CrystalVisibility.transform.position, Quaternion.identity);
             destroyed = true;
         }
+        if (amount <= 0f) return;   // barrier still up: no "0" popup spam
         GameObject spawnedPopup = Instantiate(DamagePopup, transform.position, Quaternion.identity);
         spawnedPopup.GetComponent<DamagePopup>().TargetPosition = transform.position + new Vector3(0, 3.5f, 0);
         spawnedPopup.GetComponent<DamagePopup>().PopupDisplayContent = ((int)amount).ToString();
 
-        AudioManager.Instance.Play(Sfx.CoreHit);
+        AudioManager.Instance?.Play(Sfx.CoreHit);
     }
 }

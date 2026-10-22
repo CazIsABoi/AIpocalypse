@@ -403,7 +403,7 @@ MonoBehaviour:
   regenAmount: 0.01
   AttackSpeed: 0
   Lifesteal: 0
-  lifestealCap: 0.3
+  lifestealCap: 0.15
 --- !u!81 &6569809672249085572
 AudioListener:
   m_ObjectHideFlags: 0

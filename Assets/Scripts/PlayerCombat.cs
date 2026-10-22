@@ -13,6 +13,8 @@ public class PlayerCombat : MonoBehaviour
     private PlayerHealth health;
     [SerializeField, Range(0f, 1f)] private float meleeShootLock = 1f;   // part of the melee cooldown where shooting is blocked
     private float shootLock;
+    [SerializeField, Range(0f, 1f)] private float meleeOverloadDrain = 0.35f;   // how much Overload charge a connecting swing removes
+    private OverloadDischarge overload;
 
     [SerializeField] private GameObject RiflePivot;
     [SerializeField] private GameObject RifleMuzzle;        // Its shooting Point.
@@ -38,6 +40,7 @@ public class PlayerCombat : MonoBehaviour
     {
         stats = GetComponent<PlayerStats>();
         health = GetComponent<PlayerHealth>();
+        overload = GetComponent<OverloadDischarge>();
     }
 
     // Update is called once per frame
@@ -51,12 +54,12 @@ public class PlayerCombat : MonoBehaviour
         //Debug.DrawLine(transform.position, GetMouseWorldPosition(), Color.red);
         Debug.DrawLine(transform.position, transform.position + CalculateAimingDirection() * 1.25f);
         
-        MeleeCooldown = MeleeBaseCooldown / (1f + stats.AttackSpeed);  // Add all multipliers here
-        MeleeDamage = stats.Damage * 4;         // Add melee damage multipliers here
+        MeleeCooldown = MeleeBaseCooldown / Mathf.Max(0.2f, 1f + stats.AttackSpeed + stats.meleeSpeedPercent);   // shared + melee-only speed
+        MeleeDamage = stats.Damage * 4 * stats.MeleeDamageMult;   // melee path: Melee Damage %
         if (CurrentMeleeCooldown > 0) CurrentMeleeCooldown -= Time.deltaTime;
 
         FirearmCooldown = FirearmBaseCooldown / (1f + stats.AttackSpeed);  // Add all multipliers here
-        RangedDamage = stats.Damage;         // Add melee damage multipliers here. 5 dmg per bullet by default, 25 dps, melee is 40.
+        RangedDamage = stats.Damage * stats.GunDamageMult;   // gun path: Gun Damage %         // Add melee damage multipliers here. 5 dmg per bullet by default, 25 dps, melee is 40.
         if (CurrentFirearmCooldown > 0) CurrentFirearmCooldown -= Time.deltaTime;
         if (shootLock > 0) shootLock -= Time.deltaTime;
 
@@ -78,7 +81,7 @@ public class PlayerCombat : MonoBehaviour
                 AudioManager.Instance.Play(Sfx.Melee);
 
                 bool hitAny = false, crit = false;
-                Collider[] hits = Physics.OverlapSphere(transform.position + CalculateAimingDirection() * 1.25f, 1.5f, EnemyLayer);
+                Collider[] hits = Physics.OverlapSphere(transform.position + CalculateAimingDirection() * 1.25f, stats.MeleeRadius, EnemyLayer);   // Melee Range widens the swing
                 foreach (Collider hit in hits)
                 {
                     float amount = 0f;
@@ -91,7 +94,7 @@ public class PlayerCombat : MonoBehaviour
                         amount = enemy.TakeDamage(MeleeDamage, stats.CritChance, stats.CritDamage);   // enemies: with crits
                         if (amount > MeleeDamage) crit = true;   // damage dealt above normal = it was a crit
                         amount = amount * stats.Lifesteal; // Lifesteal: heal for a percentage of the damage dealt
-                        health.Heal(Mathf.Clamp(amount, 0f, Mathf.Max(0f, healthBefore))); // never more than the enemy had, never negative (enemy already dead this frame)
+                        health.HealLifesteal(Mathf.Clamp(amount, 0f, Mathf.Max(0f, healthBefore))); // never more than the enemy had, never negative (enemy already dead this frame)
                         CameraShake.Instance?.Add(0.2f);
 
                     }
@@ -101,6 +104,7 @@ public class PlayerCombat : MonoBehaviour
                 if (hitAny)
                 {
                     Hitstop.Instance?.Stop(crit ? 0.06f : 0.03f);
+                    overload?.ReduceCharge(meleeOverloadDrain);   // swinging into a crowd keeps the robots from discharging
                     AudioManager.Instance?.Play(Sfx.MeleeHit);   // the swing connected (the swing itself is Sfx.Melee)
                 }
             }

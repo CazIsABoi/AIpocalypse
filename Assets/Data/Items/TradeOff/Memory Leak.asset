@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Memory Leak
   m_EditorClassIdentifier: Assembly-CSharp::TradeOffUpgrade
   Title: Memory Leak
-  Description: +1 bullet, -25% attack speed
+  Description: +1 bullet, -35% attack speed
   Icon: {fileID: 0}
   Weight: 4
   Rarity: 3
@@ -21,4 +21,4 @@ MonoBehaviour:
   - Stat: 6
     Amount: 1
   - Stat: 11
-    Amount: -0.25
+    Amount: -0.35

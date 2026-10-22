@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Patch Tuesday
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Patch Tuesday
-  Description: +1% max HP regen per second
+  Description: +0.6% max HP regen per second
   Icon: {fileID: 0}
   Weight: 7
   Rarity: 2
   Stat: 10
-  Amount: 0.01
+  Amount: 0.006

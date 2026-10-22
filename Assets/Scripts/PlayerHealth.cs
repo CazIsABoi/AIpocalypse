@@ -43,6 +43,8 @@ public class PlayerHealth : MonoBehaviour
     void Update() 
     {
         invulnerableTimer = Mathf.Max(0f, invulnerableTimer - Time.deltaTime);
+        // refill the lifesteal budget smoothly, holding at most one second's worth
+        lifestealBudget = Mathf.Min(stats.MaxHealth * lifestealPerSecondCap, lifestealBudget + stats.MaxHealth * lifestealPerSecondCap * Time.deltaTime);
 
         regenTimer = Mathf.Max(0f, regenTimer - Time.deltaTime);
         bool paused = regenTimer > 0f;
@@ -77,6 +79,20 @@ public class PlayerHealth : MonoBehaviour
         if (fraction > 0.2f) Hitstop.Instance?.Stop(0.05f);
         if (!IsDead) AudioManager.Instance?.Play(Sfx.PlayerHurt);   // death sound is played in Die()
         Damaged?.Invoke(amount);
+    }
+
+    // Lifesteal can heal at most this fraction of max HP per second: late-game damage is huge,
+    // so a pure percentage of it out-healed anything enemies could deal
+    [SerializeField, Range(0f, 0.5f)] private float lifestealPerSecondCap = 0.06f;
+    private float lifestealBudget;
+
+    public void HealLifesteal(float amount)
+    {
+        float cap = stats.MaxHealth * lifestealPerSecondCap;
+        float heal = Mathf.Min(amount, lifestealBudget);
+        lifestealBudget -= heal;
+        Heal(heal);
+        if (lifestealBudget > cap) lifestealBudget = cap;
     }
 
     public void Heal(float amount, bool show = true)

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f48cf5d16e685e498a1355c26a6403d, type: 3}
   m_Name: ShrineRoom
   m_EditorClassIdentifier: Assembly-CSharp::RoomContent
-  weight: 2
-  minRoomSize: 11
+  weight: 1
+  minRoomSize: 13
   pattern: 2
   props:
   - {fileID: 48537467582771601, guid: c3d3055f74ea28e439c033e637be4323, type: 3}

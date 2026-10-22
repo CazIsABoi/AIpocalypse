@@ -75,7 +75,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         PlayerTarget = GameObject.Find("Player");
         playerHealth = PlayerTarget.GetComponent<PlayerHealth>();
         SpeedMax = Speed * 3;
-        clock = FindAnyObjectByType<RunClock>();
+        if (AiType == 10) clock = FindAnyObjectByType<RunClock>();   // only the boss needs it (a scene search per spawn adds up)
     }
 
     // Update is called once per frame
@@ -102,6 +102,10 @@ public class EnemyController : MonoBehaviour, IDamageable
         {
             if (died)
             {
+                // the adds aren't children of the EntityHandler, so ClearEnemies() wouldn't remove them
+                foreach (GameObject add in spawnedBossEnemies) if (add != null) Destroy(add);
+                spawnedBossEnemies.Clear();
+
                 clock.RevertBossUIChanges();
                 //player.Teleport(new Vector3(-500f, 2, -13.5f));
 
@@ -459,7 +463,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         }
         else if(AiType == 10)
         {
-            if (clock.Elapsed < 900)
+            if (clock.TimeLeft > 0f)   // the clock's own boss time, not a hardcoded 900
             {
                 SubmergeOriginalPos = transform.position;
                 SubmergeInCountdown = Random.Range(10f, 30f);
@@ -493,6 +497,7 @@ public class EnemyController : MonoBehaviour, IDamageable
             }
             else
             {
+                spawnedBossEnemies.RemoveAll(e => e == null);   // drop dead adds so the cap counts living ones
                 if (spawnedBossEnemies.Count < 80)
                 {
                     if (BossPhase == 0)
@@ -647,9 +652,12 @@ public class EnemyController : MonoBehaviour, IDamageable
         if(IsCrit) Amount *= CritDamage;
         Health -= Amount;
         
-        if (IsCrit) ShowPopup(ref critPopup, ref critTotal, ref lastCritTime, Amount, true);
-        else ShowPopup(ref normalPopup, ref normalTotal, ref lastNormalTime, Amount, false);
-        flash?.Flash();
+        if (Amount > 0f)   // shielded boss: no "0" popups or flash for every bullet
+        {
+            if (IsCrit) ShowPopup(ref critPopup, ref critTotal, ref lastCritTime, Amount, true);
+            else ShowPopup(ref normalPopup, ref normalTotal, ref lastNormalTime, Amount, false);
+            flash?.Flash();
+        }
 
         AudioManager.Instance.PlayAt(Sfx.EnemyHit, transform.position);
         if (IsCrit) AudioManager.Instance?.PlayAt(Sfx.CritHit, transform.position);   // extra punch layered on crits

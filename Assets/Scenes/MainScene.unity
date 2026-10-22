@@ -5470,6 +5470,32 @@ MonoBehaviour:
   - {fileID: 714347659}
   cardRow: {fileID: 1473538464}
   flash: {fileID: 1185541737}
+  tiers:
+  - fromMinute: 0
+    common: 1
+    uncommon: 1
+    rare: 0.6
+    epic: 0.25
+    legendary: 0
+  - fromMinute: 5
+    common: 0.8
+    uncommon: 1
+    rare: 1
+    epic: 0.6
+    legendary: 0.25
+  - fromMinute: 10
+    common: 0.5
+    uncommon: 0.8
+    rare: 1
+    epic: 1
+    legendary: 0.6
+  endlessTier:
+    fromMinute: 0
+    common: 0.25
+    uncommon: 0.5
+    rare: 1
+    epic: 1.5
+    legendary: 1.5
   flyStagger: 0.08
   lingerTime: 0.5
   rowShakeTime: 0.3
@@ -6814,7 +6840,7 @@ MonoBehaviour:
   m_text: Build
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dac967fc606795341953d13f17d68429, type: 2}
-  m_sharedMaterial: {fileID: 9123858607660784415, guid: 47b336a8b13f8d348949d95efd4f7687, type: 2}
+  m_sharedMaterial: {fileID: 7461350438173722967, guid: dac967fc606795341953d13f17d68429, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -6880,7 +6906,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1349834418
@@ -7351,7 +7377,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   text: {fileID: 446008440}
-  buildText: {fileID: 1349834417}
+  buildText: {fileID: 1954920443}
   clock: {fileID: 822126394}
   game: {fileID: 822126392}
   stats: {fileID: 995908159}

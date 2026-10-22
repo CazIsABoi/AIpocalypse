@@ -47,4 +47,16 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ed37c034cae84ffb9458ad59ffda5ac1, type: 2}
   - {fileID: 11400000, guid: 68c0670ec2a44953a032a547b721f0a1, type: 2}
   - {fileID: 11400000, guid: 7b3a7730bf4764c49bea1921b0de41c1, type: 2}
+  - {fileID: 11400000, guid: 9a2779575141434ca7c4adb454dd612e, type: 2}
+  - {fileID: 11400000, guid: 438aadb379f742fea2c19ca1d2d6189e, type: 2}
+  - {fileID: 11400000, guid: aea3385948084307965ef70a91b99f49, type: 2}
+  - {fileID: 11400000, guid: 2f87dcdfcd1b41e38de4d1c215f4ebc2, type: 2}
+  - {fileID: 11400000, guid: 08a25b1ccaab48ce9d4046a6a07ef46d, type: 2}
+  - {fileID: 11400000, guid: 998ded0f009a42b1b683c007a67335bd, type: 2}
+  - {fileID: 11400000, guid: 43133e60807d418cbd072afcd26720ca, type: 2}
+  - {fileID: 11400000, guid: 4de770d592be4e3bbb2400b9d8e07493, type: 2}
+  - {fileID: 11400000, guid: 4cd48c355df14e82858913212d1bc027, type: 2}
+  - {fileID: 11400000, guid: e9f9cb8af58145459d378b965d303732, type: 2}
+  - {fileID: 11400000, guid: 98c92de2f90440719e0fbd4c2aa27378, type: 2}
+  - {fileID: 11400000, guid: 06f43c8d0a0d4d6f8b831b49a78ca27a, type: 2}
   sourceText: Level Up

@@ -130,7 +130,7 @@ MonoBehaviour:
   activateTime: 1
   spawnRadius: 4
   baseWave: 3
-  rewardPool: {fileID: 11400000, guid: fbb8fe16f97a95347ae41eab23a7e331, type: 2}
+  rewardPool: {fileID: 11400000, guid: 4bf7f7e2e51e402b97e20e9a58147084, type: 2}
   usedMaterial: {fileID: 2100000, guid: 6c6f564aabe61d547ac0a69f0146cfec, type: 2}
   usedMapIconMaterial: {fileID: 2100000, guid: 21e312b252758cf4c995586d92c687ed, type: 2}
 --- !u!1 &201455131237233054

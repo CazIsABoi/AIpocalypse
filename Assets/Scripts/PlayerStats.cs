@@ -24,7 +24,19 @@ public class PlayerStats : MonoBehaviour
     public event System.Action<StatType> StatsChanged;
     public float AttackSpeed;
     public float Lifesteal; // fraction of damage dealt that is returned as health (0.01 = 1% of damage dealt)
-    [SerializeField] private float lifestealCap = 0.3f; // cap at 30% lifesteal
+    [SerializeField] private float lifestealCap = 0.15f; // cap at 15% lifesteal
+    [SerializeField] private float regenCap = 0.04f;     // cap at 4% max HP per second
+
+    [Header("Build paths")]
+    public float meleeDamagePercent;     // melee only (0.15 = +15%)
+    public float meleeSpeedPercent;      // melee only, stacks with AttackSpeed
+    public float gunDamagePercent;       // gun only
+    public float meleeRange;             // extra swing radius
+    [SerializeField] private float meleeBaseRadius = 1.5f;
+    [SerializeField] private float meleeRangeCap = 2f;  // at most +2 radius (3.5 total)
+    public float MeleeRadius => meleeBaseRadius + meleeRange;
+    public float MeleeDamageMult => Mathf.Max(0.1f, 1f + meleeDamagePercent);   // never below 10%
+    public float GunDamageMult => Mathf.Max(0.1f, 1f + gunDamagePercent);
 
     public int Level { get; private set; } = 1;
     public int Xp { get; private set; }
@@ -45,7 +57,12 @@ public class PlayerStats : MonoBehaviour
         XpChanged?.Invoke(Xp, XpToNext);
     }
 
-    int XpForLevel(int level) { return 30 + (level - 1) * 15; }
+    // Slightly curved: spawns ramp up a lot, so a linear curve made late levels come faster and faster
+    int XpForLevel(int level)
+    {
+        int l = level - 1;
+        return 30 + l * 15 + Mathf.RoundToInt(1.5f * l * l);
+    }
 
     public void Add(StatType type, float amount)
     {
@@ -79,10 +96,10 @@ public class PlayerStats : MonoBehaviour
                 CritChance += amount;
                 break;
             case StatType.BulletPierce:
-                BulletPierce += (int) amount;
+                BulletPierce = Mathf.Max(1, BulletPierce + (int) amount);   // pierce 0 = bullets never hit anything
                 break;
             case StatType.RegenAmount:
-                regenAmount += amount;
+                regenAmount = Mathf.Min(regenCap, regenAmount + amount);
                 break;
             case StatType.AttackSpeed:
                 AttackSpeed += amount;
@@ -90,6 +107,10 @@ public class PlayerStats : MonoBehaviour
             case StatType.Lifesteal:
                 Lifesteal = Mathf.Min(lifestealCap, Lifesteal + amount);
                 break;
+            case StatType.MeleeDamagePercent: meleeDamagePercent += amount; break;
+            case StatType.MeleeSpeedPercent: meleeSpeedPercent += amount; break;
+            case StatType.GunDamagePercent: gunDamagePercent += amount; break;
+            case StatType.MeleeRange: meleeRange = Mathf.Min(meleeRangeCap, meleeRange + amount); break;
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 break;
@@ -127,6 +148,10 @@ public class PlayerStats : MonoBehaviour
                 return AttackSpeed;
             case StatType.Lifesteal:
                 return Lifesteal;
+            case StatType.MeleeDamagePercent: return meleeDamagePercent;
+            case StatType.MeleeSpeedPercent: return meleeSpeedPercent;
+            case StatType.GunDamagePercent: return gunDamagePercent;
+            case StatType.MeleeRange: return MeleeRadius;
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 return 0f;
@@ -156,13 +181,17 @@ public class PlayerStats : MonoBehaviour
             case StatType.BulletAmount:
                 return BulletAmount + amount;
             case StatType.BulletPierce:
-                return BulletPierce + amount;
+                return Mathf.Max(1, BulletPierce + amount);
             case StatType.RegenAmount:
-                return regenAmount + amount;
+                return Mathf.Min(regenCap, regenAmount + amount);
             case StatType.AttackSpeed:
                 return AttackSpeed + amount;
             case StatType.Lifesteal:
                 return Mathf.Min(lifestealCap, Lifesteal + amount);
+            case StatType.MeleeDamagePercent: return meleeDamagePercent + amount;
+            case StatType.MeleeSpeedPercent: return meleeSpeedPercent + amount;
+            case StatType.GunDamagePercent: return gunDamagePercent + amount;
+            case StatType.MeleeRange: return meleeBaseRadius + Mathf.Min(meleeRangeCap, meleeRange + amount);
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 return 0f;
@@ -175,6 +204,8 @@ public class PlayerStats : MonoBehaviour
         {
             case StatType.CritChance: return CritChance >= 1f;                // 100% crit
             case StatType.Lifesteal: return Lifesteal >= lifestealCap - 0.0001f;
+            case StatType.RegenAmount: return regenAmount >= regenCap - 0.0001f;
+            case StatType.MeleeRange: return meleeRange >= meleeRangeCap - 0.0001f;
             default: return false;
         }
     }

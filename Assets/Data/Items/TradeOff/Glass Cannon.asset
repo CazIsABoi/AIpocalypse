@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Glass Cannon
   m_EditorClassIdentifier: Assembly-CSharp::TradeOffUpgrade
   Title: Glass Cannon
-  Description: +100% crit damage, +10% crit chance, -40 max HP
+  Description: +100% crit damage, +10% crit chance, -70 max HP
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4
@@ -23,4 +23,4 @@ MonoBehaviour:
   - Stat: 8
     Amount: 0.1
   - Stat: 2
-    Amount: -40
+    Amount: -70

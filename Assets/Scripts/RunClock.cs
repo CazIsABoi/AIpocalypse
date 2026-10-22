@@ -35,7 +35,7 @@ public class RunClock : MonoBehaviour
         if (TimeLeft <= 0f && !bossFired)
         {
             bossFired = true;
-            //BossTime?.Invoke();
+            BossTime?.Invoke();   // for anything else that wants to react to the boss
             StartBoss();
         }
         if (Endless)
@@ -43,11 +43,11 @@ public class RunClock : MonoBehaviour
             EndlessTime += Time.deltaTime;
         }
 
-        if(TEMP.action.WasPressedThisFrame())
-        {
-            Elapsed = 900;
-            //StartBoss();
-        }
+#if UNITY_EDITOR
+        // debug only: skip to the boss (never in a build)
+        if (TEMP != null && TEMP.action.WasPressedThisFrame())
+            Elapsed = Mathf.Max(Elapsed, bossTime);
+#endif
     }
     public void RevertBossUIChanges()
     {
@@ -56,8 +56,8 @@ public class RunClock : MonoBehaviour
         xpBarSlider.fillRect.GetComponent<Image>().color = new Color(237/255f, 241f/255f, 90f/255);
         xpBarSlider.GetComponent<RectTransform>().sizeDelta = new Vector2(750, 150);
         cogIcon.GetComponent<RectTransform>().sizeDelta = new Vector2(90, 90);
-        EventHUD.SetActive(false);
-        OverallTimer.SetActive(false);
+        EventHUD.SetActive(true);       // back on for endless (the timer shows "ENDLESS")
+        OverallTimer.SetActive(true);
     }
     public void StartBoss()
     {
@@ -68,6 +68,7 @@ public class RunClock : MonoBehaviour
         EventHUD.SetActive(false);
         OverallTimer.SetActive(false);
 
+        AudioManager.Instance?.Play(Sfx.BossSpawn);
         player.Teleport(new Vector3(-500f, 2, -13.5f));
     }
 

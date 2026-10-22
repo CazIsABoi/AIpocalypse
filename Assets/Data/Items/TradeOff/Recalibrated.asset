@@ -13,14 +13,12 @@ MonoBehaviour:
   m_Name: Recalibrated
   m_EditorClassIdentifier: Assembly-CSharp::TradeOffUpgrade
   Title: Recalibrated
-  Description: +4 Bullets, -1 Bullet Pierce, -60% Damage
+  Description: +3 bullets, -55% damage
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4
   Changes:
   - Stat: 4
-    Amount: -0.6
+    Amount: -0.55
   - Stat: 6
-    Amount: 4
-  - Stat: 9
-    Amount: -1
+    Amount: 3
