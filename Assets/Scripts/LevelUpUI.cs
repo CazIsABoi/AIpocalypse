@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class LevelUpUI : MonoBehaviour
 {
+    [Header("References")]
+    [SerializeField] private TMPro.TMP_Text sourceLabel;
     [SerializeField] private PlayerStats stats;
     [SerializeField] private PlayerHealth health;
     [SerializeField] private RewardPool levelUpPool;
@@ -57,6 +59,8 @@ public class LevelUpUI : MonoBehaviour
         panel.SetActive(true);                    // first: coroutines can't start on inactive cards
         StopRowShake();
         StopFlash();
+        int shownLevel = stats.Level - pendingLevelUps + 1;
+        sourceLabel.text = pool == levelUpPool ? $"LEVEL {shownLevel}" : pool.sourceText;
 
         for (int i = 0; i < cards.Length; i++)
         {

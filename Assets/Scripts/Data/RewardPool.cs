@@ -5,4 +5,5 @@ using UnityEngine;
 public class RewardPool : ScriptableObject
 {
     public List<RewardData> Rewards;
+    public string sourceText;
 }

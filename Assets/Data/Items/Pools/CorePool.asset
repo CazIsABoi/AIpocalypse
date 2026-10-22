@@ -36,3 +36,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 93fb561cc48444fb928f36d30d4c5c5d, type: 2}
   - {fileID: 11400000, guid: 43673bacd8c344fdac745271d27cd146, type: 2}
   - {fileID: 11400000, guid: e4f673dbed95449dbbc30cb97c681201, type: 2}
+  sourceText: Core
