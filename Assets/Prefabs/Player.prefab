@@ -137,6 +137,7 @@ GameObject:
   - component: {fileID: 3581711298317858232}
   - component: {fileID: 7221705215083545504}
   - component: {fileID: 6569809672249085572}
+  - component: {fileID: 1838573102006745370}
   m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
@@ -355,8 +356,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5951e8f6d5915cd4fb84669ab32f147e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  invulnerableTime: 0.3
-  regenDelay: 3
+  invulnerableTime: 0.1
+  regenDelay: 15
+  pausedRegenFactor: 0.2
+  minShake: 0.2
+  maxShake: 0.5
+  k: 5
   slider: {fileID: 0}
 --- !u!114 &3581711298317858232
 MonoBehaviour:
@@ -406,6 +411,20 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4225567227736019386}
   m_Enabled: 1
+--- !u!114 &1838573102006745370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4225567227736019386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: deb5a08497920584c831fec7fa66dec6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  popupPrefab: {fileID: 6525401655566320639, guid: 1bc13262ec6b2db46ad7a86aea11ff58, type: 3}
+  interval: 0.5
 --- !u!1 &4300784283819191719
 GameObject:
   m_ObjectHideFlags: 0
@@ -1006,6 +1025,7 @@ GameObject:
   - component: {fileID: 8272284241553263012}
   - component: {fileID: 3607088614109252843}
   - component: {fileID: 5766786095152845401}
+  - component: {fileID: 5748114818263585003}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1102,7 +1122,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -1123,6 +1143,20 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &5748114818263585003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7639602943315957503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c036a85ff06cff3489c8f3c7a2261584, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  maxOffset: 0.4
+  decay: 1.5
 --- !u!1 &9018459578496385662
 GameObject:
   m_ObjectHideFlags: 0

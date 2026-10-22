@@ -18,6 +18,7 @@ public class PlayerHealth : MonoBehaviour
     public bool IsDead => Health <= 0;
 
     public event System.Action<float, float> HealthChanged;   // (current, max)
+    public event System.Action<float> Healed;                 // amount healed
     public event System.Action Died;
     public event System.Action<float> Damaged;
 
@@ -45,7 +46,7 @@ public class PlayerHealth : MonoBehaviour
         float rate = paused ? pausedRegenFactor : 1f;          // the ternary picks one of two values
 
         if (!IsDead && Health < MaxHealth)
-            Heal(stats.MaxHealth * stats.regenAmount * rate * Time.deltaTime);
+            Heal(stats.MaxHealth * stats.regenAmount * rate * Time.deltaTime, false);
 
         sliderImage.color = paused ? Color.teal : Color.white;
     }
@@ -59,14 +60,18 @@ public class PlayerHealth : MonoBehaviour
         float fraction = amount / stats.MaxHealth;      // 0.1 = this hit took 10% of max HP
         float shake = Mathf.Lerp(minShake, maxShake, fraction * k);
         CameraShake.Instance?.Add(shake);
+        if (fraction > 0.2f) Hitstop.Instance?.Stop(0.05f);
         if (!IsDead) AudioManager.Instance?.Play(Sfx.PlayerHurt);   // death sound is played in Die()
         Damaged?.Invoke(amount);
     }
 
-    public void Heal(float amount)
+    public void Heal(float amount, bool show = true)
     {
         if (IsDead || amount <= 0f) return;   // a heal must never be able to hurt
+        float healthBefore = Health;
         SetHealth(Health + amount);
+        float actualHealed = Health - healthBefore;
+        if (show) Healed?.Invoke(actualHealed);
     }
 
     public void ResetHealth()

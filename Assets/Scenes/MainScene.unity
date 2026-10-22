@@ -4135,6 +4135,7 @@ GameObject:
   - component: {fileID: 822126392}
   - component: {fileID: 822126393}
   - component: {fileID: 822126394}
+  - component: {fileID: 822126395}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -4220,6 +4221,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RunClock
   bossTime: 900
+--- !u!114 &822126395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 822126390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84cf46f2d4c055c44a7a042149497fbc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hitstop
+  scale: 0.05
 --- !u!222 &826420167
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6107,25 +6121,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1374265232}
   m_CullTransparentMesh: 1
---- !u!1 &1394593508 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7639602943315957503, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
-  m_PrefabInstance: {fileID: 7492861483733216453}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1394593510
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1394593508}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c036a85ff06cff3489c8f3c7a2261584, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  maxOffset: 0.4
-  decay: 1.5
 --- !u!1 &1434915282
 GameObject:
   m_ObjectHideFlags: 0
@@ -9709,25 +9704,9 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1653187248909934678, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
-      propertyPath: k
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1653187248909934678, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
       propertyPath: slider
       value: 
       objectReference: {fileID: 684794307}
-    - target: {fileID: 1653187248909934678, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
-      propertyPath: minShake
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1653187248909934678, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
-      propertyPath: regenDelay
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 1653187248909934678, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
-      propertyPath: invulnerableTime
-      value: 0.1
-      objectReference: {fileID: 0}
     - target: {fileID: 3581711298317858232, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
       propertyPath: dungeon
       value: 
@@ -9776,25 +9755,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5766786095152845401, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
-      propertyPath: m_RenderPostProcessing
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7221705215083545504, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
-      propertyPath: baseDamage
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7221705215083545504, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
-      propertyPath: pickupRange
-      value: 1.5
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7639602943315957503, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1394593510}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2c2ca333a66a1ad4abbcb4fef82bd1df, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

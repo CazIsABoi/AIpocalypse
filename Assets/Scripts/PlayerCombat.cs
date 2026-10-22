@@ -73,6 +73,7 @@ public class PlayerCombat : MonoBehaviour
 
                 AudioManager.Instance.Play(Sfx.Melee);
 
+                bool hitAny = false, crit = false;
                 Collider[] hits = Physics.OverlapSphere(transform.position + CalculateAimingDirection() * 1.25f, 1.5f, EnemyLayer);
                 foreach (Collider hit in hits)
                 {
@@ -81,15 +82,20 @@ public class PlayerCombat : MonoBehaviour
                     if (hit.TryGetComponent(out EnemyController enemy))
                     {
                         healthBefore = enemy.Health;
+
+                        hitAny = true;
+                        if (amount > MeleeDamage) crit = true;
+
                         amount = enemy.TakeDamage(MeleeDamage, stats.CritChance, stats.CritDamage);   // enemies: with crits
                         amount = amount * stats.Lifesteal; // Lifesteal: heal for a percentage of the damage dealt
                         health.Heal(Mathf.Clamp(amount, 0f, Mathf.Max(0f, healthBefore))); // never more than the enemy had, never negative (enemy already dead this frame)
-                        CameraShake.Instance?.Add(0.1f);
+                        CameraShake.Instance?.Add(0.2f);
+
                     }
                     else if (hit.TryGetComponent(out IDamageable target))
                         { target.TakeDamage(MeleeDamage); CameraShake.Instance?.Add(0.1f); }                                    // anything else hittable, e.g. the core
                 }
-                
+                if (hitAny) Hitstop.Instance?.Stop(crit ? 0.06f : 0.03f);
             }
         }
         else if (!RightClick.action.IsPressed())
