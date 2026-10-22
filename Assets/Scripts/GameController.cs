@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,6 +11,8 @@ public class GameController : MonoBehaviour
     [SerializeField] private EventDirector director;
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private CanvasGroup fade;
+    [SerializeField] private LevelUpUI rewards;
+    [SerializeField] private RewardPool corePool;      // reward for destroying the Core (shown on the new floor)
     public int Floor { get; private set; } = 1;
     public event System.Action<int> FloorChanged;
 
@@ -83,6 +85,11 @@ public class GameController : MonoBehaviour
         }
 
         GamePause.Remove(PauseReason.FloorChange);             // still paused if something else (death, level-up) is active
+
+        // Floor-clear reward. ShowChest returns false while another reward is open (e.g. a Lockdown chest),
+        // so WaitUntil keeps trying every frame until it gets its turn.
+        if (corePool != null && rewards != null)
+            yield return new WaitUntil(() => playerHealth.IsDead || rewards.ShowChest(corePool));
     }
 
     public void Restart()

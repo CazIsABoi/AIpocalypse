@@ -23,6 +23,8 @@ MonoBehaviour:
   footprint: 3
   mapMaterial: {fileID: 2100000, guid: 19b8ea268e65ad849bf72cf45bff2668, type: 2}
   mapRoomMaterial: {fileID: 2100000, guid: ba52d5882f4581e46b9537995aaecc48, type: 2}
+  visibleThroughFog: 1
+  revealAfterRooms: 6
   rotation: 0
   randomScale: 0
   tintFloor: 1

@@ -108,10 +108,19 @@ public class DungeonGenerator : MonoBehaviour
             if (surface.Texture != null) surface.Texture.Apply();
         dirtySurfaces.Clear();
     }
+    // Map icons waiting to pop above the fog as a hint (e.g. the Core), and how many explored rooms they need
+    private readonly List<(Transform icon, int afterRooms)> hintIcons = new List<(Transform, int)>();
+    private int exploredRooms;   // rooms the player walked into this floor (the start room doesn't count)
+
+    private int baseMinRooms = -1, baseMaxRooms;   // the Inspector values, saved the first time SetFloor runs
+
+    // Always computed from the BASE values, so floors grow by exactly extraRoomsPerFloor each time
     public void SetFloor(int floor)
     {
-        minRooms = Mathf.Min(minRooms + (floor - 1) * extraRoomsPerFloor, roomCap);
-        maxRooms = Mathf.Max(maxRooms, minRooms);
+        if (baseMinRooms < 0) { baseMinRooms = minRooms; baseMaxRooms = maxRooms; }
+        int extra = (floor - 1) * extraRoomsPerFloor;
+        minRooms = Mathf.Min(baseMinRooms + extra, roomCap);
+        maxRooms = Mathf.Min(Mathf.Max(baseMaxRooms + extra, minRooms), roomCap);
     }
 
     void OnDestroy()
@@ -247,6 +256,8 @@ public class DungeonGenerator : MonoBehaviour
         // Clear the old dungeon (textures are NOT destroyed with GameObjects, so free them ourselves)
         FreeFloorTextures();
         foreach (Transform child in transform) Destroy(child.gameObject);
+        hintIcons.Clear();
+        exploredRooms = 0;
         yield return null;
 
         if (useRandomSeed) seed = System.Environment.TickCount;
@@ -823,6 +834,11 @@ public class DungeonGenerator : MonoBehaviour
         Material mapMat = content.mapMaterial != null ? content.mapMaterial : mapObstacleMaterial;
         int half = mapSize / 2;   // a 3x3 icon starts one cell before the centre cell
         Renderer mapIcon = CreateMapQuad(room.slot, offset.x + cell.x - half, offset.y + cell.y - half, mapSize, mapSize, mapMat, room.root, obstacleMapOffset);
+        if (content.visibleThroughFog)
+        {
+            if (content.revealAfterRooms <= 0) RaiseAboveFog(mapIcon.transform);
+            else hintIcons.Add((mapIcon.transform, content.revealAfterRooms));
+        }
 
         // Chests recolor their map icon and room when looted, so tell them which quads are theirs
         if (prop.TryGetComponent(out Chest chest))
@@ -1175,6 +1191,21 @@ public class DungeonGenerator : MonoBehaviour
         Debug.Log($"Explored {room.slot}");
 
         if (room.fog != null) StartCoroutine(FadeFog(room.fog));
+
+        exploredRooms++;
+        for (int i = hintIcons.Count - 1; i >= 0; i--)        // backwards, so removing doesn't skip one
+        {
+            if (exploredRooms < hintIcons[i].afterRooms) continue;
+            if (hintIcons[i].icon != null) RaiseAboveFog(hintIcons[i].icon);
+            hintIcons.RemoveAt(i);
+        }
+    }
+
+    // Map quads normally sit under the fog; lifting one above it shows it on the minimap everywhere
+    void RaiseAboveFog(Transform icon)
+    {
+        Vector3 p = icon.position;
+        icon.position = new Vector3(p.x, fogHeight + 0.2f, p.z);
     }
 
     // --------- Helpers ---------

@@ -13,6 +13,8 @@ public class RoomContent : ScriptableObject
     [Min(1)] public int footprint = 1;   // cells per side a prop takes up (Center pattern only), odd numbers center best
     public Material mapMaterial;      // minimap color of each prop (empty = normal obstacle color)
     public Material mapRoomMaterial;  // minimap color of the whole room (empty = normal room color)
+    public bool visibleThroughFog;    // prop icons pop above the fog as a hint, e.g. the Core: "go here"
+    [Min(0)] public int revealAfterRooms = 3;   // ...once this many rooms are explored (0 = visible from the start)
 
     [Header("Rotation")]
     public PropRotation rotation;   // how placed props are turned
