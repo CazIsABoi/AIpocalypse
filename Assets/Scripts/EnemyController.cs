@@ -40,12 +40,14 @@ public class EnemyController : MonoBehaviour, IDamageable
     [SerializeField] private GameObject TripodBulletPrefab;
     [SerializeField] private GameObject TripodShootPivot;
     [SerializeField] private GameObject DroneExplosionPrefab;
+    private HitFlash flash;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         Health = MaxHealth;
         agent = GetComponent<NavMeshAgent>();
+        flash = GetComponent<HitFlash>();
         PlayerTarget = GameObject.Find("Player");
         playerHealth = PlayerTarget.GetComponent<PlayerHealth>();
         SpeedMax = Speed * 3;
@@ -65,6 +67,7 @@ public class EnemyController : MonoBehaviour, IDamageable
             GameObject spawnedXp = Instantiate(xpPrefab, transform.position, Quaternion.identity, transform.parent);
             spawnedXp.GetComponent<XpOrb>().Amount = Xp;
             AudioManager.Instance.PlayAt(Sfx.EnemyDeath, transform.position);
+            handler?.RegisterKill();
             Destroy(gameObject); return;  
             } // Enemy died, destroy the gameobject and exit the update loop.
         if (AttackInterval > 0) AttackInterval -= Time.deltaTime;
@@ -449,6 +452,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         spawnedPopup.GetComponent<DamagePopup>().TargetPosition = transform.position + new Vector3(0, 1.5f, 0);
         if(IsCrit) spawnedPopup.GetComponent<DamagePopup>().IsCrit = true;
         spawnedPopup.GetComponent<DamagePopup>().PopupDisplayContent = ((int)Amount).ToString();
+        flash?.Flash();
 
         AudioManager.Instance.PlayAt(Sfx.EnemyHit, transform.position);
         return Amount;

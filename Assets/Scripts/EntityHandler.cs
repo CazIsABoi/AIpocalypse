@@ -14,6 +14,8 @@ public class EntityHandler : MonoBehaviour
     [SerializeField] private int MaxSpawnCount;
     [SerializeField] private List<GameObject> spawnedEnemies = new List<GameObject>();
     public float SpawnMultiplier = 1f;
+    public int Kills { get; private set; }
+    public void RegisterKill() => Kills++;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

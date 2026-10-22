@@ -113,8 +113,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 3, z: 1}
+  m_Center: {x: 0, y: 3, z: 0}
 --- !u!114 &4253123751545581310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,6 +128,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Core
   maxHealth: 200
+  baseHealth: 200
+  perFloor: 0.35
+  perMinute: 0.05
+  bulletDamageMultiplier: 0.1
   DamagePopup: {fileID: 3937980857255322814, guid: 0e3792d5caef44f4494d3b453acbd366, type: 3}
 --- !u!114 &7871441523183622213
 MonoBehaviour:

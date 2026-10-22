@@ -46,10 +46,15 @@ public class ProjectileController : MonoBehaviour
                             amount = amount * Lifesteal; // Lifesteal: heal for a percentage of the damage dealt
                             Owner?.Heal(Mathf.Clamp(amount, 0f, Mathf.Max(0f, healthBefore))); // never more than the enemy had, never negative (enemy already dead this frame)
                         }
+                        else if (c.TryGetComponent(out Core core))
+                        {
+                            hitSomething = true;
+                            core.TakeBulletDamage(Damage);
+                        }
                         else if (c.TryGetComponent(out IDamageable target))
                         {
                             hitSomething = true;
-                            target.TakeDamage(Damage);                          // anything else hittable, e.g. the core
+                            target.TakeDamage(Damage);                          // anything else hittable, 
                         }
                         else Destroy(gameObject);
                         BulletPierce--;

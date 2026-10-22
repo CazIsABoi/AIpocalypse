@@ -332,6 +332,7 @@ GameObject:
   - component: {fileID: 8503369225443525376}
   - component: {fileID: 7000668719919852536}
   - component: {fileID: 8626435081194244577}
+  - component: {fileID: -4296407862292940747}
   m_Layer: 8
   m_Name: Tripod - Enemy 2
   m_TagString: Untagged
@@ -501,6 +502,7 @@ MonoBehaviour:
     m_Bits: 512
   TripodBulletPrefab: {fileID: 2006935733718916428, guid: b5a46c53eb826734b804815eae5ab70c, type: 3}
   TripodShootPivot: {fileID: 7957198028299024486}
+  DroneExplosionPrefab: {fileID: 0}
 --- !u!195 &7000668719919852536
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -537,6 +539,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FloorTrail
   dungeon: {fileID: 0}
   wearPerStep: 0.1
+--- !u!114 &-4296407862292940747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5333901100499698115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcdbfe4e32ad86b4da5c6eab534a2f29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitFlash
+  flashMaterial: {fileID: 2100000, guid: 732dd1ef387cef246bf64cd537b63037, type: 2}
+  duration: 0.06
 --- !u!1 &6098720431619477486
 GameObject:
   m_ObjectHideFlags: 0

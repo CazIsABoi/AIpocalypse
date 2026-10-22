@@ -4,8 +4,9 @@ public class Core : MonoBehaviour, IDamageable
 {
     [SerializeField] private float maxHealth = 200f;
     [SerializeField] private float baseHealth = 200f;
-    [SerializeField] private float perFloor = 0.35f;     // +35% per floor (multiplied: 1.35^floor)
-    [SerializeField] private float perMinute = 0.05f;    // +5% per minute of run time
+    [SerializeField] private float perFloor = 0.35f;     
+    [SerializeField] private float perMinute = 0.05f;   
+    [SerializeField] private float bulletDamageMultiplier = 0.1f;
     [SerializeField] private GameObject DamagePopup;
     private float health;
     private bool destroyed;
@@ -15,7 +16,7 @@ public class Core : MonoBehaviour, IDamageable
     {
         game = FindAnyObjectByType<GameController>();
         var clock = FindAnyObjectByType<RunClock>();
-        maxHealth = baseHealth * Mathf.Pow(1 + perFloor, game.Floor - 1) * (1 + perMinute * clock.Elapsed);
+        maxHealth = baseHealth * (1 + perFloor * (game.Floor - 1)) * (1 + perMinute * clock.Elapsed / 60f);
         health = maxHealth;
     }
 
@@ -34,4 +35,6 @@ public class Core : MonoBehaviour, IDamageable
 
         AudioManager.Instance.Play(Sfx.CoreHit);
     }
+
+    public void TakeBulletDamage(float amount) => TakeDamage(amount * bulletDamageMultiplier);
 }
