@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   offTime: 3
-  warnTime: 1
+  warnTime: 1.5
   onTime: 1
   playerDamage: 10
   enemyDamage: 15

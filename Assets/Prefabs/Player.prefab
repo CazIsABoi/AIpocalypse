@@ -138,6 +138,7 @@ GameObject:
   - component: {fileID: 7221705215083545504}
   - component: {fileID: 6569809672249085572}
   - component: {fileID: 1838573102006745370}
+  - component: {fileID: 322560547325121221}
   m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
@@ -1188,3 +1189,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4450579462336461517}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &322560547325121221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4225567227736019386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d48bbc118634b2a8f6545ed8889b27c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OverloadDischarge
+  radius: 2.8
+  minEnemies: 3
+  chargeTime: 1
+  drainSpeed: 2
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  baseDamage: 3
+  perEnemy: 2
+  arcMaterial: {fileID: 2100000, guid: a1a36f9c1dab409a909d18386ce8c872, type: 2}
+  maxArcs: 3
+  arcTime: 0.15
+  jitter: 0.18
+  chestHeight: 1

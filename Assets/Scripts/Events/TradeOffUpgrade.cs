@@ -16,6 +16,14 @@ public class TradeOffUpgrade : RewardData
         }
     }
 
+    // Worth offering as long as at least one of its upsides isn't capped
+    public override bool CanOffer(PlayerStats stats)
+    {
+        foreach (var change in Changes)
+            if (change.Amount > 0 && !stats.IsCapped(change.Stat)) return true;
+        return false;
+    }
+
     public override string GetPreview(PlayerStats stats)
     {
         string preview = "";

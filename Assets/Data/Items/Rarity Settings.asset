@@ -125,8 +125,8 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     revealEffect: {fileID: 0}
-    revealSfx: 28
-    flyInSfx: 40
+    revealSfx: 38
+    flyInSfx: 37
     glowColor: {r: 0.20392159, g: 0.39607847, b: 0.6901961, a: 1}
     shakeStrength: 3
     punchScale: 0

@@ -46,7 +46,9 @@ public class FirewallEvent : GameEvent
     {
         foreach (var barrier in barriers)
         {
-            Destroy(barrier);
+            if (barrier == null) continue;
+            if (barrier.TryGetComponent(out BarrierFX fx)) fx.FadeOut();   // fades, then destroys itself
+            else Destroy(barrier);
         }
 
         if (!failed)

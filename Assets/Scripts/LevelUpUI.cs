@@ -183,7 +183,11 @@ public class LevelUpUI : MonoBehaviour
 
     public List<RewardData> PickRewards(RewardPool pool, int count)
     {
-        List<RewardData> options = new List<RewardData>(pool.Rewards);
+        // leave out cards that would do nothing right now (capped stats)
+        List<RewardData> options = new List<RewardData>();
+        foreach (var reward in pool.Rewards)
+            if (reward.CanOffer(stats)) options.Add(reward);
+        if (options.Count == 0) options.AddRange(pool.Rewards);   // never open an empty card screen
         List<RewardData> chosen = new List<RewardData>();
 
         for (int i = 0; i < count && options.Count > 0; i++)

@@ -8,6 +8,9 @@ public class Core : MonoBehaviour, IDamageable
     [SerializeField] private float perMinute = 0.05f;   
     [SerializeField] private float bulletDamageMultiplier = 0.1f;
     [SerializeField] private GameObject DamagePopup;
+    [SerializeField] private float popupSumWindow = 0.5f;   // hits closer together than this add onto the same number
+    private DamagePopup popup;
+    private float popupTotal, lastPopupTime;
     private float health;
     private bool destroyed;
     private GameController game;
@@ -30,9 +33,20 @@ public class Core : MonoBehaviour, IDamageable
             AudioManager.Instance?.Play(Sfx.CoreDestroyed);
             game.NextFloor();
         }
-        GameObject spawnedPopup = Instantiate(DamagePopup, transform.position, Quaternion.identity);
-        spawnedPopup.GetComponent<DamagePopup>().TargetPosition = transform.position + new Vector3(0, 1.5f, 0);
-        spawnedPopup.GetComponent<DamagePopup>().PopupDisplayContent = ((int)amount).ToString();
+        // Rapid hits add up on one number (like enemies); also stops 10% bullet hits showing as "0"
+        if (popup != null && Time.time - lastPopupTime < popupSumWindow)
+        {
+            popupTotal += amount;
+            popup.Refresh();
+        }
+        else
+        {
+            popup = Instantiate(DamagePopup, transform.position, Quaternion.identity).GetComponent<DamagePopup>();
+            popup.TargetPosition = transform.position + new Vector3(0, 1.5f, 0);
+            popupTotal = amount;
+        }
+        popup.PopupDisplayContent = Mathf.CeilToInt(popupTotal).ToString();
+        lastPopupTime = Time.time;
 
         if (!destroyed) AudioManager.Instance.Play(Sfx.CoreHit);   // the killing hit plays CoreDestroyed instead
     }

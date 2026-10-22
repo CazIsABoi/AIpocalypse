@@ -11,6 +11,9 @@ public abstract class RewardData : ScriptableObject
     public abstract void Apply(PlayerStats stats);
 
     public virtual string GetPreview(PlayerStats stats) => "";
+
+    // false = pointless right now (e.g. its stat is already capped), so it isn't offered
+    public virtual bool CanOffer(PlayerStats stats) => true;
     public Rarity GetRarity()
     {
         if (Rarity != Rarity.Auto) return Rarity;

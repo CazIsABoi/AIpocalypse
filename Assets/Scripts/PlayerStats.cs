@@ -168,6 +168,17 @@ public class PlayerStats : MonoBehaviour
                 return 0f;
         }
     }
+    // A stat that can't usefully go higher: cards that only raise it are left out of the picks
+    public bool IsCapped(StatType type)
+    {
+        switch (type)
+        {
+            case StatType.CritChance: return CritChance >= 1f;                // 100% crit
+            case StatType.Lifesteal: return Lifesteal >= lifestealCap - 0.0001f;
+            default: return false;
+        }
+    }
+
     float CalcDamage(float flat, float percent) => (baseDamage + flat) * (1f + percent);
     float CalcSpeed(float flat, float percent) => (BaseSpeed + flat) * (1f + percent);
 }
