@@ -18,6 +18,7 @@ public class RunClock : MonoBehaviour
     [SerializeField] private PlayerMovement player;
     [SerializeField] private InputActionReference TEMP;
 
+    [SerializeField] private EventDirector controller;
     [SerializeField] private Image cogIcon;
     [SerializeField] private Slider xpBarSlider;
     [SerializeField] private GameObject EventHUD;
@@ -26,6 +27,7 @@ public class RunClock : MonoBehaviour
     private void Start()
     {
         player = GameObject.Find("Player").GetComponent<PlayerMovement>();
+        controller = FindAnyObjectByType<EventDirector>();
     }
     void Update()
     {
@@ -49,6 +51,7 @@ public class RunClock : MonoBehaviour
     }
     public void RevertBossUIChanges()
     {
+        controller.ResumeEvents();
         Camera.main.fieldOfView = 60;
         xpBarSlider.fillRect.GetComponent<Image>().color = new Color(237/255f, 241f/255f, 90f/255);
         xpBarSlider.GetComponent<RectTransform>().sizeDelta = new Vector2(750, 150);
@@ -58,6 +61,7 @@ public class RunClock : MonoBehaviour
     }
     public void StartBoss()
     {
+        controller.StopEvents();
         Camera.main.fieldOfView = 80;
         xpBarSlider.GetComponent<RectTransform>().sizeDelta = new Vector2(750, 150);
         cogIcon.GetComponent<RectTransform>().sizeDelta = new Vector2(90, 90);
