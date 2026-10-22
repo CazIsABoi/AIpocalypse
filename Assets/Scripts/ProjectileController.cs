@@ -56,9 +56,11 @@ public class ProjectileController : MonoBehaviour
                             hitSomething = true;
                             target.TakeDamage(Damage);                          // anything else hittable, 
                         }
-                        else Destroy(gameObject);
+                        
                         BulletPierce--;
+                        if(BulletPierce <= 0) Destroy(gameObject);
                     }
+                    
                     if (hitSomething) DamageCD = 0.1f;
                 }
             }
