@@ -1826,7 +1826,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d876d355c455f24448629f0e808cac8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  MainSceneName: MainScene
+  MainSceneName: Intro
   mixer: {fileID: 24100000, guid: c3ba3808b322ce6429a20ce361419d7c, type: 2}
   creditsPanel: {fileID: 2109261931}
   settingsPanel: {fileID: 1116029847}

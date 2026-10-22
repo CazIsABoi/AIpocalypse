@@ -85,6 +85,16 @@
                     "interactions": "",
                     "initialStateCheck": false,
                     "priority": 0
+                },
+                {
+                    "name": "SkipKey",
+                    "type": "Button",
+                    "id": "93142a85-4ce2-44fa-9203-0663e29c6994",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -217,6 +227,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "OpenMapWebGL",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "20bf64dc-3ed7-4d63-bc00-681795b98765",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SkipKey",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
