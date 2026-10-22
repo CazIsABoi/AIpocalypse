@@ -11056,6 +11056,26 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1165407477304659349, guid: c15810ed934cd3c4aa32787bad9f9835, type: 3}
+      propertyPath: m_Type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1165407477304659349, guid: c15810ed934cd3c4aa32787bad9f9835, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 2433152336268005233, guid: 49cf4012b46b2e04c81d6af876e3c82c, type: 3}
+    - target: {fileID: 3014968401608542310, guid: c15810ed934cd3c4aa32787bad9f9835, type: 3}
+      propertyPath: m_Colors.m_HighlightedColor.b
+      value: 0.7264151
+      objectReference: {fileID: 0}
+    - target: {fileID: 3014968401608542310, guid: c15810ed934cd3c4aa32787bad9f9835, type: 3}
+      propertyPath: m_Colors.m_HighlightedColor.g
+      value: 0.7264151
+      objectReference: {fileID: 0}
+    - target: {fileID: 3014968401608542310, guid: c15810ed934cd3c4aa32787bad9f9835, type: 3}
+      propertyPath: m_Colors.m_HighlightedColor.r
+      value: 0.7264151
+      objectReference: {fileID: 0}
     - target: {fileID: 3014968401608542310, guid: c15810ed934cd3c4aa32787bad9f9835, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -11064,9 +11084,21 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3489470926784431774, guid: c15810ed934cd3c4aa32787bad9f9835, type: 3}
+      propertyPath: m_Type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3489470926784431774, guid: c15810ed934cd3c4aa32787bad9f9835, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 1311228827271957886, guid: e7d449e4b66431542a1c1eda6b7e0806, type: 3}
     - target: {fileID: 3576761192771103940, guid: c15810ed934cd3c4aa32787bad9f9835, type: 3}
       propertyPath: m_Name
       value: SettingsPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 3576761192771103940, guid: c15810ed934cd3c4aa32787bad9f9835, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3577195939063268649, guid: c15810ed934cd3c4aa32787bad9f9835, type: 3}
       propertyPath: m_Pivot.x
@@ -11160,6 +11192,18 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 1954674097318967487, guid: 5e39e7210f288cb4f882e47820625b3f, type: 3}
+    - target: {fileID: 6218080087007964674, guid: c15810ed934cd3c4aa32787bad9f9835, type: 3}
+      propertyPath: m_Colors.m_HighlightedColor.b
+      value: 0.8396226
+      objectReference: {fileID: 0}
+    - target: {fileID: 6218080087007964674, guid: c15810ed934cd3c4aa32787bad9f9835, type: 3}
+      propertyPath: m_Colors.m_HighlightedColor.g
+      value: 0.8396226
+      objectReference: {fileID: 0}
+    - target: {fileID: 6218080087007964674, guid: c15810ed934cd3c4aa32787bad9f9835, type: 3}
+      propertyPath: m_Colors.m_HighlightedColor.r
+      value: 0.8396226
+      objectReference: {fileID: 0}
     - target: {fileID: 6345919151910843477, guid: c15810ed934cd3c4aa32787bad9f9835, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
