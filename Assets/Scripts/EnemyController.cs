@@ -42,6 +42,11 @@ public class EnemyController : MonoBehaviour, IDamageable
     [SerializeField] private GameObject DroneExplosionPrefab;
     private HitFlash flash;
 
+    [SerializeField] private float popupSumWindow = 0.5f;   // hits closer together than this add onto the same number
+    // Normal hits and crits sum up on separate numbers, so a crit never recolors the normal number
+    private DamagePopup normalPopup, critPopup;
+    private float normalTotal, critTotal, lastNormalTime, lastCritTime;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -448,13 +453,32 @@ public class EnemyController : MonoBehaviour, IDamageable
         if(IsCrit) Amount *= CritDamage;
         Health -= Amount;
         
-        GameObject spawnedPopup = Instantiate(DamagePopup, transform.position, Quaternion.identity);
-        spawnedPopup.GetComponent<DamagePopup>().TargetPosition = transform.position + new Vector3(0, 1.5f, 0);
-        if(IsCrit) spawnedPopup.GetComponent<DamagePopup>().IsCrit = true;
-        spawnedPopup.GetComponent<DamagePopup>().PopupDisplayContent = ((int)Amount).ToString();
+        if (IsCrit) ShowPopup(ref critPopup, ref critTotal, ref lastCritTime, Amount, true);
+        else ShowPopup(ref normalPopup, ref normalTotal, ref lastNormalTime, Amount, false);
         flash?.Flash();
 
         AudioManager.Instance.PlayAt(Sfx.EnemyHit, transform.position);
         return Amount;
+    }
+
+    // Rapid hits add up on one number instead of spawning a new popup every hit.
+    // 'ref' lets the same method update either the normal or the crit set of fields.
+    void ShowPopup(ref DamagePopup popup, ref float total, ref float lastTime, float amount, bool crit)
+    {
+        if (popup != null && Time.time - lastTime < popupSumWindow)
+        {
+            total += amount;
+            popup.Refresh();
+        }
+        else
+        {
+            popup = Instantiate(DamagePopup, transform.position, Quaternion.identity).GetComponent<DamagePopup>();
+            // crits float a bit higher so the two numbers don't overlap
+            popup.TargetPosition = transform.position + new Vector3(0, crit ? 2f : 1.5f, 0);
+            popup.IsCrit = crit;
+            total = amount;
+        }
+        popup.PopupDisplayContent = ((int)total).ToString();
+        lastTime = Time.time;
     }
 }

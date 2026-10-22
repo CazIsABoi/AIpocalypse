@@ -16,12 +16,15 @@ MonoBehaviour:
   minRoomSize: 15
   pattern: 1
   props:
-  - {fileID: 820827969279677616, guid: 4fe32f9edc7fcce49aea801b098dbb62, type: 3}
+  - {fileID: 3532497002403899492, guid: a3d718f9fdd412649ae5be7912ce1254, type: 3}
   walkable: 0
   density: 0.05
   spacing: 4
+  footprint: 1
   mapMaterial: {fileID: 0}
   mapRoomMaterial: {fileID: 0}
+  visibleThroughFog: 0
+  revealAfterRooms: 3
   rotation: 0
   randomScale: 0
   tintFloor: 1

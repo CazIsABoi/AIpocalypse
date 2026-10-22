@@ -114,7 +114,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1, y: 3, z: 1}
-  m_Center: {x: 0, y: 3, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &4253123751545581310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,7 +163,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6914072531148290114}
   - component: {fileID: 6914072531148290115}
-  m_Layer: 7
+  m_Layer: 12
   m_Name: PlayerBlocker
   m_TagString: Untagged
   m_Icon: {fileID: 0}

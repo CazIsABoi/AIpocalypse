@@ -62,6 +62,7 @@ public class DungeonGenerator : MonoBehaviour
 
     [Header("Fog")]
     [SerializeField] float fogHeight = 3f;
+    [SerializeField] float floorTop = 0.22f;  // height of the floor's walkable surface (FloorTile cube top); props stand on this
     [SerializeField] float fogFadeTime = 0.5f;
     [SerializeField] float mapHeight = 2.5f;   // must be lower than fogHeight, so the fog covers it
     [SerializeField] float obstacleMapOffset = 0.2f;
@@ -818,6 +819,7 @@ public class DungeonGenerator : MonoBehaviour
     {
         GameObject prefab = content.props[Random.Range(0, content.props.Length)];
         Vector3 pos = CellToWorld(RoomOrigin(room), cell.x, cell.y);
+        pos.y += floorTop;   // stand ON the floor, not inside it
         float angle = 0f;
         switch (content.rotation)
         {

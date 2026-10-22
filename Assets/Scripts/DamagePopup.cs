@@ -11,6 +11,12 @@ public class DamagePopup : MonoBehaviour
 
     public bool IsCrit;
     [SerializeField] private Color CritColor;
+    private float startLifetime;
+
+    void Awake() => startLifetime = Lifetime;
+
+    // Another hit was added onto this number: restart the animation so it pops again
+    public void Refresh() => Lifetime = startLifetime;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

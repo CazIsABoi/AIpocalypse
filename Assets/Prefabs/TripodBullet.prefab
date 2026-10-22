@@ -49,7 +49,7 @@ MonoBehaviour:
   Direction: {x: 0, y: 0, z: 0}
   hittableLayers:
     serializedVersion: 2
-    m_Bits: 576
+    m_Bits: 704
   ProjectileType: Tripod Bullet
   BulletSpeed: 10
   Damage: 0
