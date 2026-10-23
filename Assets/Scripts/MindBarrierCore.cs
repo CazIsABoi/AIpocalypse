@@ -57,6 +57,7 @@ public class MindBarrierCore : MonoBehaviour, IDamageable
         health -= amount;
         if (health <= 0)
         {
+            AudioManager.Instance?.Play(Sfx.DroneDeath);
             CrystalVisibility.SetActive(false);
             Instantiate(ExplodePrefab, CrystalVisibility.transform.position, Quaternion.identity);
             destroyed = true;
