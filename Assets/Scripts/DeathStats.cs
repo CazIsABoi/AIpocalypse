@@ -52,7 +52,10 @@ partial class DeathStats : MonoBehaviour
             {
                 name = GameSettings.PlayerName,
                 seconds = clock.Elapsed, floor = game.Floor, level = stats.Level, kills = spawner.Kills,
-                threat = spawner.Threat, gunHit = stats.GunHit, meleeHit = stats.MeleeHit
+                threat = spawner.Threat, gunHit = stats.GunHit, meleeHit = stats.MeleeHit,
+                killer = stats.GetComponent<PlayerHealth>()?.LastHitBy,
+                coreFound = FindAnyObjectByType<Core>() is Core c && c.Discovered ? 1 : 0,
+                floorTime = Time.time - game.FloorStartedAt
             });
         }
     }

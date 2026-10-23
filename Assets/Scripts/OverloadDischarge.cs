@@ -101,7 +101,7 @@ public class OverloadDischarge : MonoBehaviour
     void Discharge()
     {
         charge = 0f;
-        health?.TakeDamage(baseDamage + perEnemy * nearbyCount);   // goes through the i-frame window like any hit
+        health?.TakeDamage(baseDamage + perEnemy * nearbyCount, "Overload");   // goes through the i-frame window like any hit
         AudioManager.Instance?.PlayAt(Sfx.HazardZap, transform.position);
         CameraShake.Instance?.Add(0.25f);
         for (int i = 0; i < Mathf.Min(maxArcs, nearbyCount); i++)

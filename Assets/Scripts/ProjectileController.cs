@@ -74,7 +74,7 @@ public class ProjectileController : MonoBehaviour
                     if (c.gameObject.GetComponent<PlayerHealth>())
                     {
                         //hitSomething = true;
-                        c.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage);
+                        c.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, "Tripod shot");
 
                     }
                     

@@ -7,6 +7,7 @@ public class RunClock : MonoBehaviour
     [SerializeField] private float bossTime = 900f;   
     public float Elapsed { get; private set; }
     public float TimeLeft => Mathf.Max(0f, bossTime - Elapsed);
+    public float BossAt => bossTime;                     // seconds into the run when the boss comes
     public float Progress => Elapsed / bossTime;       
     public event System.Action BossTime;               
     private bool bossFired;

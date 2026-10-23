@@ -15,13 +15,27 @@ public class Core : MonoBehaviour, IDamageable
     private float health;
     private bool destroyed;
     private GameController game;
+    private Transform player;
+    public bool Discovered { get; private set; }   // the player got near it (telemetry: did they find the Core?)
+    [SerializeField] private float discoverDistance = 10f;
 
     void Awake()
     {
         game = FindAnyObjectByType<GameController>();
+        var ph = FindAnyObjectByType<PlayerHealth>();
+        if (ph != null) player = ph.transform;
         var clock = FindAnyObjectByType<RunClock>();
         maxHealth = baseHealth * (1 + perFloor * (game.Floor - 1)) * (1 + perMinute * clock.Elapsed / 60f);
         health = maxHealth;
+    }
+
+    void Update() => CheckDiscovered();
+
+    void CheckDiscovered()
+    {
+        if (Discovered || player == null) return;
+        Vector3 d = player.position - transform.position; d.y = 0f;
+        if (d.magnitude < discoverDistance) Discovered = true;
     }
 
     public void TakeDamage(float amount)

@@ -43,6 +43,11 @@ public class EnemyController : MonoBehaviour, IDamageable
     [SerializeField] private GameObject TripodShootPivot;
     [SerializeField] private GameObject DroneExplosionPrefab;
     private HitFlash flash;
+    public bool IsElite;   // set by EntityHandler.SpawnElite
+    string AttackerName => (IsElite ? "Elite " : "") + AiType switch
+    {
+        0 => "Walker", 1 => "Tank", 2 => "Drone", 3 => "Froggie", 4 => "Tripod", 10 => "Boss", _ => "Enemy"
+    };
     // cached: GetComponentInChildren searches the whole hierarchy every call
     private Animator anim;
     private Animator Anim => anim != null ? anim : (anim = GetComponentInChildren<Animator>());
@@ -189,7 +194,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     {
                         if(hit.gameObject.GetComponent<PlayerHealth>())
                         {
-                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage);
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName);
                             DamageWindow = 5;
                         }
                     }
@@ -248,7 +253,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     {
                         if (hit.gameObject.GetComponent<PlayerHealth>())
                         {
-                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage);
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName);
                             DamageWindow = 0.54f;
                         }
                     }
@@ -271,7 +276,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     Vector3 offset = PlayerTarget.transform.position - transform.position;
                     if (offset.sqrMagnitude <= AttackRange * AttackRange) // If the player is still in range, apply damage
                     {
-                        playerHealth.TakeDamage(Damage);
+                        playerHealth.TakeDamage(Damage, AttackerName);
                         // Debug.Log($"Player hit for {Damage}");
                     }
 
@@ -339,7 +344,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     {
                         if (hit.gameObject.GetComponent<PlayerHealth>())
                         {
-                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage);
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName);
                             //DamageWindow = 5;
                         }
                     }
@@ -388,7 +393,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     {
                         if (hit.gameObject.GetComponent<PlayerHealth>())
                         {
-                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage);
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName);
                             DamageWindow = 5;
                         }
                     }
@@ -459,7 +464,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     Vector3 offset = PlayerTarget.transform.position - transform.position;
                     if (offset.sqrMagnitude <= AttackRange * AttackRange) // If the player is still in range, apply damage
                     {
-                        playerHealth.TakeDamage(Damage);
+                        playerHealth.TakeDamage(Damage, AttackerName);
                         // Debug.Log($"Player hit for {Damage}");
                     }
 

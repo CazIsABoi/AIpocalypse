@@ -17,6 +17,9 @@ public static class ScoreService
         public int floor, level, kills;
         public float threat, gunHit, meleeHit;
         public string version, platform;
+        public string killer;        // what dealt the last hit
+        public int coreFound;        // 1 = they got near this floor's Core
+        public float floorTime;      // seconds spent on the floor they died on
     }
 
     [Serializable] public class Entry { public string name; public float seconds; public int floor; public float threat; }

@@ -15,6 +15,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private RewardPool corePool;      // reward for destroying the Core (shown on the new floor)
     public int Floor { get; private set; } = 1;
     public event System.Action<int> FloorChanged;
+    public float FloorStartedAt { get; private set; }   // Time.time when the current floor became playable
 
     [Header("Minimap")]
     [SerializeField] private Camera minimapCam;
@@ -35,6 +36,7 @@ public class GameController : MonoBehaviour
     void OnDungeonReady()
     {
         spawner.ClearEnemies();
+        FloorStartedAt = Time.time;
         playerHealth.Heal(playerHealth.MaxHealth * 0.25f);   // heal a bit on floor change
         player.Teleport(dungeon.StartPosition);
         director.StartLoop();

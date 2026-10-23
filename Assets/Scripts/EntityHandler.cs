@@ -17,8 +17,17 @@ public class EntityHandler : MonoBehaviour
     public int Kills { get; private set; }
     public void RegisterKill() => Kills++;
 
+    [Header("Grace period (new players)")]
+    [SerializeField] private float[] graceSpawnRate = { 0.5f, 0.75f };  // spawn speed on floor 1, floor 2 (1 = normal)
+    [SerializeField] private float[] graceDamage = { 0.6f, 0.8f };      // enemy damage on floor 1, floor 2
+    private GameController game;
+
+    [Header("Enemy HP scaling")]
+    [SerializeField] private float preBossHealthGrowth = 1.0042f;  // HP x this per second until the boss (~x40 at 15:00)
+
     [Header("Endless (after the boss)")]
-    [SerializeField] private float endlessHealthGrowth = 1.07f;   // enemy HP x this per minute
+    [SerializeField] private float endlessHealthGrowth = 1.08f;   // enemy HP x this per minute...
+    [SerializeField] private float endlessHealthAccel = 0.003f;   // ...and the growth itself speeds up: late minutes scale much harder
     [SerializeField] private float endlessDamageGrowth = 1.13f;   // enemy damage x this per minute: danger leads, sponginess trails
     [SerializeField] private float eliteInterval = 150f;          // seconds between elites
     [SerializeField] private float eliteHealth = 3f, eliteDamage = 2f, eliteXp = 3f, eliteSize = 1.35f;
@@ -30,10 +39,17 @@ public class EntityHandler : MonoBehaviour
     // How much harder enemies hit than when endless began (1.0 = just started). Shown as THREAT on the timer.
     public float Threat => clock.Endless ? Mathf.Pow(endlessDamageGrowth, EndlessMinutes) : 1f;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        game = FindAnyObjectByType<GameController>();
+    }
+
+    // 1 on floor 3+ and in endless; lower on the first floors so new players get a gentler start
+    float Grace(float[] perFloor)
+    {
+        if (game == null || clock.Endless) return 1f;
+        int i = game.Floor - 1;
+        return i >= 0 && i < perFloor.Length ? perFloor[i] : 1f;
     }
 
     // Update is called once per frame
@@ -77,7 +93,7 @@ public class EntityHandler : MonoBehaviour
 
         if(SpawnCD <= 0 && spawnedEnemies.Count < 100)
         {
-            SpawnCD = CurrentSpawnCD / SpawnMultiplier;
+            SpawnCD = CurrentSpawnCD / (SpawnMultiplier * Grace(graceSpawnRate));
             int RollQuantity = Random.Range(MinSpawnCount, MaxSpawnCount + 1);
 
             for (int i = 0; i < RollQuantity; i++)
@@ -157,7 +173,7 @@ public class EntityHandler : MonoBehaviour
         UpdateEnemyList();
         enemy.MaxHealth = enemies[index].BaseHealth * HealthMultiplier();
         enemy.Xp = enemies[index].XpValue;
-        enemy.Damage = enemies[index].BaseDamage * DamageMultiplier();
+        enemy.Damage = enemies[index].BaseDamage * DamageMultiplier() * Grace(graceDamage);
         AudioManager.Instance?.PlayAt(Sfx.EnemySpawn, pos);   // 3D + long min interval in the AudioManager, so waves don't spam
         return enemy;
     }
@@ -166,6 +182,7 @@ public class EntityHandler : MonoBehaviour
     {
         if (!dungeon.TryGetSpawnPosition(out Vector3 pos)) return;
         EnemyController e = SpawnEnemy(RollEnemyWeightAndIndex(), pos);
+        e.IsElite = true;
         e.MaxHealth *= eliteHealth;
         e.Damage *= eliteDamage;
         e.Xp = Mathf.RoundToInt(e.Xp * eliteXp);
@@ -212,23 +229,17 @@ public class EntityHandler : MonoBehaviour
         return 1f;
     }
 
+    // HP keeps growing all the way to the boss, then endless continues from there and accelerates:
+    // exp(a*m + b*m^2): x2.9 after 10 min of endless, x13 after 20, x150 after 30 (on top of the boss value)
     float HealthMultiplier()
     {
+        float atBoss = Mathf.Pow(preBossHealthGrowth, Mathf.Max(0f, clock.BossAt - 20f));
         if (clock.Endless)
-            return 25f * Mathf.Pow(endlessHealthGrowth, EndlessMinutes);  // continues from the pre-boss x25
-
-        if (GameTime < 20)
         {
-            return 1f;
+            float m = EndlessMinutes;
+            return atBoss * Mathf.Exp(Mathf.Log(endlessHealthGrowth) * m + endlessHealthAccel * m * m);
         }
-        else if (GameTime < 720)
-        {
-            return Mathf.Pow(1.0046f, GameTime - 20f); // 0.33
-        }
-        else if (GameTime >= 720)
-        {
-            return 25f;    //10f
-        }
-        return 1f;
+        if (GameTime < 20) return 1f;
+        return Mathf.Pow(preBossHealthGrowth, Mathf.Min(GameTime, clock.BossAt) - 20f);
     }
  }

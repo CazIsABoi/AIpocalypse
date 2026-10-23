@@ -56,6 +56,15 @@ public class PlayerHealth : MonoBehaviour
         sliderImage.color = paused ? Color.teal : Color.white;
     }
 
+    public string LastHitBy { get; private set; } = "Unknown";   // for death telemetry
+
+    public void TakeDamage(float amount, string source)
+    {
+        if (!IsDead && invulnerableTimer <= 0f && !string.IsNullOrEmpty(source)) LastHitBy = source;
+        else if (!IsDead && amount > windowDamage && !string.IsNullOrEmpty(source)) LastHitBy = source;   // bigger hit in the window
+        TakeDamage(amount);
+    }
+
     public void TakeDamage(float amount)
     {
         if (IsDead) return;
