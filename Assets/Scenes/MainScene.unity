@@ -4786,7 +4786,7 @@ MonoBehaviour:
   corePool: {fileID: 11400000, guid: e08940b684a54d63b30c0a0c25f976c6, type: 2}
   minimapCam: {fileID: 314635956}
   minimap: {fileID: 314635957}
-  renderEvery: 3
+  renderEvery: 2
 --- !u!114 &822126393
 MonoBehaviour:
   m_ObjectHideFlags: 0
