@@ -12,35 +12,43 @@ public class XpBar : MonoBehaviour
     [SerializeField] private Gradient bossbarColor;
     [SerializeField] private Gradient shieldColor;
 
+    private bool showingBoss;
+    private Color xpColor;   // the normal fill color, restored after the boss bar
+
     private void Start()
     {
         clock = FindAnyObjectByType<RunClock>();
         stats = FindAnyObjectByType<PlayerStats>();
-
-        if (clock.Elapsed < 900)
-        {
-            if (stats != null)
-            {
-                stats.XpChanged += UpdateXpText;
-                UpdateXpText(stats.Xp, stats.XpToNext);
-                stats.XpChanged += UpdateXpBar;
-                UpdateXpBar(stats.Xp, stats.XpToNext);
-            }
-        }
-        
+        xpColor = xpBarSlider.fillRect.GetComponent<Image>().color;
+        ShowXp(true);
     }
+
+    // Subscribe/unsubscribe once when the mode changes, not every frame
+    void ShowXp(bool on)
+    {
+        if (stats == null) return;
+        stats.XpChanged -= UpdateXpText;
+        stats.XpChanged -= UpdateXpBar;
+        if (!on) return;
+        xpBarSlider.fillRect.GetComponent<Image>().color = xpColor;
+        stats.XpChanged += UpdateXpText;
+        stats.XpChanged += UpdateXpBar;
+        UpdateXpText(stats.Xp, stats.XpToNext);
+        UpdateXpBar(stats.Xp, stats.XpToNext);
+    }
+
     private void Update()
     {
-        if (clock.Elapsed >= 900)
+        // boss bar only while the fight is on: after the boss dies (endless) it's the XP bar again
+        bool bossFight = clock.TimeLeft <= 0f && !clock.Endless && boss != null;
+        if (bossFight != showingBoss)
         {
-            
-            stats.XpChanged -= UpdateXpText;
-            UpdateXpText(stats.Xp, stats.XpToNext);
-            stats.XpChanged -= UpdateXpBar;
-            UpdateXpBar(stats.Xp, stats.XpToNext);
+            showingBoss = bossFight;
+            ShowXp(!bossFight);
+        }
 
-            Debug.Log("Updating Stats");
-            if (boss == null) return;
+        if (bossFight)
+        {
             xpText.text = "HP: " + boss.Health.ToString("N0") + "/" + boss.MaxHealth.ToString("N0");
 
             xpBarSlider.maxValue = boss.MaxHealth;

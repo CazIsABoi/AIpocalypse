@@ -93,6 +93,16 @@ public static class StatNames
                 return type.ToString();  
         }
     }
+    // 950 -> "950", 12400 -> "12.4k", 3500000 -> "3.5M": late-game damage gets huge
+    public static string Compact(float v)
+    {
+        float a = Mathf.Abs(v);
+        if (a >= 1e9f) return $"{v / 1e9f:0.#}B";
+        if (a >= 1e6f) return $"{v / 1e6f:0.#}M";
+        if (a >= 1e4f) return $"{v / 1e3f:0.#}k";
+        return $"{v:0.#}";
+    }
+
     public const string Good = "#6CFF8A";     // green for gains
     public const string Bad = "#FF6464";      // red for losses
 

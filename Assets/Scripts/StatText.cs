@@ -23,10 +23,11 @@ public class StatText : MonoBehaviour
     void Refresh(StatType _)
     {
         string value = StatNames.Format(stat, stats.Get(stat));
-        if (stat == StatType.CritDamage)
-        {
-            value += $" ({stats.CritHitDamage:0.#} on crit)";
-        }
+        // Damage: what one gun hit and one melee hit actually deal (path multipliers included)
+        if (stat == StatType.Damage || stat == StatType.DamagePercent)
+            value = $"Gun {StatNames.Compact(stats.GunHit)} | Melee {StatNames.Compact(stats.MeleeHit)}";
+        else if (stat == StatType.CritDamage)
+            value += $"  Gun {StatNames.Compact(stats.GunCritHit)} | Melee {StatNames.Compact(stats.MeleeCritHit)}";
         text.text = $"{label}: {value}";
     }
 }

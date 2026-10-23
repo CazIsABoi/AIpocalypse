@@ -37,6 +37,12 @@ public class PlayerStats : MonoBehaviour
     public float MeleeRadius => meleeBaseRadius + meleeRange;
     public float MeleeDamageMult => Mathf.Max(0.1f, 1f + meleeDamagePercent);   // never below 10%
     public float GunDamageMult => Mathf.Max(0.1f, 1f + gunDamagePercent);
+    [SerializeField] private float meleeDamageFactor = 4f;   // a swing hits this many times harder than a bullet
+    // What one hit actually deals (shown in the stats panels)
+    public float GunHit => Damage * GunDamageMult;
+    public float MeleeHit => Damage * meleeDamageFactor * MeleeDamageMult;
+    public float GunCritHit => GunHit * CritDamage;
+    public float MeleeCritHit => MeleeHit * CritDamage;
 
     public int Level { get; private set; } = 1;
     public int Xp { get; private set; }
@@ -93,7 +99,7 @@ public class PlayerStats : MonoBehaviour
                 CritDamage += amount;
                 break;
             case StatType.CritChance:
-                CritChance += amount;
+                CritChance = Mathf.Min(1f, CritChance + amount);   // 100% max
                 break;
             case StatType.BulletPierce:
                 BulletPierce = Mathf.Max(1, BulletPierce + (int) amount);   // pierce 0 = bullets never hit anything
@@ -177,7 +183,7 @@ public class PlayerStats : MonoBehaviour
             case StatType.CritDamage:
                 return CritDamage + amount;
             case StatType.CritChance:
-                return CritChance + amount;
+                return Mathf.Min(1f, CritChance + amount);
             case StatType.BulletAmount:
                 return BulletAmount + amount;
             case StatType.BulletPierce:

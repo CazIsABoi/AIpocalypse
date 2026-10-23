@@ -94,7 +94,10 @@ public class EnemyController : MonoBehaviour, IDamageable
             {
                 GameObject spawnedXp = Instantiate(xpPrefab, transform.position, Quaternion.identity, transform.parent);
                 spawnedXp.GetComponent<XpOrb>().Amount = Xp;
-                AudioManager.Instance.PlayAt(Sfx.EnemyDeath, transform.position);
+                AudioManager.Instance.PlayAt(AiType == 2 ? Sfx.DroneDeath : Sfx.EnemyDeath, transform.position);
+                // boss adds are spawned without a handler, so find the one in the scene for them
+                if (handler == null) handler = FindAnyObjectByType<EntityHandler>();
+                handler?.RegisterKill();
                 Destroy(gameObject); return;
             } // Enemy died, destroy the gameobject and exit the update loop.
         }

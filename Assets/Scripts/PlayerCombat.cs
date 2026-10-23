@@ -56,11 +56,11 @@ public class PlayerCombat : MonoBehaviour
         Debug.DrawLine(transform.position, transform.position + CalculateAimingDirection() * 1.25f);
         
         MeleeCooldown = MeleeBaseCooldown / Mathf.Max(0.2f, 1f + stats.AttackSpeed + stats.meleeSpeedPercent);   // shared + melee-only speed
-        MeleeDamage = stats.Damage * 4 * stats.MeleeDamageMult;   // melee path: Melee Damage %
+        MeleeDamage = stats.MeleeHit;          // Damage x 4 x Melee Damage % (PlayerStats)
         if (CurrentMeleeCooldown > 0) CurrentMeleeCooldown -= Time.deltaTime;
 
         FirearmCooldown = FirearmBaseCooldown / (1f + stats.AttackSpeed);  // Add all multipliers here
-        RangedDamage = stats.Damage * stats.GunDamageMult;   // gun path: Gun Damage %         // Add melee damage multipliers here. 5 dmg per bullet by default, 25 dps, melee is 40.
+        RangedDamage = stats.GunHit;           // Damage x Gun Damage % (PlayerStats)         // Add melee damage multipliers here. 5 dmg per bullet by default, 25 dps, melee is 40.
         if (CurrentFirearmCooldown > 0) CurrentFirearmCooldown -= Time.deltaTime;
         if (shootLock > 0) shootLock -= Time.deltaTime;
 
