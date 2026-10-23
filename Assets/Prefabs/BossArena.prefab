@@ -346,7 +346,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cb94b58d76764d42a4b9a8c6ddb5b51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  maxHealth: 5000
+  maxHealth: 50000
   DamagePopup: {fileID: 3937980857255322814, guid: 0e3792d5caef44f4494d3b453acbd366, type: 3}
   destroyed: 0
   BarrierActive: 1
@@ -558,7 +558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cb94b58d76764d42a4b9a8c6ddb5b51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  maxHealth: 5000
+  maxHealth: 50000
   DamagePopup: {fileID: 3937980857255322814, guid: 0e3792d5caef44f4494d3b453acbd366, type: 3}
   destroyed: 0
   BarrierActive: 1
@@ -1106,7 +1106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cb94b58d76764d42a4b9a8c6ddb5b51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  maxHealth: 5000
+  maxHealth: 50000
   DamagePopup: {fileID: 3937980857255322814, guid: 0e3792d5caef44f4494d3b453acbd366, type: 3}
   destroyed: 0
   BarrierActive: 1
@@ -1210,8 +1210,8 @@ MonoBehaviour:
   TargetPosition: {x: 0, y: 0, z: 0}
   AiType: 10
   agent: {fileID: 0}
-  Health: 250000
-  MaxHealth: 250000
+  Health: 1000000
+  MaxHealth: 1000000
   Damage: 0
   Xp: 0
   AttackRange: 0

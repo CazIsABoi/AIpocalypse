@@ -35,10 +35,10 @@ public class MindBarrierCore : MonoBehaviour, IDamageable
             if (ShieldEnergyPulseInterval > 0) ShieldEnergyPulseInterval -= Time.deltaTime;
             else
             {
-                if (health > 4000) ShieldEnergyPulseInterval = 0.4f;
-                else if (health > 3000) ShieldEnergyPulseInterval = 0.8f;
-                else if (health > 2000) ShieldEnergyPulseInterval = 1.2f;
-                else if (health > 1000) ShieldEnergyPulseInterval = 1.6f;
+                if (health > 40000) ShieldEnergyPulseInterval = 0.4f;
+                else if (health > 30000) ShieldEnergyPulseInterval = 0.8f;
+                else if (health > 20000) ShieldEnergyPulseInterval = 1.2f;
+                else if (health > 10000) ShieldEnergyPulseInterval = 1.6f;
                 else if (health > 0) ShieldEnergyPulseInterval = 2f;
 
                 if (health > 0)
