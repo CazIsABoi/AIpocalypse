@@ -576,7 +576,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                 }
             }
 
-            if (Health <= 200000f && BossPhase == 0)
+            if (Health <= 750000f && BossPhase == 0)
             {
                 BarrierCores[0].BarrierActive = false;
                 BossPhase = 1;
@@ -587,7 +587,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                 BossPhase = 2;
                 ProtectiveBarrierActive = false;
             }
-            else if (Health <= 125000f && BossPhase == 2)
+            else if (Health <= 500000f && BossPhase == 2)
             {
                 BarrierCores[1].BarrierActive = false;
                 BossPhase = 3;
@@ -598,7 +598,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                 BossPhase = 4;
                 ProtectiveBarrierActive = false;
             }
-            else if (Health <= 50000f && BossPhase == 4)
+            else if (Health <= 250000f && BossPhase == 4)
             {
                 BarrierCores[2].BarrierActive = false;
                 BossPhase = 5;
