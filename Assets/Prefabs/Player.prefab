@@ -218,6 +218,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   meleeShootLock: 1
+  meleeOverloadDrain: 0.35
   RiflePivot: {fileID: 4300784283819191719}
   RifleMuzzle: {fileID: 9018459578496385662}
   animator: {fileID: 6770411190671845255}
@@ -245,7 +246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5951e8f6d5915cd4fb84669ab32f147e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  invulnerableTime: 0.1
+  invulnerableTime: 0.2
   regenDelay: 15
   pausedRegenFactor: 0.2
   minShake: 0.2
@@ -253,6 +254,7 @@ MonoBehaviour:
   k: 5
   lowHealthFraction: 0.25
   slider: {fileID: 0}
+  lifestealPerSecondCap: 0.06
 --- !u!114 &3581711298317858232
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -293,6 +295,14 @@ MonoBehaviour:
   AttackSpeed: 0
   Lifesteal: 0
   lifestealCap: 0.15
+  regenCap: 0.04
+  meleeDamagePercent: 0
+  meleeSpeedPercent: 0
+  gunDamagePercent: 0
+  meleeRange: 0
+  meleeBaseRadius: 1.5
+  meleeRangeCap: 2
+  meleeDamageFactor: 4
 --- !u!81 &6569809672249085572
 AudioListener:
   m_ObjectHideFlags: 0
@@ -972,8 +982,8 @@ Camera:
   m_GameObject: {fileID: 7639602943315957503}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1178,16 +1188,40 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -2373236279876170237, guid: 10d1d426e6f47d843a686d93b704049c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4442062363554211953}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1637699260344441437, guid: 10d1d426e6f47d843a686d93b704049c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2314764506935529779}
   m_SourcePrefab: {fileID: 100100000, guid: 10d1d426e6f47d843a686d93b704049c, type: 3}
 --- !u!1 &525811876905921567 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1637699260344441437, guid: 10d1d426e6f47d843a686d93b704049c, type: 3}
   m_PrefabInstance: {fileID: 1294303106395846210}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2314764506935529779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525811876905921567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cca2d55c617439ca14c51af8da60df2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMask
+  maskSet: {fileID: 11400000, guid: da218ad9a5f75f5438f2c46bd181ccfc, type: 2}
+  targets:
+  - {fileID: 2589406822958994740}
+  materialSlot: 0
 --- !u!4 &1088385591956487886 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2228421158650284172, guid: 10d1d426e6f47d843a686d93b704049c, type: 3}
+  m_PrefabInstance: {fileID: 1294303106395846210}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &2589406822958994740 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -5613417973577866378, guid: 10d1d426e6f47d843a686d93b704049c, type: 3}
   m_PrefabInstance: {fileID: 1294303106395846210}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &5685473455810672705 stripped
