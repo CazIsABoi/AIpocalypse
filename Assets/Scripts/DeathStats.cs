@@ -43,5 +43,18 @@ partial class DeathStats : MonoBehaviour
         float best = PlayerPrefs.GetFloat("best_time", 0f);
         if (best > 0f && clock.Elapsed > best) text.text += "\nNEW BEST!";
         if (clock.Elapsed > best) { PlayerPrefs.SetFloat("best_time", clock.Elapsed); PlayerPrefs.Save(); }
+
+        // send the finished run to the online leaderboard / telemetry sheet (once per run)
+        if (!submitted)
+        {
+            submitted = true;
+            ScoreService.Submit(new ScoreService.Run
+            {
+                name = GameSettings.PlayerName,
+                seconds = clock.Elapsed, floor = game.Floor, level = stats.Level, kills = spawner.Kills,
+                threat = spawner.Threat, gunHit = stats.GunHit, meleeHit = stats.MeleeHit
+            });
+        }
     }
+    private bool submitted;
 }
