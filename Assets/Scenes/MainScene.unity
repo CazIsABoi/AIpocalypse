@@ -2662,7 +2662,7 @@ MonoBehaviour:
   - id: 16
     clips:
     - {fileID: 8300000, guid: 9f8771a3d06b62642b1695163fdeae8e, type: 3}
-    volume: 1
+    volume: 0.7
     pitchVariance: 0
     minInterval: 1
     lastPlayed: 0
