@@ -325,6 +325,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                 if(DamageWindow < 0.08f)
                 {
                     GameObject spawnedExplosion = Instantiate(DroneExplosionPrefab, transform.position, Quaternion.identity);
+                    AudioManager.Instance?.Play(Sfx.DroneDeath);
                     DamageWindow = 5;
                 }
 
