@@ -5837,7 +5837,7 @@ MonoBehaviour:
   dungeon: {fileID: 841289497}
   hintText: {fileID: 1016573025}
   arrow: {fileID: 1587673967}
-  startHint: Hold LMB to shoot or Hold RMB to melee
+  startHint: Hold [LMB] to shoot or Hold [RMB] to melee
   coreHint: Hit the AI Core with your melee to destroy it
   startDelay: 1
   showTime: 5
