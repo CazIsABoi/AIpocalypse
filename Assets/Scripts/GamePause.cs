@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-public enum PauseReason { LevelUp, FloorChange, PauseMenu, Death }
+public enum PauseReason { LevelUp, FloorChange, PauseMenu, Death, Cutscene }
 
 [AutoStaticsCleanup]
 partial class GamePause

@@ -49,6 +49,24 @@ public class RunClock : MonoBehaviour
             Elapsed = Mathf.Max(Elapsed, bossTime);
 #endif
     }
+    [SerializeField] private CutScenePlayer outro;   // optional: plays when the boss dies (Play On Start off)
+
+    // Boss died: outro first (if there is one), then continue the run
+    public void BossDefeated()
+    {
+        if (outro != null) outro.Play(ContinueAfterBoss);
+        else ContinueAfterBoss();
+    }
+
+    // Everything that happens after the boss: UI back, next floor, endless mode
+    public void ContinueAfterBoss()
+    {
+        RevertBossUIChanges();
+        FindAnyObjectByType<GameController>().NextFloor();
+        StartEndless();
+        AudioManager.Instance?.Play(Sfx.OvertimeStart);
+    }
+
     public void RevertBossUIChanges()
     {
         controller.ResumeEvents();

@@ -109,13 +109,8 @@ public class EnemyController : MonoBehaviour, IDamageable
                 foreach (GameObject add in spawnedBossEnemies) if (add != null) Destroy(add);
                 spawnedBossEnemies.Clear();
 
-                clock.RevertBossUIChanges();
-                //player.Teleport(new Vector3(-500f, 2, -13.5f));
-
-                FindAnyObjectByType<GameController>().NextFloor();
                 AudioManager.Instance?.Play(Sfx.BossDeath);
-                clock.StartEndless();                          // switches to endless mode
-                AudioManager.Instance?.Play(Sfx.OvertimeStart);
+                clock.BossDefeated();   // outro (if set on the RunClock), then next floor + endless
                 Destroy(gameObject); return;
             }
         }

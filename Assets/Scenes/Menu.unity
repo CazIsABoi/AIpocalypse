@@ -855,7 +855,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: CHOOSE YOUR COLOR
+  m_text: CHOOSE YOUR MASK
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dac967fc606795341953d13f17d68429, type: 2}
   m_sharedMaterial: {fileID: 7461350438173722967, guid: dac967fc606795341953d13f17d68429, type: 2}
