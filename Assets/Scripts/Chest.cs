@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Chest : MonoBehaviour
+public class Chest : MonoBehaviour, IMapMarked
 {
     [SerializeField] private RewardPool chestPool;
     [SerializeField] private float openRange = 1.5f;

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Unthrottled
   m_EditorClassIdentifier: Assembly-CSharp::TradeOffUpgrade
   Title: Unthrottled
-  Description: +30% speed, -20 max HP
+  Description: +30% speed, -35 max HP
   Icon: {fileID: 0}
   Weight: 4
   Rarity: 3
@@ -21,4 +21,4 @@ MonoBehaviour:
   - Stat: 1
     Amount: 0.3
   - Stat: 2
-    Amount: -20
+    Amount: -35

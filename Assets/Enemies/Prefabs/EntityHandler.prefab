@@ -56,3 +56,4 @@ MonoBehaviour:
   MinSpawnCount: 0
   MaxSpawnCount: 0
   spawnedEnemies: []
+  eliteMapIcon: {fileID: 2100000, guid: 278d369296164ab98264938239a4fe1f, type: 2}

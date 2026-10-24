@@ -16,7 +16,7 @@ MonoBehaviour:
   minRoomSize: 11
   pattern: 2
   props:
-  - {fileID: 5273236684985416777, guid: c333b3b55a5e31145b14e7d60212e1ea, type: 3}
+  - {fileID: 8981241667407147279, guid: fd8f78195e3dd954193ab22829c8b148, type: 3}
   walkable: 0
   density: 0.05
   spacing: 4

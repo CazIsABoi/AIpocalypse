@@ -8,6 +8,7 @@ public class SettingsUI : MonoBehaviour
     [SerializeField] private TMPro.TextMeshProUGUI masterText, musicText, sfxText;
     [SerializeField] private Toggle fullscreen;
     [SerializeField] private Toggle gunSounds, hitSounds;
+    [SerializeField] private Toggle submitScores;   // optional: "Submit scores to leaderboard"
 
     void OnEnable()
     {
@@ -17,6 +18,7 @@ public class SettingsUI : MonoBehaviour
         gunSounds.SetIsOnWithoutNotify(GameSettings.GunSounds);
         hitSounds.SetIsOnWithoutNotify(GameSettings.HitSounds);
         fullscreen.SetIsOnWithoutNotify(GameSettings.Fullscreen != 0);
+        if (submitScores != null) submitScores.SetIsOnWithoutNotify(GameSettings.SubmitScores);
 
         UpdateText(master, masterText);
         UpdateText(music, musicText);
@@ -31,6 +33,7 @@ public class SettingsUI : MonoBehaviour
     public void GoToMainMenu() { GamePause.Clear(); UnityEngine.SceneManagement.SceneManager.LoadScene("Menu"); }
     public void OnGunSounds(bool on) => GameSettings.GunSounds = on;
     public void OnHitSounds(bool on) => GameSettings.HitSounds = on;
+    public void OnSubmitScores(bool on) => GameSettings.SubmitScores = on;   // hook to the toggle (Dynamic bool)
 
     private void UpdateText(Slider slider, TMPro.TextMeshProUGUI text)
     {

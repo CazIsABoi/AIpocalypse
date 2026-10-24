@@ -16,6 +16,29 @@ public class TradeOffUpgrade : RewardData
         }
     }
 
+    // Path = the one path its upsides feed (melee-only or gun-only); mixed or neither = no tag
+    public override RewardPath GetPath()
+    {
+        RewardPath path = RewardPath.None;
+        foreach (var change in Changes)
+        {
+            if (change.Amount <= 0) continue;
+            RewardPath p = PathOf(change.Stat);
+            if (p == RewardPath.None) continue;
+            if (path != RewardPath.None && path != p) return RewardPath.None;
+            path = p;
+        }
+        return path;
+    }
+
+    // Worth offering as long as at least one of its upsides isn't capped
+    public override bool CanOffer(PlayerStats stats)
+    {
+        foreach (var change in Changes)
+            if (change.Amount > 0 && !stats.IsCapped(change.Stat)) return true;
+        return false;
+    }
+
     public override string GetPreview(PlayerStats stats)
     {
         string preview = "";

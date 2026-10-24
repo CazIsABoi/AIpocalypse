@@ -74,7 +74,7 @@ public class HazardPlate : MonoBehaviour
             float dz = diff.z;
             if (Mathf.Abs(dx) < 0.6f && Mathf.Abs(dz) < 0.6f)
             {
-                player.TakeDamage(playerDamage);
+                player.TakeDamage(playerDamage, "Hazard Plate");
             }
         }
         if (enemyLayer != 0)

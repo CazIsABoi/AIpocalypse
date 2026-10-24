@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Kernel Panic
   m_EditorClassIdentifier: Assembly-CSharp::TradeOffUpgrade
   Title: Kernel Panic
-  Description: +50% damage, +20% speed, -50 max HP
+  Description: +50% damage, +20% speed, -80 max HP
   Icon: {fileID: 0}
   Weight: 1
   Rarity: 5
@@ -23,4 +23,4 @@ MonoBehaviour:
   - Stat: 1
     Amount: 0.2
   - Stat: 2
-    Amount: -50
+    Amount: -80

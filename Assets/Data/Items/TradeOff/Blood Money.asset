@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Blood Money
   m_EditorClassIdentifier: Assembly-CSharp::TradeOffUpgrade
   Title: Blood Money
-  Description: +4% lifesteal, -25 max HP
+  Description: +3% lifesteal, -40 max HP
   Icon: {fileID: 0}
   Weight: 4
   Rarity: 3
   Changes:
   - Stat: 12
-    Amount: 0.04
+    Amount: 0.03
   - Stat: 2
-    Amount: -25
+    Amount: -40

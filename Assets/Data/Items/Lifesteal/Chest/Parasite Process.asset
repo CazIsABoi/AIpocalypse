@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Parasite Process
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Parasite Process
-  Description: +5% lifesteal
+  Description: +3.5% lifesteal
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4
   Stat: 12
-  Amount: 0.05
+  Amount: 0.035

@@ -23,6 +23,7 @@ public class RewardCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     [SerializeField] private UIGradient gradient;
 
     [Header("Flip")]
+    [SerializeField] Rarity flipFromRarity = Rarity.Rare;   // cards below this start face up (no flip click)
     [SerializeField] float flipTime = 0.125f;
     [SerializeField] float shakeTime = 0.25f;
     [SerializeField]
@@ -59,7 +60,13 @@ public class RewardCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public void Setup(RewardData reward, System.Action<RewardData> onChosen, PlayerStats stats)
     {
         style = raritySettings.Get(reward.GetRarity());
-        title.text = $"{reward.Title}\n<size=60%><alpha=#B3><cspace=0.15em>{reward.GetRarity().ToString().ToUpper()}</cspace>";
+        string tag = reward.GetPath() switch   // which build path this card feeds
+        {
+            RewardPath.Melee => "  <color=#FBC270>MELEE</color>",
+            RewardPath.Gun => "  <color=#7090FF>GUN</color>",
+            _ => ""
+        };
+        title.text = $"{reward.Title}\n<size=60%><alpha=#B3><cspace=0.15em>{reward.GetRarity().ToString().ToUpper()}</cspace><alpha=#FF>{tag}";
         description.text = ColorSigns(reward.Description);
         change.text = reward.GetPreview(stats);
 
@@ -78,11 +85,12 @@ public class RewardCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         visual.localRotation = Quaternion.identity;
         visual.anchoredPosition = Vector2.zero;
         button.interactable = true;
-        revealed = false;
+        // Only Rare+ cards are worth a flip; lower ones arrive face up, so picking takes one click
+        revealed = reward.GetRarity() < flipFromRarity;
         locked = false;
         hovered = false;
         targetScale = 1f;
-        back.SetActive(true);
+        back.SetActive(!revealed);
         glow.enabled = false;
         this.reward = reward;
         chosen = onChosen;
@@ -114,7 +122,7 @@ public class RewardCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         button.interactable = false;
         visual.anchoredPosition = new Vector2(0f, -flyOffset);   // hidden below before the delay
         for (float d = 0; d < delay; d += Time.unscaledDeltaTime) yield return null;
-        AudioManager.Instance?.Play(Sfx.CardFlyIn);
+        AudioManager.Instance?.Play(style.flyInSfx);   // per rarity: Rare+ hint at what's coming
 
         for (float t = 0; t < 1f; t += Time.unscaledDeltaTime / flyTime)
         {

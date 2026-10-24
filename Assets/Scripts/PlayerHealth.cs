@@ -3,6 +3,7 @@ using UnityEngine;
 public class PlayerHealth : MonoBehaviour
 {
     [SerializeField] private float invulnerableTime = 0.3f;   // short protection after a hit
+    private float windowDamage;
     [SerializeField] private float regenDelay = 15f;    // pause after taking damage
     [SerializeField, Range(0f, 1f)] float pausedRegenFactor = 0.2f;   // 20% of normal regen while paused
     [SerializeField] private float minShake = 0.1f;    // camera shake on hit
@@ -42,6 +43,8 @@ public class PlayerHealth : MonoBehaviour
     void Update() 
     {
         invulnerableTimer = Mathf.Max(0f, invulnerableTimer - Time.deltaTime);
+        // refill the lifesteal budget smoothly, holding at most one second's worth
+        lifestealBudget = Mathf.Min(stats.MaxHealth * lifestealPerSecondCap, lifestealBudget + stats.MaxHealth * lifestealPerSecondCap * Time.deltaTime);
 
         regenTimer = Mathf.Max(0f, regenTimer - Time.deltaTime);
         bool paused = regenTimer > 0f;
@@ -53,10 +56,30 @@ public class PlayerHealth : MonoBehaviour
         sliderImage.color = paused ? Color.teal : Color.white;
     }
 
+    public string LastHitBy { get; private set; } = "Unknown";   // for death telemetry
+
+    public void TakeDamage(float amount, string source)
+    {
+        if (!IsDead && invulnerableTimer <= 0f && !string.IsNullOrEmpty(source)) LastHitBy = source;
+        else if (!IsDead && amount > windowDamage && !string.IsNullOrEmpty(source)) LastHitBy = source;   // bigger hit in the window
+        TakeDamage(amount);
+    }
+
     public void TakeDamage(float amount)
     {
-        if (IsDead || invulnerableTimer > 0f) return;
-        invulnerableTimer = invulnerableTime;
+        if (IsDead) return;
+        if (invulnerableTimer > 0f)
+        {
+            if (amount <= windowDamage) return;     // smaller or equal hit: blocked, as before
+            float extra = amount - windowDamage;    // bigger hit: only the part above what you already took
+            windowDamage = amount;
+            amount = extra;                         // then continue as a normal hit with 'extra'
+        }
+        else
+        {
+            invulnerableTimer = invulnerableTime;   // a fresh window starts
+            windowDamage = amount;
+        }
         regenTimer = regenDelay;
         SetHealth(Health - amount);
         float fraction = amount / stats.MaxHealth;      // 0.1 = this hit took 10% of max HP
@@ -65,6 +88,20 @@ public class PlayerHealth : MonoBehaviour
         if (fraction > 0.2f) Hitstop.Instance?.Stop(0.05f);
         if (!IsDead) AudioManager.Instance?.Play(Sfx.PlayerHurt);   // death sound is played in Die()
         Damaged?.Invoke(amount);
+    }
+
+    // Lifesteal can heal at most this fraction of max HP per second: late-game damage is huge,
+    // so a pure percentage of it out-healed anything enemies could deal
+    [SerializeField, Range(0f, 0.5f)] private float lifestealPerSecondCap = 0.06f;
+    private float lifestealBudget;
+
+    public void HealLifesteal(float amount)
+    {
+        float cap = stats.MaxHealth * lifestealPerSecondCap;
+        float heal = Mathf.Min(amount, lifestealBudget);
+        lifestealBudget -= heal;
+        Heal(heal);
+        if (lifestealBudget > cap) lifestealBudget = cap;
     }
 
     public void Heal(float amount, bool show = true)

@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4a43f53720f8737468d4afd219df44c2, type: 3}
-  m_Name: bullets_TripleDDR5
+  m_Name: Wide Arc
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
-  Title: Triple DDR5 Sticks
-  Description: 'Geez, that''s expensive. +2 bullets'
+  Title: Wide Arc
+  Description: +0.3 melee range
   Icon: {fileID: 0}
-  Weight: 1
-  Rarity: 5
-  Stat: 6
-  Amount: 2
+  Weight: 7
+  Rarity: 2
+  Stat: 14
+  Amount: 0.3

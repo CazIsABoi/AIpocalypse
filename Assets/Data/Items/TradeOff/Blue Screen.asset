@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Blue Screen
   m_EditorClassIdentifier: Assembly-CSharp::TradeOffUpgrade
   Title: Blue Screen
-  Description: +2 bullets, +1 pierce, -30% speed, -30 max HP
+  Description: +2 bullets, +1 pierce, -35% damage, -25% speed
   Icon: {fileID: 0}
   Weight: 1
   Rarity: 5
@@ -22,7 +22,7 @@ MonoBehaviour:
     Amount: 2
   - Stat: 9
     Amount: 1
+  - Stat: 4
+    Amount: -0.35
   - Stat: 1
-    Amount: -0.3
-  - Stat: 2
-    Amount: -30
+    Amount: -0.25

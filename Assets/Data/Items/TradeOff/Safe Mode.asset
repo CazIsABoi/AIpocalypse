@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Safe Mode
   m_EditorClassIdentifier: Assembly-CSharp::TradeOffUpgrade
   Title: Safe Mode
-  Description: +80 max HP, +1% regen, -25% damage
+  Description: +80 max HP, +0.6% regen, -25% damage
   Icon: {fileID: 0}
   Weight: 4
   Rarity: 3
@@ -21,6 +21,6 @@ MonoBehaviour:
   - Stat: 2
     Amount: 80
   - Stat: 10
-    Amount: 0.01
+    Amount: 0.006
   - Stat: 4
     Amount: -0.25

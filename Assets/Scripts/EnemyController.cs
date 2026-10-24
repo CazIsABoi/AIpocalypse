@@ -1,3 +1,5 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -41,11 +43,38 @@ public class EnemyController : MonoBehaviour, IDamageable
     [SerializeField] private GameObject TripodShootPivot;
     [SerializeField] private GameObject DroneExplosionPrefab;
     private HitFlash flash;
+    public bool IsElite;   // set by EntityHandler.SpawnElite
+    string AttackerName => (IsElite ? "Elite " : "") + AiType switch
+    {
+        0 => "Walker", 1 => "Tank", 2 => "Drone", 3 => "Froggie", 4 => "Tripod", 10 => "Boss", _ => "Enemy"
+    };
+    // cached: GetComponentInChildren searches the whole hierarchy every call
+    private Animator anim;
+    private Animator Anim => anim != null ? anim : (anim = GetComponentInChildren<Animator>());
+    private Image hpFill;
+    private float lastBarHealth = -1f, lastBarMax = -1f;
 
     [SerializeField] private float popupSumWindow = 0.5f;   // hits closer together than this add onto the same number
     // Normal hits and crits sum up on separate numbers, so a crit never recolors the normal number
     private DamagePopup normalPopup, critPopup;
     private float normalTotal, critTotal, lastNormalTime, lastCritTime;
+
+    // Artifimind Stuff, Boss
+    [SerializeField] private int BossPhase;
+    [SerializeField] private MindBarrierCore[] BarrierCores = new MindBarrierCore[3];
+    [SerializeField] public bool ProtectiveBarrierActive;
+    [SerializeField] private GameObject BarrierObj;
+
+    [SerializeField] private float SpawnCooldown;
+    [SerializeField] private GameObject[] SideRooms = new GameObject[4];
+    [SerializeField] private EnemyData[] enemyPool = new EnemyData[5];
+    [SerializeField] private RunClock clock;
+
+    [SerializeField] private float SubmergeInCountdown;
+    [SerializeField] private float SubmergeDuration;
+    [SerializeField] private Vector3 SubmergeOriginalPos;
+
+    [SerializeField] private List<GameObject> spawnedBossEnemies = new List<GameObject>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -56,6 +85,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         PlayerTarget = GameObject.Find("Player");
         playerHealth = PlayerTarget.GetComponent<PlayerHealth>();
         SpeedMax = Speed * 3;
+        if (AiType == 10) clock = FindAnyObjectByType<RunClock>();   // only the boss needs it (a scene search per spawn adds up)
     }
 
     // Update is called once per frame
@@ -68,20 +98,46 @@ public class EnemyController : MonoBehaviour, IDamageable
             died = true;
         }
 
-        if (died) {
-            GameObject spawnedXp = Instantiate(xpPrefab, transform.position, Quaternion.identity, transform.parent);
-            spawnedXp.GetComponent<XpOrb>().Amount = Xp;
-            AudioManager.Instance.PlayAt(AiType == 2 ? Sfx.DroneDeath : Sfx.EnemyDeath, transform.position);
-            handler?.RegisterKill();
-            Destroy(gameObject); return;  
+        if (AiType != 10)
+        {
+            if (died)
+            {
+                GameObject spawnedXp = Instantiate(xpPrefab, transform.position, Quaternion.identity, transform.parent);
+                spawnedXp.GetComponent<XpOrb>().Amount = Xp;
+                AudioManager.Instance.PlayAt(AiType == 2 ? Sfx.DroneDeath : Sfx.EnemyDeath, transform.position);
+                // boss adds are spawned without a handler, so find the one in the scene for them
+                if (handler == null) handler = FindAnyObjectByType<EntityHandler>();
+                handler?.RegisterKill();
+                Destroy(gameObject); return;
             } // Enemy died, destroy the gameobject and exit the update loop.
+        }
+        else
+        {
+            if (died)
+            {
+                // the adds aren't children of the EntityHandler, so ClearEnemies() wouldn't remove them
+                foreach (GameObject add in spawnedBossEnemies) if (add != null) Destroy(add);
+                spawnedBossEnemies.Clear();
+
+                AudioManager.Instance?.Play(Sfx.BossDeath);
+                clock.BossDefeated();   // outro (if set on the RunClock), then next floor + endless
+                Destroy(gameObject); return;
+            }
+        }
+
         if (AttackInterval > 0) AttackInterval -= Time.deltaTime;
         if (AttackCD > 0) AttackCD -= Time.deltaTime;
         if (DamageWindow > 0) DamageWindow -= Time.deltaTime;
 
-        hpSlider.value = Health;
-        hpSlider.maxValue = MaxHealth;
-        hpSlider.fillRect.GetComponent<Image>().color = HpColor.Evaluate(Health / MaxHealth);
+        // only touch the HP bar when health changed: every UI change rebuilds that canvas (costly with many enemies)
+        if (AiType != 10 && (Health != lastBarHealth || MaxHealth != lastBarMax))
+        {
+            lastBarHealth = Health; lastBarMax = MaxHealth;
+            if (hpFill == null) hpFill = hpSlider.fillRect.GetComponent<Image>();
+            hpSlider.maxValue = MaxHealth;
+            hpSlider.value = Health;
+            hpFill.color = HpColor.Evaluate(Health / MaxHealth);
+        }
 
         if(SpeedBoostIncrease)
         {
@@ -104,11 +160,12 @@ public class EnemyController : MonoBehaviour, IDamageable
                 if (offset.sqrMagnitude <= AttackRange * AttackRange)
                 {
                     IsAttacking = true;
-                    AttackCD = 1.5f;
-                    AttackWindow = 0.5f;
+                    AttackCD = 2f;
+                    AttackWindow = 1f;
                     AudioManager.Instance?.PlayAt(Sfx.EnemyAttack, transform.position);
                     DamageWindow = 0.5f;
                     // Debug.Log("attacked");
+                    Anim.Play("Stomp");
                 }
             }
             if(!IsAttacking)
@@ -137,7 +194,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     {
                         if(hit.gameObject.GetComponent<PlayerHealth>())
                         {
-                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage);
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName);
                             DamageWindow = 5;
                         }
                     }
@@ -168,7 +225,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     DamageWindow = 0.7f;
                     AudioManager.Instance?.PlayAt(Sfx.EnemyAttack, transform.position);
                     Debug.Log("attacked");
-                    GetComponentInChildren<Animator>().SetBool("IsAttacking", true);
+                    Anim.SetBool("IsAttacking", true);
                 }
             }
             if (!IsAttacking)
@@ -187,7 +244,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                 if (AttackWindow <= 6f && AttackWindow > 4.5f) spinSpeed = Mathf.InverseLerp(6f, 4.5f, AttackWindow);
                 else if (AttackWindow <= 4.5f && AttackWindow > 1.5f) spinSpeed = 1;
                 else spinSpeed = Mathf.InverseLerp(0f, 1.5f, AttackWindow);
-                GetComponentInChildren<Animator>().SetFloat("SpinSpeed", spinSpeed); 
+                Anim.SetFloat("SpinSpeed", spinSpeed); 
 
                 if(DamageWindow < 0.1f)
                 {
@@ -196,7 +253,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     {
                         if (hit.gameObject.GetComponent<PlayerHealth>())
                         {
-                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage);
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName);
                             DamageWindow = 0.54f;
                         }
                     }
@@ -219,12 +276,12 @@ public class EnemyController : MonoBehaviour, IDamageable
                     Vector3 offset = PlayerTarget.transform.position - transform.position;
                     if (offset.sqrMagnitude <= AttackRange * AttackRange) // If the player is still in range, apply damage
                     {
-                        playerHealth.TakeDamage(Damage);
+                        playerHealth.TakeDamage(Damage, AttackerName);
                         // Debug.Log($"Player hit for {Damage}");
                     }
 
-                    GetComponentInChildren<Animator>().SetBool("IsAttacking", false);
-                    GetComponentInChildren<Animator>().Play("Walk");
+                    Anim.SetBool("IsAttacking", false);
+                    Anim.Play("Walk");
                     agent.speed = Speed;
                     IsAttacking = false;
                 }
@@ -269,13 +326,14 @@ public class EnemyController : MonoBehaviour, IDamageable
                 }
 
                 AttackWindow -= Time.deltaTime;
-                if (AttackWindow >= 1.0f && AttackWindow < 1.1f) GetComponentInChildren<Animator>().Play("Explode");
+                if (AttackWindow >= 1.0f && AttackWindow < 1.1f) Anim.Play("Explode");
                 if (AttackWindow <= 1 && AttackWindow > 0.16f) agent.speed = Mathf.Lerp(15, 0, 23 * Time.deltaTime);
                 else if (AttackWindow <= 0.15) agent.speed = 0;
 
                 if(DamageWindow < 0.08f)
                 {
                     GameObject spawnedExplosion = Instantiate(DroneExplosionPrefab, transform.position, Quaternion.identity);
+                    AudioManager.Instance?.Play(Sfx.DroneDeath);
                     DamageWindow = 5;
                 }
 
@@ -286,7 +344,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     {
                         if (hit.gameObject.GetComponent<PlayerHealth>())
                         {
-                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage);
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName);
                             //DamageWindow = 5;
                         }
                     }
@@ -306,7 +364,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                 AttackWindow = 1f;
                 DamageWindow = 1f;
                 AttackCD = 2f;
-                GetComponentInChildren<Animator>().Play("Hop");
+                Anim.Play("Hop");
             }
             if (!IsAttacking)
             {
@@ -335,7 +393,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     {
                         if (hit.gameObject.GetComponent<PlayerHealth>())
                         {
-                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage);
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName);
                             DamageWindow = 5;
                         }
                     }
@@ -361,8 +419,8 @@ public class EnemyController : MonoBehaviour, IDamageable
 
                 if (offset.sqrMagnitude <= AttackRange * AttackRange)
                 {
-                    GetComponentInChildren<Animator>().SetBool("IsFiring", true);
-                    GetComponentInChildren<Animator>().Play("TripodShoot");
+                    Anim.SetBool("IsFiring", true);
+                    Anim.Play("TripodShoot");
                     IsAttacking = true;
                     AttackCD = 9f;
                     AttackWindow = 6f;
@@ -406,14 +464,162 @@ public class EnemyController : MonoBehaviour, IDamageable
                     Vector3 offset = PlayerTarget.transform.position - transform.position;
                     if (offset.sqrMagnitude <= AttackRange * AttackRange) // If the player is still in range, apply damage
                     {
-                        playerHealth.TakeDamage(Damage);
+                        playerHealth.TakeDamage(Damage, AttackerName);
                         // Debug.Log($"Player hit for {Damage}");
                     }
 
-                    GetComponentInChildren<Animator>().SetBool("IsFiring", false);
+                    Anim.SetBool("IsFiring", false);
                     agent.speed = Speed;
                     IsAttacking = false;
                 }
+            }
+        }
+        else if(AiType == 10)
+        {
+            if (clock.TimeLeft > 0f)   // the clock's own boss time, not a hardcoded 900
+            {
+                SubmergeOriginalPos = transform.position;
+                SubmergeInCountdown = Random.Range(10f, 30f);
+                return;
+            }
+
+            if (SubmergeInCountdown > 0 && SubmergeDuration <= 0) SubmergeInCountdown -= Time.deltaTime;
+            else if(SubmergeInCountdown <= 0 && SubmergeDuration <= 0)
+            {
+                SubmergeInCountdown = Random.Range(10f, 30f);
+                SubmergeDuration = Random.Range(4f, 11f);
+            }
+
+            if(SubmergeDuration > 0)
+            {
+                SubmergeDuration -= Time.deltaTime;
+                transform.position = Vector3.MoveTowards(transform.position, SubmergeOriginalPos + new Vector3(0, -10, 0), 4 * Time.deltaTime);
+            }
+            else
+            {
+                transform.position = Vector3.MoveTowards(transform.position, SubmergeOriginalPos, 4 * Time.deltaTime);
+            }
+
+
+            if (ProtectiveBarrierActive) BarrierObj.SetActive(true);
+            else BarrierObj.SetActive(false);
+
+            if (SpawnCooldown > 0)
+            {
+                SpawnCooldown -= Time.deltaTime;
+            }
+            else
+            {
+                spawnedBossEnemies.RemoveAll(e => e == null);   // drop dead adds so the cap counts living ones
+                if (spawnedBossEnemies.Count < 80)
+                {
+                    if (BossPhase == 0)
+                    {
+                        int RoomChoice = Random.Range(0, 4);
+                        GameObject enemy = Instantiate(enemyPool[0].EnemyPrefab, SideRooms[RoomChoice].transform.position + new Vector3(0, 0.6f, 0), Quaternion.identity);
+                        enemy.GetComponent<EnemyController>().MaxHealth = enemyPool[0].BaseHealth * 25f;
+                        enemy.GetComponent<EnemyController>().Damage = enemyPool[0].BaseDamage * 3f;
+                        spawnedBossEnemies.Add(enemy);
+                        SpawnCooldown = 1.5f;
+                    }
+                    if (BossPhase == 1)
+                    {
+                        int RoomChoice = Random.Range(0, 4);
+                        GameObject enemy = Instantiate(enemyPool[4].EnemyPrefab, SideRooms[RoomChoice].transform.position + new Vector3(0, 0.6f, 0), Quaternion.identity);
+                        enemy.GetComponent<EnemyController>().MaxHealth = enemyPool[4].BaseHealth * 25f;
+                        enemy.GetComponent<EnemyController>().Damage = enemyPool[4].BaseDamage * 3f;
+                        spawnedBossEnemies.Add(enemy);
+                        SpawnCooldown = 1.2f;
+                    }
+                    if (BossPhase == 2)
+                    {
+                        int RoomChoice = Random.Range(0, 4);
+                        GameObject enemy = Instantiate(enemyPool[2].EnemyPrefab, SideRooms[RoomChoice].transform.position + new Vector3(0, 0.6f, 0), Quaternion.identity);
+                        enemy.GetComponent<EnemyController>().MaxHealth = enemyPool[2].BaseHealth * 25f;
+                        enemy.GetComponent<EnemyController>().Damage = enemyPool[2].BaseDamage * 3f;
+                        spawnedBossEnemies.Add(enemy);
+                        SpawnCooldown = 1.1f;
+                    }
+                    if (BossPhase == 3)
+                    {
+                        int RoomChoice = Random.Range(0, 4);
+                        GameObject enemy = Instantiate(enemyPool[3].EnemyPrefab, SideRooms[RoomChoice].transform.position + new Vector3(0, 0.6f, 0), Quaternion.identity);
+                        enemy.GetComponent<EnemyController>().MaxHealth = enemyPool[3].BaseHealth * 25f;
+                        enemy.GetComponent<EnemyController>().Damage = enemyPool[3].BaseDamage * 3f;
+                        spawnedBossEnemies.Add(enemy);
+                        SpawnCooldown = 1f;
+                    }
+                    if (BossPhase == 4)
+                    {
+                        int RoomChoice = Random.Range(0, 4);
+                        GameObject enemy = Instantiate(enemyPool[1].EnemyPrefab, SideRooms[RoomChoice].transform.position + new Vector3(0, 0.6f, 0), Quaternion.identity);
+                        enemy.GetComponent<EnemyController>().MaxHealth = enemyPool[1].BaseHealth * 25f;
+                        enemy.GetComponent<EnemyController>().Damage = enemyPool[1].BaseDamage * 3f;
+                        spawnedBossEnemies.Add(enemy);
+                        SpawnCooldown = 2f;
+                    }
+                    if (BossPhase == 5)
+                    {
+                        int RoomChoice = Random.Range(0, 4);
+                        int EnemyChoice = Random.Range(0, 5);
+                        GameObject enemy = Instantiate(enemyPool[EnemyChoice].EnemyPrefab, SideRooms[RoomChoice].transform.position + new Vector3(0, 0.6f, 0), Quaternion.identity);
+                        enemy.GetComponent<EnemyController>().MaxHealth = enemyPool[EnemyChoice].BaseHealth * 25f;
+                        enemy.GetComponent<EnemyController>().Damage = enemyPool[EnemyChoice].BaseDamage * 3f;
+                        spawnedBossEnemies.Add(enemy);
+                        SpawnCooldown = 1.4f;
+                    }
+                    if (BossPhase == 6)
+                    {
+                        int RoomChoice = Random.Range(0, 4);
+                        int EnemyChoice = Random.Range(0, 5);
+                        GameObject enemy = Instantiate(enemyPool[EnemyChoice].EnemyPrefab, SideRooms[RoomChoice].transform.position + new Vector3(0, 0.6f, 0), Quaternion.identity);
+                        enemy.GetComponent<EnemyController>().MaxHealth = enemyPool[EnemyChoice].BaseHealth * 25f;
+                        enemy.GetComponent<EnemyController>().Damage = enemyPool[EnemyChoice].BaseDamage * 3f;
+                        spawnedBossEnemies.Add(enemy);
+                        SpawnCooldown = 0.5f;
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < spawnedBossEnemies.Count; i++)
+                    {
+                        if (spawnedBossEnemies[i] == null) spawnedBossEnemies.RemoveAt(i);
+                    }
+                }
+            }
+
+            if (Health <= 750000f && BossPhase == 0)
+            {
+                BarrierCores[0].BarrierActive = false;
+                BossPhase = 1;
+                ProtectiveBarrierActive = true;
+            }
+            else if(BossPhase == 1 && BarrierCores[0].destroyed)
+            {
+                BossPhase = 2;
+                ProtectiveBarrierActive = false;
+            }
+            else if (Health <= 500000f && BossPhase == 2)
+            {
+                BarrierCores[1].BarrierActive = false;
+                BossPhase = 3;
+                ProtectiveBarrierActive = true;
+            }
+            else if (BossPhase == 3 && BarrierCores[1].destroyed)
+            {
+                BossPhase = 4;
+                ProtectiveBarrierActive = false;
+            }
+            else if (Health <= 250000f && BossPhase == 4)
+            {
+                BarrierCores[2].BarrierActive = false;
+                BossPhase = 5;
+                ProtectiveBarrierActive = true;
+            }
+            else if (BossPhase == 5 && BarrierCores[2].destroyed)
+            {
+                BossPhase = 6;
+                ProtectiveBarrierActive = false;
             }
         }
     }
@@ -439,7 +645,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     private void LateUpdate()
     {
-        hpSlider.transform.parent.transform.rotation = Quaternion.Euler(45f, 0f, 0f);
+        if(AiType!=10)  hpSlider.transform.parent.transform.rotation = Quaternion.Euler(45f, 0f, 0f);
     }
 
     // IDamageable entry point (hazards etc.) — no crit
@@ -450,6 +656,8 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     public float TakeDamage(float Amount, float CritChance, float CritDamage)
     {
+        if (AiType == 10 && ProtectiveBarrierActive) Amount = 0;
+
         float CritRoll = Random.Range(0f, 100f);
         bool IsCrit = false;
         if (CritChance*100f >= CritRoll) IsCrit = true;
@@ -457,9 +665,12 @@ public class EnemyController : MonoBehaviour, IDamageable
         if(IsCrit) Amount *= CritDamage;
         Health -= Amount;
         
-        if (IsCrit) ShowPopup(ref critPopup, ref critTotal, ref lastCritTime, Amount, true);
-        else ShowPopup(ref normalPopup, ref normalTotal, ref lastNormalTime, Amount, false);
-        flash?.Flash();
+        if (Amount > 0f)   // shielded boss: no "0" popups or flash for every bullet
+        {
+            if (IsCrit) ShowPopup(ref critPopup, ref critTotal, ref lastCritTime, Amount, true);
+            else ShowPopup(ref normalPopup, ref normalTotal, ref lastNormalTime, Amount, false);
+            flash?.Flash();
+        }
 
         AudioManager.Instance.PlayAt(Sfx.EnemyHit, transform.position);
         if (IsCrit) AudioManager.Instance?.PlayAt(Sfx.CritHit, transform.position);   // extra punch layered on crits

@@ -8,16 +8,34 @@ public class Core : MonoBehaviour, IDamageable
     [SerializeField] private float perMinute = 0.05f;   
     [SerializeField] private float bulletDamageMultiplier = 0.1f;
     [SerializeField] private GameObject DamagePopup;
+    [SerializeField] private Vector3 popupOffset = new Vector3(2.2f, 2.5f, 0f);   // world offset: +X = screen right in the top-down view
+    [SerializeField] private float popupSumWindow = 0.5f;   // hits closer together than this add onto the same number
+    private DamagePopup popup;
+    private float popupTotal, lastPopupTime;
     private float health;
     private bool destroyed;
     private GameController game;
+    private Transform player;
+    public bool Discovered { get; private set; }   // the player got near it (telemetry: did they find the Core?)
+    [SerializeField] private float discoverDistance = 10f;
 
     void Awake()
     {
         game = FindAnyObjectByType<GameController>();
+        var ph = FindAnyObjectByType<PlayerHealth>();
+        if (ph != null) player = ph.transform;
         var clock = FindAnyObjectByType<RunClock>();
         maxHealth = baseHealth * (1 + perFloor * (game.Floor - 1)) * (1 + perMinute * clock.Elapsed / 60f);
         health = maxHealth;
+    }
+
+    void Update() => CheckDiscovered();
+
+    void CheckDiscovered()
+    {
+        if (Discovered || player == null) return;
+        Vector3 d = player.position - transform.position; d.y = 0f;
+        if (d.magnitude < discoverDistance) Discovered = true;
     }
 
     public void TakeDamage(float amount)
@@ -30,9 +48,22 @@ public class Core : MonoBehaviour, IDamageable
             AudioManager.Instance?.Play(Sfx.CoreDestroyed);
             game.NextFloor();
         }
-        GameObject spawnedPopup = Instantiate(DamagePopup, transform.position, Quaternion.identity);
-        spawnedPopup.GetComponent<DamagePopup>().TargetPosition = transform.position + new Vector3(0, 1.5f, 0);
-        spawnedPopup.GetComponent<DamagePopup>().PopupDisplayContent = ((int)amount).ToString();
+        // Rapid hits add up on one number (like enemies); also stops 10% bullet hits showing as "0"
+        if (popup != null && Time.time - lastPopupTime < popupSumWindow)
+        {
+            popupTotal += amount;
+            popup.Refresh();
+        }
+        else
+        {
+            // beside the core, not inside it: the model hides anything spawned in its middle
+            Vector3 start = transform.position + popupOffset;
+            popup = Instantiate(DamagePopup, start, Quaternion.identity).GetComponent<DamagePopup>();
+            popup.TargetPosition = start + Vector3.up * 1f;
+            popupTotal = amount;
+        }
+        popup.PopupDisplayContent = Mathf.CeilToInt(popupTotal).ToString();
+        lastPopupTime = Time.time;
 
         if (!destroyed) AudioManager.Instance.Play(Sfx.CoreHit);   // the killing hit plays CoreDestroyed instead
     }

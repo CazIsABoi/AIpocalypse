@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Overclock Burn
   m_EditorClassIdentifier: Assembly-CSharp::TradeOffUpgrade
   Title: Overclock Burn
-  Description: +40% damage, -15% speed
+  Description: +35% damage, -20% speed
   Icon: {fileID: 0}
   Weight: 4
   Rarity: 3
   Changes:
   - Stat: 4
-    Amount: 0.4
+    Amount: 0.35
   - Stat: 1
-    Amount: -0.15
+    Amount: -0.2

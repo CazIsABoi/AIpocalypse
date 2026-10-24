@@ -9,7 +9,8 @@ public class RaritySettings : ScriptableObject
         public Rarity rarity;
         public Gradient gradient;           
         public GameObject revealEffect;
-        public Sfx revealSfx;
+        public Sfx revealSfx;           // when the card flips open
+        public Sfx flyInSfx;            // when the card slides in (Rare+ get their own hint sound)
         public Color glowColor;
         public float shakeStrength;
         public float rowShake;          // pixels the whole card row shakes on reveal (0 = none, Legendary only)

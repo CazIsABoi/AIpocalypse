@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Auto-Heal Daemon
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Auto-Heal Daemon
-  Description: +2% max HP regen per second
+  Description: +1.2% max HP regen per second
   Icon: {fileID: 0}
   Weight: 4
   Rarity: 3
   Stat: 10
-  Amount: 0.02
+  Amount: 0.012

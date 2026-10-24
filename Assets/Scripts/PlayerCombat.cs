@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,10 +11,15 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private LayerMask EnemyLayer;
     private PlayerStats stats;
     private PlayerHealth health;
+    [SerializeField, Range(0f, 1f)] private float meleeShootLock = 1f;   // part of the melee cooldown where shooting is blocked
+    private float shootLock;
+    [SerializeField, Range(0f, 1f)] private float meleeOverloadDrain = 0.35f;   // how much Overload charge a connecting swing removes
+    private OverloadDischarge overload;
 
     [SerializeField] private GameObject RiflePivot;
     [SerializeField] private GameObject RifleMuzzle;        // Its shooting Point.
 
+    [SerializeField] private Animator animator;
     public int BulletAmount = 1;
     public int BulletPierce = 1;
     [SerializeField] private GameObject BulletPrefab;
@@ -37,6 +41,7 @@ public class PlayerCombat : MonoBehaviour
     {
         stats = GetComponent<PlayerStats>();
         health = GetComponent<PlayerHealth>();
+        overload = GetComponent<OverloadDischarge>();
     }
 
     // Update is called once per frame
@@ -44,19 +49,20 @@ public class PlayerCombat : MonoBehaviour
     {
         if (Time.timeScale == 0f) return;
         Vector3 direction = CalculateAimingDirection();
-        Quaternion rotation = Quaternion.LookRotation(-direction);
+        Quaternion rotation = Quaternion.LookRotation(direction);
         RiflePivot.transform.rotation = rotation;
 
         //Debug.DrawLine(transform.position, GetMouseWorldPosition(), Color.red);
         Debug.DrawLine(transform.position, transform.position + CalculateAimingDirection() * 1.25f);
         
-        MeleeCooldown = MeleeBaseCooldown / (1f + stats.AttackSpeed);  // Add all multipliers here
-        MeleeDamage = stats.Damage * 4;         // Add melee damage multipliers here
+        MeleeCooldown = MeleeBaseCooldown / Mathf.Max(0.2f, 1f + stats.AttackSpeed + stats.meleeSpeedPercent);   // shared + melee-only speed
+        MeleeDamage = stats.MeleeHit;          // Damage x 4 x Melee Damage % (PlayerStats)
         if (CurrentMeleeCooldown > 0) CurrentMeleeCooldown -= Time.deltaTime;
 
         FirearmCooldown = FirearmBaseCooldown / (1f + stats.AttackSpeed);  // Add all multipliers here
-        RangedDamage = stats.Damage;         // Add melee damage multipliers here. 5 dmg per bullet by default, 25 dps, melee is 40.
+        RangedDamage = stats.GunHit;           // Damage x Gun Damage % (PlayerStats)         // Add melee damage multipliers here. 5 dmg per bullet by default, 25 dps, melee is 40.
         if (CurrentFirearmCooldown > 0) CurrentFirearmCooldown -= Time.deltaTime;
+        if (shootLock > 0) shootLock -= Time.deltaTime;
 
         BulletAmount = stats.BulletAmount;
         BulletPierce = stats.BulletPierce;
@@ -65,16 +71,20 @@ public class PlayerCombat : MonoBehaviour
         {
             if (CurrentMeleeCooldown <= 0)
             {
+                animator.SetBool("IsAttacking", true);
                 CurrentMeleeCooldown = MeleeCooldown;
+                shootLock = MeleeCooldown * meleeShootLock;   // no shooting during the swing (it lasts ~one cooldown)
+                CancelInvoke(nameof(ShootGun));                // and stop a burst that was already queued
 
-                RiflePivot.GetComponentInChildren<Animator>().SetFloat("MeleeSpeed", 0.5f / MeleeCooldown);
-                RiflePivot.GetComponentInChildren<Animator>().SetBool("IsSlashing", true);
-                RiflePivot.GetComponentInChildren<Animator>().Play("RifleSlash");
+                animator.GetComponentInChildren<Animator>().SetFloat("SlashSpeedVisual", 0.5f / MeleeCooldown);
+                //RiflePivot.GetComponentInChildren<Animator>().SetFloat("MeleeSpeed", 0.5f / MeleeCooldown);
+                //RiflePivot.GetComponentInChildren<Animator>().SetBool("IsSlashing", true);
+                //RiflePivot.GetComponentInChildren<Animator>().Play("RifleSlash");
 
                 AudioManager.Instance.Play(Sfx.Melee);
 
                 bool hitAny = false, crit = false;
-                Collider[] hits = Physics.OverlapSphere(transform.position + CalculateAimingDirection() * 1.25f, 1.5f, EnemyLayer);
+                Collider[] hits = Physics.OverlapSphere(transform.position + CalculateAimingDirection() * 1.25f, stats.MeleeRadius, EnemyLayer);   // Melee Range widens the swing
                 foreach (Collider hit in hits)
                 {
                     float amount = 0f;
@@ -84,11 +94,10 @@ public class PlayerCombat : MonoBehaviour
                         healthBefore = enemy.Health;
 
                         hitAny = true;
-                        if (amount > MeleeDamage) crit = true;
-
                         amount = enemy.TakeDamage(MeleeDamage, stats.CritChance, stats.CritDamage);   // enemies: with crits
+                        if (amount > MeleeDamage) crit = true;   // damage dealt above normal = it was a crit
                         amount = amount * stats.Lifesteal; // Lifesteal: heal for a percentage of the damage dealt
-                        health.Heal(Mathf.Clamp(amount, 0f, Mathf.Max(0f, healthBefore))); // never more than the enemy had, never negative (enemy already dead this frame)
+                        health.HealLifesteal(Mathf.Clamp(amount, 0f, Mathf.Max(0f, healthBefore))); // never more than the enemy had, never negative (enemy already dead this frame)
                         CameraShake.Instance?.Add(0.2f);
 
                     }
@@ -98,6 +107,7 @@ public class PlayerCombat : MonoBehaviour
                 if (hitAny)
                 {
                     Hitstop.Instance?.Stop(crit ? 0.06f : 0.03f);
+                    overload?.ReduceCharge(meleeOverloadDrain);   // swinging into a crowd keeps the robots from discharging
                     AudioManager.Instance?.Play(Sfx.MeleeHit);   // the swing connected (the swing itself is Sfx.Melee)
                 }
             }
@@ -105,10 +115,11 @@ public class PlayerCombat : MonoBehaviour
         else if (!RightClick.action.IsPressed())
         {
             if (CurrentMeleeCooldown < 0) CurrentMeleeCooldown = 0;
-            RiflePivot.GetComponentInChildren<Animator>().SetBool("IsSlashing", false);
+            //RiflePivot.GetComponentInChildren<Animator>().SetBool("IsSlashing", false);
+            animator.SetBool("IsAttacking", false);
         }
 
-        if (LeftClick.action.IsPressed())
+        if (LeftClick.action.IsPressed() && shootLock <= 0)
         {
             if (CurrentFirearmCooldown <= 0)
             {

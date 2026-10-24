@@ -62,7 +62,7 @@ public enum Sfx
     CardFlyIn,        // each card sliding up into place (plays 3x, keep it short) → needs a sound
     CardReveal,       // front shows (Common/Uncommon/Rare; Epic+ use RareCardReveal) → needs a sound
     DroneDeath,       // drone explodes (instead of EnemyDeath)
-    LegendaryReveal,  // the long reveal for Legendary cards (Epic keeps RareCardReveal)
+    RareCardFlyIn,    // a Rare+ card slides in (a hint before the flip; RareCardReveal plays on the flip)
 }
 
 [AutoStaticsCleanup]
@@ -83,6 +83,8 @@ partial class AudioManager : MonoBehaviour
     }
 
     [SerializeField] private AudioSource source;  // 2D, Output = SFX group
+
+    private AudioSource steadySource;
     [SerializeField] private Entry[] sounds;
 
     [SerializeField] private AudioSource source3DPrefab;   // Spatial Blend 1, Output = SFX, Play On Awake off
@@ -97,6 +99,11 @@ partial class AudioManager : MonoBehaviour
     void Awake() 
     { 
         Instance = this; 
+        // Second 2D source for sounds without pitch variance (long reveals, stingers), so a later
+        // pitch-varied sound on 'source' can't bend them while they're still playing
+        steadySource = gameObject.AddComponent<AudioSource>();
+        steadySource.playOnAwake = false;
+        steadySource.outputAudioMixerGroup = source.outputAudioMixerGroup;
         pool = new AudioSource[poolSize];
         for (int i = 0; i < poolSize; i++)
         {
@@ -113,6 +120,7 @@ partial class AudioManager : MonoBehaviour
     public void Play(Sfx id)
     {
         if (!TryGetClip(id, out Entry entry, out AudioClip clip)) return;
+        if (entry.pitchVariance <= 0f) { steadySource.PlayOneShot(clip, entry.volume); return; }
         source.pitch = 1f + Random.Range(-entry.pitchVariance, entry.pitchVariance);
         source.PlayOneShot(clip, entry.volume);
     }

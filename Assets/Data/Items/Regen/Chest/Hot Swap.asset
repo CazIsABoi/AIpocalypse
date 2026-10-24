@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Hot Swap
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Hot Swap
-  Description: +3% max HP regen per second
+  Description: +2% max HP regen per second
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4
   Stat: 10
-  Amount: 0.03
+  Amount: 0.02
