@@ -7,6 +7,7 @@ public class QuitButton : MonoBehaviour
     public void ReturnToMainMenu()
     {
         Debug.Log("Quit button pressed. Exiting the game.");
+        RunTelemetry.Instance?.Submit("quit", 0);   // a run left mid-way (does nothing if it already ended in a death)
         GamePause.Clear(); // Reset time scale to normal in case it was changed
         SceneManager.LoadScene(mainMenuSceneName);
     }

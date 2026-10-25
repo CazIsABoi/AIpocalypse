@@ -17,6 +17,14 @@ public class PlayerEffects : MonoBehaviour
         levels[type] = Level(type) + amount;
     }
 
+    // For telemetry: "ChainLightning:2|Ricochet:1"
+    public string Describe()
+    {
+        var parts = new List<string>();
+        foreach (var pair in levels) if (pair.Value > 0) parts.Add($"{pair.Key}:{pair.Value}");
+        return string.Join("|", parts);
+    }
+
     // Testing: pick an effect here, then in Play mode use this component's ⋮ menu
     [Header("Debug")]
     [SerializeField] private EffectType debugEffect;

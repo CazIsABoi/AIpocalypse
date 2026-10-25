@@ -21,6 +21,7 @@ public class HealthOrb : Pickup
     protected override void Collect()
     {
         health.Heal(player.MaxHealth * healFraction);
+        RunTelemetry.Instance?.HealthOrbCollected(player.MaxHealth * healFraction);
         AudioManager.Instance?.Play(Sfx.HealthPickup);
     }
 }

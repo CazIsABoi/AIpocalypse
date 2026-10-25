@@ -50,6 +50,7 @@ public class LevelUpUI : MonoBehaviour
     private bool isOpen;
     private bool showingLevelUp;                      // level-up or chest?
     private bool choosing;                            // picked card is lingering, ignore more picks
+    private string pickSource;                        // telemetry: "Level", or the pool's name for chests etc.
     private Vector2 rowBasePos;
     private Coroutine rowShake;
     private Coroutine flashRoutine;
@@ -101,6 +102,7 @@ public class LevelUpUI : MonoBehaviour
         StopFlash();
         int shownLevel = stats.Level - pendingLevelUps + 1;
         sourceLabel.text = pool == levelUpPool ? $"LEVEL {shownLevel}" : pool.sourceText;
+        pickSource = pool == levelUpPool ? "Level" : pool.name;   // telemetry: where this pick came from
 
         for (int i = 0; i < cards.Length; i++)
         {
@@ -147,6 +149,9 @@ public class LevelUpUI : MonoBehaviour
         yield return new WaitForSecondsRealtime(lingerTime);   // realtime: the game is still paused
         choosing = false;
 
+        var shown = new List<RewardData>();
+        foreach (var card in cards) if (card.gameObject.activeSelf) shown.Add(card.Reward);
+        RunTelemetry.Instance?.CardPicked(reward, shown, pickSource);
         reward.Apply(stats);
         if (showingLevelUp) pendingLevelUps--;
         if (pendingLevelUps > 0)

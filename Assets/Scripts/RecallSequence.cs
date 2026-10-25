@@ -63,9 +63,17 @@ public class RecallSequence : MonoBehaviour
             IdeaData picked = null;
             picker.Show(choices, idea => picked = idea);
             while (picked == null) yield return null;
-            int recallsBefore = Progress.Recalls;
+            int recallsBefore = Progress.Recalls, cost = Progress.RecallCost;
             Progress.Recall(picked);   // save first (spends Thoughts, unlocks the Idea + its cards)...
             if (Progress.Recalls <= recallsBefore) { Debug.LogWarning("Recall didn't go through"); break; }   // would loop forever
+
+            var names = new System.Collections.Generic.List<string>();
+            foreach (var idea in choices) names.Add(idea.Title);
+            ScoreService.SubmitRecall(new ScoreService.RecallEvent
+            {
+                idea = picked.Title, choices = string.Join(",", names),
+                recallNumber = Progress.Recalls, cost = cost, thoughtsLeft = Progress.Thoughts
+            });
 
             bool closed = false;       // ...show second
             unlockScreen.Show(picked.Cards, () => closed = true, picked.Title.ToUpper());

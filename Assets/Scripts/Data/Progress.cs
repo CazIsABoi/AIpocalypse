@@ -72,6 +72,7 @@ static partial class Progress
         return DrawLocked(allCards);
     }
     public static int Recalls => D.recalls;
+    public static string UnlockedIdeaList => string.Join("|", D.unlockedIdeas);   // telemetry
     // The very first death always unlocks something: the first recall costs what the player has,
     // rounded down to a ten (14 -> 10, 37 -> 30), so the bar looks like it filled up by itself
     public static int RecallCost => D.recalls == 0 ? FirstRecallCost : 80 + ((D.recalls - 1) * 40);
