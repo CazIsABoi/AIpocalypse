@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4
+  Id: Hot Swap
+  StartsUnlocked: 0
   Stat: 10
   Amount: 0.02

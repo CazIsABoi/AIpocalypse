@@ -17,6 +17,8 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 1
   Rarity: 5
+  Id: Kernel Panic
+  StartsUnlocked: 0
   Changes:
   - Stat: 4
     Amount: 0.5

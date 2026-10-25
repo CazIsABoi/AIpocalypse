@@ -17,6 +17,8 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4
+  Id: Glass Cannon
+  StartsUnlocked: 1
   Changes:
   - Stat: 7
     Amount: 1

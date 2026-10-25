@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8cd26653a214259b06f5679417d7e74, type: 3}
+  m_Name: Marksman
+  m_EditorClassIdentifier: Assembly-CSharp::IdeaData
+  Id: Marksman
+  Title: Marksman
+  Description: Patience, aim, release. Top-tier gun damage.
+  Icon: {fileID: 0}
+  Rarity: 4
+  Cards:
+  - {fileID: 11400000, guid: 4cd48c355df14e82858913212d1bc027, type: 2}
+  - {fileID: 11400000, guid: 4de770d592be4e3bbb2400b9d8e07493, type: 2}
+  - {fileID: 11400000, guid: c37527fa02794db483c81ade84510f5d, type: 2}

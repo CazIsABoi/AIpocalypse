@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4
+  Id: Off Switch
+  StartsUnlocked: 1
   Stat: 3
   Amount: 3

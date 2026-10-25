@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 10
   Rarity: 1
+  Id: Overclock
+  StartsUnlocked: 1
   Stat: 0
   Amount: 0.5

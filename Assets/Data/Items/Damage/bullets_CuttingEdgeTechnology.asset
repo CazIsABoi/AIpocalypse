@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 4
   Rarity: 3
+  Id: bullets_CuttingEdgeTechnology
+  StartsUnlocked: 0
   Stat: 9
   Amount: 1

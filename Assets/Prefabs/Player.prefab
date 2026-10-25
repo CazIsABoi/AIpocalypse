@@ -294,7 +294,7 @@ MonoBehaviour:
   regenAmount: 0.01
   AttackSpeed: 0
   Lifesteal: 0
-  lifestealCap: 0.15
+  lifestealCap: 0.1
   regenCap: 0.04
   meleeDamagePercent: 0
   meleeSpeedPercent: 0

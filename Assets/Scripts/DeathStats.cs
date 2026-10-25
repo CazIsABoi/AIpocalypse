@@ -12,6 +12,8 @@ partial class DeathStats : MonoBehaviour
     [SerializeField] private PlayerStats stats;
     [SerializeField] private EntityHandler spawner;
 
+    [SerializeField] private RecallSequence recall;   // Thoughts count-up, recall bar, Idea pick
+
     // Shown as real per-hit values below instead of raw multipliers
     static readonly HashSet<StatType> replaced = new HashSet<StatType>
     {
@@ -57,6 +59,10 @@ partial class DeathStats : MonoBehaviour
                 coreFound = FindAnyObjectByType<Core>() is Core c && c.Discovered ? 1 : 0,
                 floorTime = Time.time - game.FloorStartedAt
             });
+            // calculate thoughts earned based on time survived, kills and floor reached
+            int thoughtsEarned = Mathf.RoundToInt(clock.Elapsed * 0.1f + spawner.Kills * 0.5f + game.Floor * 2f);
+            Progress.AddThoughts(thoughtsEarned);   // save first...
+            recall.Play(thoughtsEarned);            // ...show second (count-up, bar, maybe a recall)
         }
     }
     private bool submitted;

@@ -17,6 +17,8 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 7
   Rarity: 2
+  Id: Bloatware
+  StartsUnlocked: 1
   Changes:
   - Stat: 2
     Amount: 60

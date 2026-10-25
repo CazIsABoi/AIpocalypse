@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 10
   Rarity: 1
+  Id: Clock Boost
+  StartsUnlocked: 1
   Stat: 11
   Amount: 0.1

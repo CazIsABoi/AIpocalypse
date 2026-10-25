@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 7
   Rarity: 2
+  Id: Patch Tuesday
+  StartsUnlocked: 0
   Stat: 10
   Amount: 0.006

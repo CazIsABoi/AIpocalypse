@@ -226,8 +226,17 @@ public class LevelUpUI : MonoBehaviour
         // leave out cards that would do nothing right now (capped stats)
         List<RewardData> options = new List<RewardData>();
         foreach (var reward in pool.Rewards)
-            if (reward.CanOffer(stats)) options.Add(reward);
-        if (options.Count == 0) options.AddRange(pool.Rewards);   // never open an empty card screen
+            if (reward.CanOffer(stats) && Progress.IsUnlocked(reward)) options.Add(reward);
+        if (options.Count == 0) // never open an empty card screen
+        { 
+            for (int i = 0; i < pool.Rewards.Count; i++) // Make sure only unlocked rewards are offered if all rewards are locked
+            {
+                if (Progress.IsUnlocked(pool.Rewards[i]))
+                {
+                    options.Add(pool.Rewards[i]);
+                }
+            }
+        }  
         List<RewardData> chosen = new List<RewardData>();
         RarityTier tier = CurrentTier();
 

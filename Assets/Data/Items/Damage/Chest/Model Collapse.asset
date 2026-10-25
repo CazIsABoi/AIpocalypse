@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 4
   Rarity: 3
+  Id: Model Collapse
+  StartsUnlocked: 1
   Stat: 4
   Amount: 0.35

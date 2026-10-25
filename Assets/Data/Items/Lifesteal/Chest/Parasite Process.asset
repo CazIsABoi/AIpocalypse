@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4
+  Id: Parasite Process
+  StartsUnlocked: 0
   Stat: 12
   Amount: 0.035

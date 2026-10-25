@@ -7,6 +7,8 @@ public abstract class RewardData : ScriptableObject
     public Sprite Icon;
     public int Weight = 10;          // how often it appears
     public Rarity Rarity;
+    public string Id;              // unique identifier for saving / loading
+    public bool StartsUnlocked = false; 
 
     public abstract void Apply(PlayerStats stats);
 
