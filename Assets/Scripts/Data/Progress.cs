@@ -71,7 +71,11 @@ static partial class Progress
         AddThoughts(-cost);
         return DrawLocked(allCards);
     }
-    public static int RecallCost => 80 + (D.recalls * 40);
+    public static int Recalls => D.recalls;
+    // The very first death always unlocks something: the first recall costs what the player has,
+    // rounded down to a ten (14 -> 10, 37 -> 30), so the bar looks like it filled up by itself
+    public static int RecallCost => D.recalls == 0 ? FirstRecallCost : 80 + ((D.recalls - 1) * 40);
+    static int FirstRecallCost => Thoughts >= 10 ? Thoughts / 10 * 10 : Mathf.Max(1, Thoughts);
 
     public static bool IsUnlocked(IdeaData idea)
     {

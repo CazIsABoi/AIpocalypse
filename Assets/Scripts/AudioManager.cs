@@ -10,62 +10,66 @@ public enum Sfx
     EnemyDeath,       // EnemyDeath_MAYBE
     CoreHit,          // Metal_hitting
     XpPickup,         // Pickup
-    LevelUp,          // placeholder: HealthPickup        → needs a sound
+    LevelUp,          // HealthPickup
     CardPick,         // Reload
     EventStart,       // Alarm
     PlayerHurt,       // Sword_on_steel
     PlayerDeath,      // Death
 
     // --- combat ---
-    MeleeHit,         // swing connects with an enemy (separate from the swing)  → needs a sound
-    CritHit,          // extra "punch" layered on a crit                          → needs a sound
+    MeleeHit,         // swing connects with an enemy (separate from the swing)
+    CritHit,          // extra "punch" layered on a crit
     Heal,             // lifesteal / regen tick (long min interval)  HealthPickup
 
     // --- enemies ---
-    EnemyAttack,      // an enemy hits / lunges at the player                     → needs a sound
-    EnemySpawn,       // optional, quiet, when a wave arrives                     → needs a sound
+    EnemyAttack,      // an enemy hits / lunges at the player
+    EnemySpawn,       // optional, quiet, when a wave arrives
 
     // --- core & floors ---
-    CoreDestroyed,    // core goes down                                           → needs a sound
-    FloorComplete,    // fade to the next floor                                   → needs a sound
-    ChestOpen,        // treasure chest looted                                    → needs a sound
+    CoreDestroyed,    // core goes down
+    FloorComplete,    // fade to the next floor
+    ChestOpen,        // treasure chest looted
 
     // --- events ---
-    EventEnd,         // event over (Lockdown open, Swarm calms down)            → needs a sound
+    EventEnd,         // event over (Lockdown open, Swarm calms down)
     DataLeak,         // Robotic_Glitching
-    LockdownBarrier,  // barriers slam into the doors                            → needs a sound
-    BountySpawn,      // marked enemy appears                                     → needs a sound
-    BountyKilled,     // bounty reward                                            → needs a sound
+    LockdownBarrier,  // barriers slam into the doors
+    BountySpawn,      // marked enemy appears
+    BountyKilled,     // bounty reward
 
     // --- hazards ---
-    HazardWarn,       // plate about to turn on                                   → needs a sound
-    HazardZap,        // plate is live / hits something                           → needs a sound
+    HazardWarn,       // plate about to turn on
+    HazardZap,        // plate is live / hits something
 
     // --- player state ---
-    LowHealth,        // warning beep when HP drops low (plays once per drop)     → needs a sound
+    LowHealth,        // warning beep when HP drops low (plays once per drop)
 
     // --- UI ---
-    CardHover,        // mouse over a reward card                                 → needs a sound
-    RareCardReveal,   // extra sound for Epic / Legendary cards (later: explosion) → needs a sound
-    ButtonClick,      // menus, settings                                          → needs a sound
+    CardHover,        // mouse over a reward card
+    RareCardReveal,   // extra sound for Epic / Legendary cards (later: explosion)
+    ButtonClick,      // menus, settings
     ButtonHover,      // menus, settings                                          → needs a sound
 
     // --- run timer & boss ---
-    TimerWarning,     // last minute before the boss (e.g. a tick each second)    → needs a sound
-    BossWarning,      // boss is about to arrive                                  → needs a sound
-    BossSpawn,        // boss appears                                             → needs a sound
-    BossDeath,        // boss killed                                              → needs a sound
-    OvertimeStart,    // endless mode begins                                      → needs a sound
+    TimerWarning,     // last minute before the boss (e.g. a tick each second)
+    BossWarning,      // boss is about to arrive
+    BossSpawn,        // boss appears
+    BossDeath,        // boss killed
+    OvertimeStart,    // endless mode begins
 
     // --- reward cards (added at the END on purpose: enums are saved as numbers) ---
-    CardFlip,         // card starts flipping over                                → needs a sound
-    CardFlyIn,        // each card sliding up into place (plays 3x, keep it short) → needs a sound
-    CardReveal,       // front shows (Common/Uncommon/Rare; Epic+ use RareCardReveal) → needs a sound
+    CardFlip,         // card starts flipping over
+    CardFlyIn,        // each card sliding up into place (plays 3x, keep it short)
+    CardReveal,       // front shows (Common/Uncommon/Rare; Epic+ use RareCardReveal)
     DroneDeath,       // drone explodes (instead of EnemyDeath)
     RareCardFlyIn,    // a Rare+ card slides in (a hint before the flip; RareCardReveal plays on the flip)
 
     // --- Effects ---
     Shockwave,         // ShockwaveSwingEffect (long min interval)                 → needs a sound
+
+    // --- meta-progression & pickups ---
+    ThoughtTick,       // Thoughts counting up on the death screen (short, plays often) → needs a sound
+    HealthPickup,      // health orb collected                                     → needs a sound
 }
 
 [AutoStaticsCleanup]

@@ -43,7 +43,7 @@ public class RecallSequence : MonoBehaviour
         for (float t = 0; t < 1f; t += Time.unscaledDeltaTime / countTime)
         {
             int now = Mathf.RoundToInt(Mathf.Lerp(0, earned, 1f - (1f - t) * (1f - t)));
-            if (now / 5 != shown / 5) AudioManager.Instance?.Play(Sfx.CardHover);
+            if (now / 2 != shown / 2) AudioManager.Instance?.Play(Sfx.ThoughtTick);   // a tick every 2 Thoughts
             shown = now;
             thoughtsText.text = $"THOUGHTS +{shown}";
             yield return null;
@@ -63,9 +63,9 @@ public class RecallSequence : MonoBehaviour
             IdeaData picked = null;
             picker.Show(choices, idea => picked = idea);
             while (picked == null) yield return null;
-            int thoughtsBefore = Progress.Thoughts;
+            int recallsBefore = Progress.Recalls;
             Progress.Recall(picked);   // save first (spends Thoughts, unlocks the Idea + its cards)...
-            if (Progress.Thoughts >= thoughtsBefore) { Debug.LogWarning("Recall didn't spend any Thoughts"); break; }   // would loop forever
+            if (Progress.Recalls <= recallsBefore) { Debug.LogWarning("Recall didn't go through"); break; }   // would loop forever
 
             bool closed = false;       // ...show second
             unlockScreen.Show(picked.Cards, () => closed = true, picked.Title.ToUpper());
