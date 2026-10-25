@@ -13,6 +13,8 @@ public static class GameSettings
     public static bool SubmitScores { get => PlayerPrefs.GetInt("submit_scores", 1) == 1; set { PlayerPrefs.SetInt("submit_scores", value ? 1 : 0); PlayerPrefs.Save(); } }
     public static int MaskIndex { get => PlayerPrefs.GetInt("mask_index", 0); set { PlayerPrefs.SetInt("mask_index", value); PlayerPrefs.Save(); } }
     public static string PlayerName { get => PlayerPrefs.GetString("player_name", ""); set { PlayerPrefs.SetString("player_name", value); PlayerPrefs.Save(); } }
+    // The intro plays once, on the very first start; a setting can turn it back on
+    public static bool IntroSeen { get => PlayerPrefs.GetInt("intro_seen", 0) == 1; set { PlayerPrefs.SetInt("intro_seen", value ? 1 : 0); PlayerPrefs.Save(); } }
 
     public static void ApplyAudio(UnityEngine.Audio.AudioMixer mixer)
     {

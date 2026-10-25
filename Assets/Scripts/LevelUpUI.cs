@@ -226,17 +226,20 @@ public class LevelUpUI : MonoBehaviour
         GamePause.Remove(PauseReason.LevelUp);   // stays paused if dead / pause menu etc.
     }
 
+    // unlocked by the player AND brought into this run (base card, or in an equipped Idea)
+    static bool InRun(RewardData card) => Progress.IsUnlocked(card) && RunLoadout.Allows(card);
+
     public List<RewardData> PickRewards(RewardPool pool, int count)
     {
         // leave out cards that would do nothing right now (capped stats)
         List<RewardData> options = new List<RewardData>();
         foreach (var reward in pool.Rewards)
-            if (reward.CanOffer(stats) && Progress.IsUnlocked(reward)) options.Add(reward);
+            if (reward.CanOffer(stats) && InRun(reward)) options.Add(reward);
         if (options.Count == 0) // never open an empty card screen
         { 
             for (int i = 0; i < pool.Rewards.Count; i++) // Make sure only unlocked rewards are offered if all rewards are locked
             {
-                if (Progress.IsUnlocked(pool.Rewards[i]))
+                if (InRun(pool.Rewards[i]))
                 {
                     options.Add(pool.Rewards[i]);
                 }

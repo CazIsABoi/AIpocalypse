@@ -42,9 +42,11 @@ public class MaskSelectUI : MonoBehaviour
     public void Next() { index = Wrap(index + 1); Refresh(); }           // ArrowRight
     public void Previous() { index = Wrap(index - 1); Refresh(); }       // ArrowLeft
 
+    public void Apply() => GameSettings.MaskIndex = index;   // the Run Picker saves the mask without loading a scene
+
     public void Confirm()
     {
-        GameSettings.MaskIndex = index;
+        Apply();
         SceneManager.LoadScene(nextScene);
     }
 

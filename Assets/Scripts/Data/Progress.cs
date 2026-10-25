@@ -75,7 +75,7 @@ static partial class Progress
     public static string UnlockedIdeaList => string.Join("|", D.unlockedIdeas);   // telemetry
     // The very first death always unlocks something: the first recall costs what the player has,
     // rounded down to a ten (14 -> 10, 37 -> 30), so the bar looks like it filled up by itself
-    public static int RecallCost => D.recalls == 0 ? FirstRecallCost : 80 + ((D.recalls - 1) * 40);
+    public static int RecallCost => D.recalls == 0 ? FirstRecallCost : 100 + ((D.recalls - 1) * 50);
     static int FirstRecallCost => Thoughts >= 10 ? Thoughts / 10 * 10 : Mathf.Max(1, Thoughts);
 
     public static bool IsUnlocked(IdeaData idea)

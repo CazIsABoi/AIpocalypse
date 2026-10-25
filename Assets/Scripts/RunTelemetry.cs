@@ -171,7 +171,7 @@ partial class RunTelemetry : MonoBehaviour
 
             // meta-progression (before this run's recall: that one is sent as its own "recall" event)
             thoughtsEarned = thoughtsEarned, thoughtsTotal = Progress.Thoughts, recalls = Progress.Recalls,
-            ideas = Progress.UnlockedIdeaList,
+            ideas = Progress.UnlockedIdeaList, loadout = RunLoadout.Describe,
 
             // performance & setup
             avgFps = frameTime > 0f ? frames / frameTime : 0f, worstFps = worstFps > 9000f ? 0f : worstFps,

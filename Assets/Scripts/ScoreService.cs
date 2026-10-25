@@ -43,6 +43,7 @@ public static class ScoreService
 
         public int thoughtsEarned, thoughtsTotal, recalls;
         public string ideas;         // unlocked Ideas before this run's recall
+        public string loadout;       // the Ideas equipped for this run
 
         public float avgFps, worstFps;
         public string resolution, gpu;
