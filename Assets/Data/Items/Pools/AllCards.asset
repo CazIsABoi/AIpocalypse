@@ -100,4 +100,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c37527fa02794db483c81ade84510f5d, type: 2}
   - {fileID: 11400000, guid: a5aee2f2d0b7463cb31e5ebe0aecb865, type: 2}
   - {fileID: 11400000, guid: 9a364bac8bca4dd1a47350cc1a0c0a47, type: 2}
+  - {fileID: 11400000, guid: 6bd81eef997b4f05a0009faec2d22ee9, type: 2}
+  - {fileID: 11400000, guid: c9c93b7cae004ad29cd5f506ce5ce3e1, type: 2}
+  - {fileID: 11400000, guid: 27d1f0c48c8744b392c095ffb84a6dcd, type: 2}
+  - {fileID: 11400000, guid: 20f2c2a2a3dc487dbbe0be371e48594c, type: 2}
+  - {fileID: 11400000, guid: f05ca0fa99a7436f9b9632ab81bfdf05, type: 2}
+  - {fileID: 11400000, guid: 8322343a27f04acdbd0b440f35b05a35, type: 2}
+  - {fileID: 11400000, guid: 5417b443b1774041b596fc2075c63b18, type: 2}
   sourceText: AllCards

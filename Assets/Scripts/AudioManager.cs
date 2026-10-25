@@ -63,6 +63,9 @@ public enum Sfx
     CardReveal,       // front shows (Common/Uncommon/Rare; Epic+ use RareCardReveal) → needs a sound
     DroneDeath,       // drone explodes (instead of EnemyDeath)
     RareCardFlyIn,    // a Rare+ card slides in (a hint before the flip; RareCardReveal plays on the flip)
+
+    // --- Effects ---
+    Shockwave,         // ShockwaveSwingEffect (long min interval)                 → needs a sound
 }
 
 [AutoStaticsCleanup]

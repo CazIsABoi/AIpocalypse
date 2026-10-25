@@ -138,6 +138,13 @@ MonoBehaviour:
   DamageCD: 0
   BulletPierce: 1
   Lifetime: 1.8
+  Lifesteal: 0
+  Owner: {fileID: 0}
+  Bounces: 0
+  wallLayers:
+    serializedVersion: 2
+    m_Bits: 129
+  bounceLifetime: 0.4
 --- !u!96 &-8172137948295864796
 TrailRenderer:
   serializedVersion: 4

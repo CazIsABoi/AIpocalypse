@@ -11,6 +11,7 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private LayerMask EnemyLayer;
     private PlayerStats stats;
     private PlayerHealth health;
+    private PlayerEffects effects;
     [SerializeField, Range(0f, 1f)] private float meleeShootLock = 1f;   // part of the melee cooldown where shooting is blocked
     private float shootLock;
     [SerializeField, Range(0f, 1f)] private float meleeOverloadDrain = 0.35f;   // how much Overload charge a connecting swing removes
@@ -42,6 +43,8 @@ public class PlayerCombat : MonoBehaviour
         stats = GetComponent<PlayerStats>();
         health = GetComponent<PlayerHealth>();
         overload = GetComponent<OverloadDischarge>();
+        effects = GetComponent<PlayerEffects>();
+        if (effects == null) effects = gameObject.AddComponent<PlayerEffects>();
     }
 
     // Update is called once per frame
@@ -99,11 +102,13 @@ public class PlayerCombat : MonoBehaviour
                         amount = amount * stats.Lifesteal; // Lifesteal: heal for a percentage of the damage dealt
                         health.HealLifesteal(Mathf.Clamp(amount, 0f, Mathf.Max(0f, healthBefore))); // never more than the enemy had, never negative (enemy already dead this frame)
                         CameraShake.Instance?.Add(0.2f);
+                        CombatEvents.Hit(enemy, healthBefore - enemy.Health, HitSource.Melee);
 
                     }
                     else if (hit.TryGetComponent(out IDamageable target))
                         { target.TakeDamage(MeleeDamage); CameraShake.Instance?.Add(0.1f); }                                    // anything else hittable, e.g. the core
                 }
+                CombatEvents.Swung(transform.position + CalculateAimingDirection() * 1.25f, hitAny);
                 if (hitAny)
                 {
                     Hitstop.Instance?.Stop(crit ? 0.06f : 0.03f);
@@ -138,10 +143,13 @@ public class PlayerCombat : MonoBehaviour
         ProjectileController c = shotBullet.GetComponent<ProjectileController>();
         c.Direction = CalculateAimingDirection();
         c.Damage = RangedDamage;
+        c.BulletPierce = Mathf.Max(1, BulletPierce);   // was never passed on: pierce cards did nothing (0 = bullet hits nothing)
         c.CritChance = stats.CritChance;
         c.CritDamage = stats.CritDamage;
         c.Owner = health;
         c.Lifesteal = stats.Lifesteal;
+        c.BulletSpeed = c.BulletSpeed * (1f + stats.ProjectileSpeed);   // projectile speed multiplier
+        c.Bounces = effects.Level(EffectType.Ricochet);                 // 1 bounce per Ricochet level
         AudioManager.Instance.Play(Sfx.Shoot);
     }
     private Vector3 CalculateAimingDirection()

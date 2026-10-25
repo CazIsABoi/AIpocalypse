@@ -60,7 +60,9 @@ partial class DeathStats : MonoBehaviour
                 floorTime = Time.time - game.FloorStartedAt
             });
             // calculate thoughts earned based on time survived, kills and floor reached
-            int thoughtsEarned = Mathf.RoundToInt(clock.Elapsed * 0.1f + spawner.Kills * 0.5f + game.Floor * 2f);
+            // square root = diminishing returns: a 2 min run ~25, a 15 min boss run ~85, a 30 min endless run ~185
+            float score = clock.Elapsed * 0.1f + spawner.Kills * 0.5f + game.Floor * 2f;
+            int thoughtsEarned = Mathf.RoundToInt(Mathf.Sqrt(score) * 5f);
             Progress.AddThoughts(thoughtsEarned);   // save first...
             recall.Play(thoughtsEarned);            // ...show second (count-up, bar, maybe a recall)
         }
