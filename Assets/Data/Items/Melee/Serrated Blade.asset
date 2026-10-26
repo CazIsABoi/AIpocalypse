@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Serrated Blade
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Serrated Blade
-  Description: +30% melee damage
+  Description: +35% melee damage
   Icon: {fileID: 0}
   Weight: 7
   Rarity: 2
   Id: Serrated Blade
   StartsUnlocked: 1
   Stat: 13
-  Amount: 0.3
+  Amount: 0.35

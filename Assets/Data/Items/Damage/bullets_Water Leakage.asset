@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a43f53720f8737468d4afd219df44c2, type: 3}
   m_Name: bullets_Water Leakage
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
-  Title: Water Leakage
+  Title: Spare Barrel
   Description: +1 bullet
   Icon: {fileID: 0}
   Weight: 2

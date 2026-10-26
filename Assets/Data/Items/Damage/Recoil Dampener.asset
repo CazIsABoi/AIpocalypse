@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a43f53720f8737468d4afd219df44c2, type: 3}
   m_Name: Recoil Dampener
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
-  Title: Recoil Dampener
-  Description: +30% gun damage
+  Title: Steady Aim
+  Description: +45% gun damage
   Icon: {fileID: 0}
   Weight: 4
   Rarity: 3
   Id: Recoil Dampener
   StartsUnlocked: 0
   Stat: 16
-  Amount: 0.3
+  Amount: 0.45

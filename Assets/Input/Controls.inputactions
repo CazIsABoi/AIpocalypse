@@ -105,6 +105,16 @@
                     "interactions": "",
                     "initialStateCheck": false,
                     "priority": 0
+                },
+                {
+                    "name": "MenuZoom",
+                    "type": "Button",
+                    "id": "f6a0eb5f-4ad4-404b-8a03-21728f22b574",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -259,6 +269,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "AnyKey",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ad12bfaa-2b86-4848-b355-f3c5cc00e21d",
+                    "path": "<Keyboard>/z",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MenuZoom",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

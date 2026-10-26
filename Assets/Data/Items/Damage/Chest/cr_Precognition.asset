@@ -18,6 +18,6 @@ MonoBehaviour:
   Weight: 1
   Rarity: 5
   Id: cr_Precognition
-  StartsUnlocked: 1
+  StartsUnlocked: 0
   Stat: 8
   Amount: 0.3

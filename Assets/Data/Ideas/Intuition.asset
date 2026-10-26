@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8cd26653a214259b06f5679417d7e74, type: 3}
+  m_Name: Intuition
+  m_EditorClassIdentifier: Assembly-CSharp::IdeaData
+  Id: Intuition
+  Title: Intuition
+  Description: Trust your gut. Crit chance past its usual 75% limit, and the strongest crits.
+  Icon: {fileID: 0}
+  Rarity: 5
+  Cards:
+  - {fileID: 11400000, guid: f864c579f72242e7b7cc7020e6cef934, type: 2}
+  - {fileID: 11400000, guid: 06f43c8d0a0d4d6f8b831b49a78ca27a, type: 2}
+  - {fileID: 11400000, guid: 98c92de2f90440719e0fbd4c2aa27378, type: 2}

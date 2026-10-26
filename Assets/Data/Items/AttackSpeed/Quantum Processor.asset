@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a43f53720f8737468d4afd219df44c2, type: 3}
   m_Name: Quantum Processor
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
-  Title: Quantum Processor
+  Title: Flow State
   Description: +100% attack speed
   Icon: {fileID: 0}
   Weight: 1

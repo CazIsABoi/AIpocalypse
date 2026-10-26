@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Railgun Coil
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Railgun Coil
-  Description: +50% gun damage
+  Description: +75% gun damage
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4
   Id: Railgun Coil
   StartsUnlocked: 0
   Stat: 16
-  Amount: 0.5
+  Amount: 0.75

@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Sharpened Edge
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Sharpened Edge
-  Description: +15% melee damage
+  Description: +20% melee damage
   Icon: {fileID: 0}
   Weight: 10
   Rarity: 1
   Id: Sharpened Edge
   StartsUnlocked: 1
   Stat: 13
-  Amount: 0.15
+  Amount: 0.2

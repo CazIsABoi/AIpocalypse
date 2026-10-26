@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a43f53720f8737468d4afd219df44c2, type: 3}
   m_Name: cd_Polished GPU
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
-  Title: Polished GPU
+  Title: Weak Spot
   Description: +20% crit damage
   Icon: {fileID: 0}
   Weight: 10

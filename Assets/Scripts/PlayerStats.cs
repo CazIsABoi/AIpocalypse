@@ -13,7 +13,10 @@ public class PlayerStats : MonoBehaviour
     public float Damage => CalcDamage(flatDamage, damagePercent);
 
     public float CritDamage;    // 2f is 2x damage, a 100% damage increase.
-    public float CritChance;    // 0 -> 1 is 0% -> 100% crit chance
+    public float CritChance;    // 0 -> 1 is 0% -> 100% crit chance (never above critChanceCap)
+    [SerializeField] private float critChanceCap = 0.75f;   // raised by CritChanceCap cards (e.g. the Intuition Idea), max 100%
+    private float critGathered = -1f;   // all crit chance picked up, even above the cap: raising the cap releases it
+    public float CritChanceCap => critChanceCap;
     public float CritHitDamage => Damage * CritDamage;
 
     public int BulletAmount;
@@ -100,7 +103,9 @@ public class PlayerStats : MonoBehaviour
                 CritDamage += amount;
                 break;
             case StatType.CritChance:
-                CritChance = Mathf.Min(1f, CritChance + amount);   // 100% max
+                if (critGathered < 0f) critGathered = CritChance;   // first change: start from the base value
+                critGathered += amount;
+                CritChance = Mathf.Min(critChanceCap, critGathered);
                 break;
             case StatType.BulletPierce:
                 BulletPierce = Mathf.Max(1, BulletPierce + (int) amount);   // pierce 0 = bullets never hit anything
@@ -119,6 +124,11 @@ public class PlayerStats : MonoBehaviour
             case StatType.GunDamagePercent: gunDamagePercent += amount; break;
             case StatType.MeleeRange: meleeRange = Mathf.Min(meleeRangeCap, meleeRange + amount); break;
             case StatType.ProjectileSpeed: ProjectileSpeed += amount; break;
+            case StatType.CritChanceCap:
+                critChanceCap = Mathf.Min(1f, critChanceCap + amount);
+                if (critGathered < 0f) critGathered = CritChance;
+                CritChance = Mathf.Min(critChanceCap, critGathered);   // crit chance gathered above the old cap counts now
+                break;
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 break;
@@ -161,6 +171,7 @@ public class PlayerStats : MonoBehaviour
             case StatType.GunDamagePercent: return gunDamagePercent;
             case StatType.MeleeRange: return MeleeRadius;
             case StatType.ProjectileSpeed: return ProjectileSpeed;
+            case StatType.CritChanceCap: return critChanceCap;
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 return 0f;
@@ -186,7 +197,9 @@ public class PlayerStats : MonoBehaviour
             case StatType.CritDamage:
                 return CritDamage + amount;
             case StatType.CritChance:
-                return Mathf.Min(1f, CritChance + amount);
+                return Mathf.Min(critChanceCap, (critGathered < 0f ? CritChance : critGathered) + amount);
+            case StatType.CritChanceCap:
+                return Mathf.Min(1f, critChanceCap + amount);
             case StatType.BulletAmount:
                 return BulletAmount + amount;
             case StatType.BulletPierce:
@@ -212,7 +225,8 @@ public class PlayerStats : MonoBehaviour
     {
         switch (type)
         {
-            case StatType.CritChance: return CritChance >= 1f;                // 100% crit
+            case StatType.CritChance: return CritChance >= critChanceCap - 0.0001f;   // 75% unless the cap was raised
+            case StatType.CritChanceCap: return critChanceCap >= 1f - 0.0001f;
             case StatType.Lifesteal: return Lifesteal >= lifestealCap - 0.0001f;
             case StatType.RegenAmount: return regenAmount >= regenCap - 0.0001f;
             case StatType.MeleeRange: return meleeRange >= meleeRangeCap - 0.0001f;

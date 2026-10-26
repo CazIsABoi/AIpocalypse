@@ -11,7 +11,7 @@ partial class MenuFlow : MonoBehaviour
     // Set by the death screen's Return button, so the menu opens on the picker instead of the title
     public static bool OpenPickerOnLoad;
 
-    const int TitleSlide = 0, PickerSlide = 1;
+    const int TitleSlide = 0, PickerSlide = 1, TreeSlide = 2;   // slide N sits N slide heights down the strip
 
     [SerializeField] private RunPicker picker;
     [SerializeField] private RectTransform strip;
@@ -102,6 +102,18 @@ partial class MenuFlow : MonoBehaviour
     public void Back()
     {
         if (!changing) StartCoroutine(ChangeSlide(TitleSlide));
+    }
+
+    // Button on the picker slide: the perk tree has its own slide, one further down the strip
+    public void OpenTree()
+    {
+        if (!changing) StartCoroutine(ChangeSlide(TreeSlide));
+    }
+
+    // Button on the tree slide
+    public void BackToPicker()
+    {
+        if (!changing) StartCoroutine(ChangeSlide(PickerSlide));
     }
 
     void Snap(int slide)

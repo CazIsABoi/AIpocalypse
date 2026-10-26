@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bcf3a1d05313dc45af77a57889f0c72, type: 3}
+  m_Name: Marksman
+  m_EditorClassIdentifier: Assembly-CSharp::PerkNode
+  Id: Soldier.Marksman
+  Title: Marksman
+  Description: Keep your distance. +25% gun damage, +5% crit chance
+  Icon: {fileID: 0}
+  Tier: 2
+  Branch: 2
+  IsMajor: 1
+  Cost: 1
+  Requires:
+  - {fileID: 11400000, guid: cab662051bb146599a572c08e6f32e8c, type: 2}
+  Changes:
+  - Stat: 16
+    Amount: 0.25
+  - Stat: 8
+    Amount: 0.05
+  GivesEffect: 0
+  Effect: 0
+  EffectLevels: 1

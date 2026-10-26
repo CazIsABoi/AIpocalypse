@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shockwave Core
   m_EditorClassIdentifier: Assembly-CSharp::TradeOffUpgrade
   Title: Shockwave Core
-  Description: +100% melee damage, +0.5 melee range
+  Description: +125% melee damage, +0.5 melee range
   Icon: {fileID: 0}
   Weight: 1
   Rarity: 5
@@ -21,6 +21,6 @@ MonoBehaviour:
   StartsUnlocked: 0
   Changes:
   - Stat: 13
-    Amount: 1
+    Amount: 1.25
   - Stat: 14
     Amount: 0.5

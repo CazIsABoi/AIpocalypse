@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Vampire Kernel
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Vampire Kernel
-  Description: +6% lifesteal
+  Description: +0.9% lifesteal
   Icon: {fileID: 0}
   Weight: 1
   Rarity: 5
   Id: Vampire Kernel
   StartsUnlocked: 0
   Stat: 12
-  Amount: 0.06
+  Amount: 0.009

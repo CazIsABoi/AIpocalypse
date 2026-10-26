@@ -18,12 +18,13 @@ public class EntityHandler : MonoBehaviour
     public void RegisterKill() => Kills++;
 
     [Header("Grace period (new players)")]
-    [SerializeField] private float[] graceSpawnRate = { 0.5f, 0.75f };  // spawn speed on floor 1, floor 2 (1 = normal)
-    [SerializeField] private float[] graceDamage = { 0.6f, 0.8f };      // enemy damage on floor 1, floor 2
+    [SerializeField] private float[] graceSpawnRate = { 0.5f, 0.7f, 0.85f };  // spawn speed on floors 1-3 (1 = normal)
+    [SerializeField] private float[] graceDamage = { 0.5f, 0.7f, 0.85f };     // enemy damage on floors 1-3
     private GameController game;
 
     [Header("Enemy HP scaling")]
-    [SerializeField] private float preBossHealthGrowth = 1.0042f;  // HP x this per second until the boss (~x40 at 15:00)
+    [SerializeField] private float preBossHealthGrowth = 1.0034f;  // HP x this per second until the boss (~x2.6 at 5:00, ~x7.5 at 10:00, ~x20 at 15:00)
+    [SerializeField] private float preBossDamageGrowth = 1.0012f;  // damage x this per second until 12:00 (~x1.4 at 5:00, ~x2 at 10:00, ~x2.3 max)
 
     [Header("Endless (after the boss)")]
     [SerializeField] private float endlessHealthGrowth = 1.08f;   // enemy HP x this per minute...
@@ -209,10 +210,12 @@ public class EntityHandler : MonoBehaviour
     {
         SpawnCD = 0f;
     }
+    float PreBossDamageMax => Mathf.Pow(preBossDamageGrowth, 700f);   // the value reached at 12:00 (720 - 20 seconds of growth)
+
     float DamageMultiplier()
     {
         if (clock.Endless)
-            return 3f * Mathf.Pow(endlessDamageGrowth, EndlessMinutes);   // continues from the pre-boss x3
+            return PreBossDamageMax * Mathf.Pow(endlessDamageGrowth, EndlessMinutes);   // continues from where pre-boss stopped
 
         if (GameTime < 20)
         {
@@ -220,11 +223,11 @@ public class EntityHandler : MonoBehaviour
         }
         else if (GameTime < 720)
         {
-            return Mathf.Pow(1.0016f, GameTime - 20f); // 0.33
+            return Mathf.Pow(preBossDamageGrowth, GameTime - 20f);
         }
         else if (GameTime >= 720)
         {
-            return 3f;    //10f
+            return PreBossDamageMax;   // flat from 12:00 until the boss
         }
         return 1f;
     }

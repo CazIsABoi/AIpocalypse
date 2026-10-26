@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b8a96897131b26439ead35d33a1c549, type: 3}
   m_Name: Berserker Firmware
   m_EditorClassIdentifier: Assembly-CSharp::TradeOffUpgrade
-  Title: Berserker Firmware
-  Description: +50% melee speed, +3% lifesteal, -30 max HP
+  Title: Berserker
+  Description: +50% melee speed, +0.5% lifesteal, -30 max HP
   Icon: {fileID: 0}
   Weight: 1
   Rarity: 5
@@ -23,6 +23,6 @@ MonoBehaviour:
   - Stat: 15
     Amount: 0.5
   - Stat: 12
-    Amount: 0.03
+    Amount: 0.005
   - Stat: 2
     Amount: -30

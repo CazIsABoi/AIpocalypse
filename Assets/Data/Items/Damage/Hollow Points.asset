@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a43f53720f8737468d4afd219df44c2, type: 3}
   m_Name: Hollow Points
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
-  Title: Hollow Points
-  Description: +15% gun damage
+  Title: Hand-Loaded Rounds
+  Description: +25% gun damage
   Icon: {fileID: 0}
   Weight: 7
   Rarity: 2
   Id: Hollow Points
   StartsUnlocked: 1
   Stat: 16
-  Amount: 0.15
+  Amount: 0.25

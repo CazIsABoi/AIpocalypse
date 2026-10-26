@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a43f53720f8737468d4afd219df44c2, type: 3}
   m_Name: Hotfix
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
-  Title: Hotfix
-  Description: +15 max HP
+  Title: Thick Skin
+  Description: +20 max HP
   Icon: {fileID: 0}
   Weight: 10
   Rarity: 1
   Id: Hotfix
   StartsUnlocked: 1
   Stat: 2
-  Amount: 15
+  Amount: 20

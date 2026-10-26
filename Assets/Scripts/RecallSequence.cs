@@ -68,10 +68,10 @@ public class RecallSequence : MonoBehaviour
             if (Progress.Recalls <= recallsBefore) { Debug.LogWarning("Recall didn't go through"); break; }   // would loop forever
 
             var names = new System.Collections.Generic.List<string>();
-            foreach (var idea in choices) names.Add(idea.Title);
+            foreach (var idea in choices) names.Add(idea.Id);   // Ids: survive renames
             ScoreService.SubmitRecall(new ScoreService.RecallEvent
             {
-                idea = picked.Title, choices = string.Join(",", names),
+                idea = picked.Id, choices = string.Join(",", names),
                 recallNumber = Progress.Recalls, cost = cost, thoughtsLeft = Progress.Thoughts
             });
 

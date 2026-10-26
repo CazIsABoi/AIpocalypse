@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Singularity
   m_EditorClassIdentifier: Assembly-CSharp::IdeaData
   Id: Singularity
-  Title: Singularity
+  Title: Clarity
   Description: One overwhelming thought. Massive raw damage.
   Icon: {fileID: 0}
   Rarity: 5

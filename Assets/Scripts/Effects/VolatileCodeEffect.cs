@@ -1,9 +1,11 @@
 using UnityEngine;
 
+// Volatile Code: enemies sometimes explode when they die, damaging enemies around them.
+// Kills from an explosion can explode too, so crowds chain-pop (spread over frames, never all at once).
 public class VolatileCodeEffect : PlayerEffect
 {
     [SerializeField] private LayerMask enemyLayer;
-    [SerializeField] private GameObject explosionPrefab;      
+    [SerializeField] private GameObject explosionPrefab;      // e.g. the drone explosion
     [SerializeField] private float baseChance = 0.25f;        // level 1: 25%, +15% per level after
     [SerializeField] private float chancePerLevel = 0.15f;
     [SerializeField] private float radius = 2.5f;             // +0.5 per level after 1
