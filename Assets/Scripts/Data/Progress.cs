@@ -115,5 +115,6 @@ static partial class Progress
             if (card != null && !D.unlockedCards.Contains(card.Id)) D.unlockedCards.Add(card.Id);
         }
         Save();
+        RunLoadout.AddPool(idea);
     }
 }

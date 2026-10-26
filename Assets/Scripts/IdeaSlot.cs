@@ -16,7 +16,15 @@ public class IdeaSlot : MonoBehaviour
     public void Setup(IdeaData idea, bool unlocked, System.Action<IdeaSlot> onClicked)
     {
         Idea = idea;
-        if (unlocked)
+        if (unlocked && idea.AlwaysInPool)
+        {
+            // nothing to equip: its cards are already in every run
+            title.text = idea.Title;
+            detail.text = $"{idea.Cards.Count} cards · always in the pool · {idea.Description}";
+            group.alpha = 0.8f;
+            button.interactable = false;
+        }
+        else if (unlocked)
         {
             title.text = idea.Title;
             detail.text = $"{idea.Cards.Count} cards · {idea.Description}";

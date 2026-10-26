@@ -26,6 +26,7 @@ GameObject:
   - component: {fileID: 8803895483932433008}
   - component: {fileID: 444308945315556339}
   - component: {fileID: 3456454878695825970}
+  - component: {fileID: 5823019477310662914}
   m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
@@ -1441,3 +1442,19 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4463013580150479349, guid: ac53951124a345d4ba15273e5ba46c19, type: 3}
   m_PrefabInstance: {fileID: 7361405707111864157}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5823019477310662914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4225567227736019386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e357b5cc945c76478dce2d8b79c6cef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  professions: {fileID: 11400000, guid: 23e5670846a940d2b30728451d3412a0, type: 2}
+  xpPerMinute: 10
+  xpPerKill: 0.2
+  xpPerFloor: 5

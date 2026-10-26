@@ -21,3 +21,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f864c579f72242e7b7cc7020e6cef934, type: 2}
   - {fileID: 11400000, guid: 06f43c8d0a0d4d6f8b831b49a78ca27a, type: 2}
   - {fileID: 11400000, guid: 98c92de2f90440719e0fbd4c2aa27378, type: 2}
+  AlwaysInPool: 1

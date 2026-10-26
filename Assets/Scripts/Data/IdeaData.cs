@@ -12,4 +12,8 @@ public class IdeaData : ScriptableObject
     public Sprite Icon;
     public Rarity Rarity = Rarity.Rare; // only picks the card colours (RaritySettings)
     public List<RewardData> Cards;
+
+    // On = a plain upgrade (stronger stats): once recalled its cards are in every run, no loadout slot needed.
+    // Off = a build choice (effects, lifesteal, pierce...): only in the run when equipped in the Run Picker.
+    public bool AlwaysInPool;
 }

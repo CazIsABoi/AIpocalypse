@@ -18,13 +18,13 @@ public class EntityHandler : MonoBehaviour
     public void RegisterKill() => Kills++;
 
     [Header("Grace period (new players)")]
-    [SerializeField] private float[] graceSpawnRate = { 0.5f, 0.7f, 0.85f };  // spawn speed on floors 1-3 (1 = normal)
-    [SerializeField] private float[] graceDamage = { 0.5f, 0.7f, 0.85f };     // enemy damage on floors 1-3
+    [SerializeField] private float[] graceSpawnRate = { 0.5f, 0.75f, 0.9f };  // spawn speed on floors 1-3 (1 = normal)
+    [SerializeField] private float[] graceDamage = { 0.6f, 0.8f, 0.9f };      // enemy damage on floors 1-3
     private GameController game;
 
     [Header("Enemy HP scaling")]
-    [SerializeField] private float preBossHealthGrowth = 1.0034f;  // HP x this per second until the boss (~x2.6 at 5:00, ~x7.5 at 10:00, ~x20 at 15:00)
-    [SerializeField] private float preBossDamageGrowth = 1.0012f;  // damage x this per second until 12:00 (~x1.4 at 5:00, ~x2 at 10:00, ~x2.3 max)
+    [SerializeField] private float preBossHealthGrowth = 1.0038f;  // HP x this per second until the boss (~x2.9 at 5:00, ~x9 at 10:00, ~x28 at 15:00)
+    [SerializeField] private float preBossDamageGrowth = 1.0014f;  // damage x this per second until 12:00 (~x1.5 at 5:00, ~x2.3 at 10:00, ~x2.7 max)
 
     [Header("Endless (after the boss)")]
     [SerializeField] private float endlessHealthGrowth = 1.08f;   // enemy HP x this per minute...
