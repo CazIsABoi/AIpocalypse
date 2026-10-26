@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 7
   Rarity: 2
+  Id: Packet Siphon
+  StartsUnlocked: 0
   Stat: 12
   Amount: 0.01

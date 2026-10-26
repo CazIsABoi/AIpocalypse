@@ -8,7 +8,10 @@ public class SettingsUI : MonoBehaviour
     [SerializeField] private TMPro.TextMeshProUGUI masterText, musicText, sfxText;
     [SerializeField] private Toggle fullscreen;
     [SerializeField] private Toggle gunSounds, hitSounds;
-    [SerializeField] private Toggle submitScores;   // optional: "Submit scores to leaderboard"
+    [SerializeField] private Toggle submitScores;
+
+    [SerializeField] private GameObject[] tabs;
+    [SerializeField] private Button[] tabButtons;
 
     void OnEnable()
     {
@@ -23,6 +26,14 @@ public class SettingsUI : MonoBehaviour
         UpdateText(master, masterText);
         UpdateText(music, musicText);
         UpdateText(sfx, sfxText);
+
+        for (int i = 1; i < tabs.Length; i++)
+        {
+            tabs[i].SetActive(false);
+            tabButtons[i].interactable = true;
+        }
+        tabButtons[0].interactable = false;  // first tab is active by default
+        tabs[0].SetActive(true); // ensure first tab is active
     }
 
     // hook these up in each slider's On Value Changed (Dynamic float)
@@ -38,5 +49,15 @@ public class SettingsUI : MonoBehaviour
     private void UpdateText(Slider slider, TMPro.TextMeshProUGUI text)
     {
         text.text = $"{slider.value * 100:0.0}%";  
+    }
+
+    // Ability to switch between tabs in the settings menu
+    public void SwitchTab(int tabIndex)
+    {
+        for (int i = 0; i < tabs.Length; i++)
+        {
+            tabs[i].SetActive(i == tabIndex);
+            tabButtons[i].interactable = i != tabIndex;
+        }
     }
 }

@@ -18,6 +18,7 @@ public class PlayerStats : MonoBehaviour
 
     public int BulletAmount;
     public int BulletPierce;
+    public float ProjectileSpeed;   // bonus: 0 = normal speed, 0.2 = +20%, 1 = double
 
     public float pickupRange = 3;
     public float regenAmount = 0.01f; // fraction of max HP per second (0.01 = 1%/s)
@@ -36,7 +37,7 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private float meleeRangeCap = 2f;  // at most +2 radius (3.5 total)
     public float MeleeRadius => meleeBaseRadius + meleeRange;
     public float MeleeDamageMult => Mathf.Max(0.1f, 1f + meleeDamagePercent);   // never below 10%
-    public float GunDamageMult => Mathf.Max(0.1f, 1f + gunDamagePercent);
+    public float GunDamageMult => Mathf.Max(0.1f, 1f + gunDamagePercent); 
     [SerializeField] private float meleeDamageFactor = 4f;   // a swing hits this many times harder than a bullet
     // What one hit actually deals (shown in the stats panels)
     public float GunHit => Damage * GunDamageMult;
@@ -117,6 +118,7 @@ public class PlayerStats : MonoBehaviour
             case StatType.MeleeSpeedPercent: meleeSpeedPercent += amount; break;
             case StatType.GunDamagePercent: gunDamagePercent += amount; break;
             case StatType.MeleeRange: meleeRange = Mathf.Min(meleeRangeCap, meleeRange + amount); break;
+            case StatType.ProjectileSpeed: ProjectileSpeed += amount; break;
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 break;
@@ -158,6 +160,7 @@ public class PlayerStats : MonoBehaviour
             case StatType.MeleeSpeedPercent: return meleeSpeedPercent;
             case StatType.GunDamagePercent: return gunDamagePercent;
             case StatType.MeleeRange: return MeleeRadius;
+            case StatType.ProjectileSpeed: return ProjectileSpeed;
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 return 0f;
@@ -198,6 +201,7 @@ public class PlayerStats : MonoBehaviour
             case StatType.MeleeSpeedPercent: return meleeSpeedPercent + amount;
             case StatType.GunDamagePercent: return gunDamagePercent + amount;
             case StatType.MeleeRange: return meleeBaseRadius + Mathf.Min(meleeRangeCap, meleeRange + amount);
+            case StatType.ProjectileSpeed: return ProjectileSpeed + amount;
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 return 0f;

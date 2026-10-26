@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8cd26653a214259b06f5679417d7e74, type: 3}
+  m_Name: Ballistics
+  m_EditorClassIdentifier: Assembly-CSharp::IdeaData
+  Id: Ballistics
+  Title: Ballistics
+  Description: Faster shots that bounce off walls. Projectile speed and ricochet.
+  Icon: {fileID: 0}
+  Rarity: 3
+  Cards:
+  - {fileID: 11400000, guid: f05ca0fa99a7436f9b9632ab81bfdf05, type: 2}
+  - {fileID: 11400000, guid: 8322343a27f04acdbd0b440f35b05a35, type: 2}
+  - {fileID: 11400000, guid: 5417b443b1774041b596fc2075c63b18, type: 2}
+  - {fileID: 11400000, guid: 20f2c2a2a3dc487dbbe0be371e48594c, type: 2}

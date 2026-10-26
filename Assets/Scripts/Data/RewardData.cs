@@ -7,6 +7,8 @@ public abstract class RewardData : ScriptableObject
     public Sprite Icon;
     public int Weight = 10;          // how often it appears
     public Rarity Rarity;
+    public string Id;              // unique identifier for saving / loading
+    public bool StartsUnlocked = false; 
 
     public abstract void Apply(PlayerStats stats);
 
@@ -23,7 +25,7 @@ public abstract class RewardData : ScriptableObject
         {
             case StatType.MeleeDamagePercent: case StatType.MeleeRange: case StatType.MeleeSpeedPercent:
                 return RewardPath.Melee;
-            case StatType.GunDamagePercent: case StatType.BulletAmount: case StatType.BulletPierce:
+            case StatType.GunDamagePercent: case StatType.BulletAmount: case StatType.BulletPierce: case StatType.ProjectileSpeed:
                 return RewardPath.Gun;
             default: return RewardPath.None;
         }
@@ -48,7 +50,7 @@ public enum RewardPath { None, Melee, Gun }
 
 // Assets store StatType as numbers: only ever add new values at the END
 public enum StatType { MoveSpeed, MoveSpeedPercent, MaxHealth, Damage, DamagePercent, PickupRadius, BulletAmount, CritDamage, CritChance, BulletPierce, RegenAmount, AttackSpeed, Lifesteal,
-    MeleeDamagePercent, MeleeRange, MeleeSpeedPercent, GunDamagePercent}   // path stats (added at the end on purpose)
+    MeleeDamagePercent, MeleeRange, MeleeSpeedPercent, GunDamagePercent, ProjectileSpeed}
 public enum Rarity { Auto, Common, Uncommon, Rare, Epic, Legendary }
 
 public static class StatNames
@@ -89,6 +91,8 @@ public static class StatNames
                 return "Melee Speed";
             case StatType.GunDamagePercent:
                 return "Gun Damage";
+            case StatType.ProjectileSpeed:
+                return "Projectile Speed";
             default:
                 return type.ToString();  
         }
@@ -133,6 +137,8 @@ public static class StatNames
                 return $"{(1 + value) * 100f:0.#}%"; // 0.2 → "120%", 1.1 → "210%"
             case StatType.Lifesteal:
                 return $"{value * 100f:0.#}%";      // 0.2 → "20%", 1.1 → "110%"
+            case StatType.ProjectileSpeed:
+                return $"{(1 + value) * 100f:0.#}%"; // 0.2 → "120%" (it's a bonus on top of the bullet's own speed)
             default:
                 return $"{value:0.#}";
         }

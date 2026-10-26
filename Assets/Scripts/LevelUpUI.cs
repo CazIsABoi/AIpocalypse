@@ -50,6 +50,7 @@ public class LevelUpUI : MonoBehaviour
     private bool isOpen;
     private bool showingLevelUp;                      // level-up or chest?
     private bool choosing;                            // picked card is lingering, ignore more picks
+    private string pickSource;                        // telemetry: "Level", or the pool's name for chests etc.
     private Vector2 rowBasePos;
     private Coroutine rowShake;
     private Coroutine flashRoutine;
@@ -101,6 +102,7 @@ public class LevelUpUI : MonoBehaviour
         StopFlash();
         int shownLevel = stats.Level - pendingLevelUps + 1;
         sourceLabel.text = pool == levelUpPool ? $"LEVEL {shownLevel}" : pool.sourceText;
+        pickSource = pool == levelUpPool ? "Level" : pool.name;   // telemetry: where this pick came from
 
         for (int i = 0; i < cards.Length; i++)
         {
@@ -147,6 +149,9 @@ public class LevelUpUI : MonoBehaviour
         yield return new WaitForSecondsRealtime(lingerTime);   // realtime: the game is still paused
         choosing = false;
 
+        var shown = new List<RewardData>();
+        foreach (var card in cards) if (card.gameObject.activeSelf) shown.Add(card.Reward);
+        RunTelemetry.Instance?.CardPicked(reward, shown, pickSource);
         reward.Apply(stats);
         if (showingLevelUp) pendingLevelUps--;
         if (pendingLevelUps > 0)
@@ -221,13 +226,25 @@ public class LevelUpUI : MonoBehaviour
         GamePause.Remove(PauseReason.LevelUp);   // stays paused if dead / pause menu etc.
     }
 
+    // unlocked by the player AND brought into this run (base card, or in an equipped Idea)
+    static bool InRun(RewardData card) => Progress.IsUnlocked(card) && RunLoadout.Allows(card);
+
     public List<RewardData> PickRewards(RewardPool pool, int count)
     {
         // leave out cards that would do nothing right now (capped stats)
         List<RewardData> options = new List<RewardData>();
         foreach (var reward in pool.Rewards)
-            if (reward.CanOffer(stats)) options.Add(reward);
-        if (options.Count == 0) options.AddRange(pool.Rewards);   // never open an empty card screen
+            if (reward.CanOffer(stats) && InRun(reward)) options.Add(reward);
+        if (options.Count == 0) // never open an empty card screen
+        { 
+            for (int i = 0; i < pool.Rewards.Count; i++) // Make sure only unlocked rewards are offered if all rewards are locked
+            {
+                if (InRun(pool.Rewards[i]))
+                {
+                    options.Add(pool.Rewards[i]);
+                }
+            }
+        }  
         List<RewardData> chosen = new List<RewardData>();
         RarityTier tier = CurrentTier();
 

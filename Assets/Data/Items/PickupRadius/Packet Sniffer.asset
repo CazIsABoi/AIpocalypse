@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 10
   Rarity: 1
+  Id: Packet Sniffer
+  StartsUnlocked: 1
   Stat: 5
   Amount: 0.75

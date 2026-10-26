@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 1
   Rarity: 5
+  Id: Quantum Processor
+  StartsUnlocked: 0
   Stat: 11
   Amount: 1

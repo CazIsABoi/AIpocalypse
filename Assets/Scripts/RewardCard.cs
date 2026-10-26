@@ -57,7 +57,9 @@ public class RewardCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     RewardData reward;
     System.Action<RewardData> chosen;
 
-    public void Setup(RewardData reward, System.Action<RewardData> onChosen, PlayerStats stats)
+    // stats = null outside a run (unlock screen): no "old -> new" preview
+    // faceDown: null = by rarity (level-ups), true = always flip to reveal, false = already revealed (glowing)
+    public void Setup(RewardData reward, System.Action<RewardData> onChosen, PlayerStats stats, bool? faceDown = null)
     {
         style = raritySettings.Get(reward.GetRarity());
         string tag = reward.GetPath() switch   // which build path this card feeds
@@ -68,7 +70,7 @@ public class RewardCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         };
         title.text = $"{reward.Title}\n<size=60%><alpha=#B3><cspace=0.15em>{reward.GetRarity().ToString().ToUpper()}</cspace><alpha=#FF>{tag}";
         description.text = ColorSigns(reward.Description);
-        change.text = reward.GetPreview(stats);
+        change.text = stats != null ? reward.GetPreview(stats) : "";
 
         Color top = style.gradient.Evaluate(0f);
         gradient.Set(top, style.gradient.Evaluate(1f));
@@ -86,12 +88,17 @@ public class RewardCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         visual.anchoredPosition = Vector2.zero;
         button.interactable = true;
         // Only Rare+ cards are worth a flip; lower ones arrive face up, so picking takes one click
-        revealed = reward.GetRarity() < flipFromRarity;
+        revealed = faceDown.HasValue ? !faceDown.Value : reward.GetRarity() < flipFromRarity;
         locked = false;
         hovered = false;
         targetScale = 1f;
         back.SetActive(!revealed);
         glow.enabled = false;
+        if (faceDown == false)   // revealed earlier (unlock screen page flipped back): keep its glow
+        {
+            glowColor = style.glowColor;
+            glow.enabled = glowColor.a > 0f;
+        }
         this.reward = reward;
         chosen = onChosen;
 

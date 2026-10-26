@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8cd26653a214259b06f5679417d7e74, type: 3}
+  m_Name: Parasitism
+  m_EditorClassIdentifier: Assembly-CSharp::IdeaData
+  Id: Parasitism
+  Title: Parasitism
+  Description: Take what they took from you. Hits heal you.
+  Icon: {fileID: 0}
+  Rarity: 4
+  Cards:
+  - {fileID: 11400000, guid: b767ebfc07c8492ba837f7a07732264d, type: 2}
+  - {fileID: 11400000, guid: eafb23d2a2344a6abbba1568733ee811, type: 2}
+  - {fileID: 11400000, guid: 43673bacd8c344fdac745271d27cd146, type: 2}
+  - {fileID: 11400000, guid: 1b6e70dfa00c440fb4c99ad35cb982f5, type: 2}
+  - {fileID: 11400000, guid: ae80c26505724898b55fca347991a4ce, type: 2}
+  - {fileID: 11400000, guid: 97009147415b406cb1349a7156d191ac, type: 2}

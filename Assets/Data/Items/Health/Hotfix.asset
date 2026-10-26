@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 10
   Rarity: 1
+  Id: Hotfix
+  StartsUnlocked: 1
   Stat: 2
   Amount: 15

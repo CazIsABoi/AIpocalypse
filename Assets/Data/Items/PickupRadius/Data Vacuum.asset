@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4
+  Id: Data Vacuum
+  StartsUnlocked: 1
   Stat: 5
   Amount: 5

@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 10
   Rarity: 1
+  Id: Background Process
+  StartsUnlocked: 1
   Stat: 1
   Amount: 0.08

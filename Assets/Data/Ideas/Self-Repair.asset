@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8cd26653a214259b06f5679417d7e74, type: 3}
+  m_Name: Self-Repair
+  m_EditorClassIdentifier: Assembly-CSharp::IdeaData
+  Id: Self-Repair
+  Title: Self-Repair
+  Description: A mind that mends itself. Health regeneration.
+  Icon: {fileID: 0}
+  Rarity: 3
+  Cards:
+  - {fileID: 11400000, guid: f981a531c318407ca8b95460948f9afd, type: 2}
+  - {fileID: 11400000, guid: a4c2b485c94f44c092e55e492c4e4d8d, type: 2}
+  - {fileID: 11400000, guid: b84331b7aaae4bae961f3ad50b013618, type: 2}
+  - {fileID: 11400000, guid: 93fb561cc48444fb928f36d30d4c5c5d, type: 2}
+  - {fileID: 11400000, guid: ebe588dd81b9478191723dc02787e9e1, type: 2}

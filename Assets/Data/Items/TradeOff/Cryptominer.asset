@@ -17,6 +17,8 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 4
   Rarity: 3
+  Id: Cryptominer
+  StartsUnlocked: 0
   Changes:
   - Stat: 11
     Amount: 0.4

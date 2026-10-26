@@ -22,6 +22,10 @@ GameObject:
   - component: {fileID: 6569809672249085572}
   - component: {fileID: 1838573102006745370}
   - component: {fileID: 322560547325121221}
+  - component: {fileID: 8771351358320724071}
+  - component: {fileID: 8803895483932433008}
+  - component: {fileID: 444308945315556339}
+  - component: {fileID: 3456454878695825970}
   m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
@@ -290,11 +294,12 @@ MonoBehaviour:
   CritChance: 0.1
   BulletAmount: 1
   BulletPierce: 1
+  ProjectileSpeed: 0
   pickupRange: 1.5
   regenAmount: 0.01
   AttackSpeed: 0
   Lifesteal: 0
-  lifestealCap: 0.15
+  lifestealCap: 0.1
   regenCap: 0.04
   meleeDamagePercent: 0
   meleeSpeedPercent: 0
@@ -348,6 +353,82 @@ MonoBehaviour:
   perEnemy: 2
   arcMaterial: {fileID: 2100000, guid: a1a36f9c1dab409a909d18386ce8c872, type: 2}
   maxArcs: 3
+  arcTime: 0.15
+  jitter: 0.18
+  chestHeight: 1
+--- !u!114 &8771351358320724071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4225567227736019386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19d606a6aa50fad4f9943ce4742e241e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerEffects
+  debugEffect: 4
+--- !u!114 &8803895483932433008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4225567227736019386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b74f7bb738a2b8940bfa66e11b871d78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VolatileCodeEffect
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  explosionPrefab: {fileID: 4004912163067032167, guid: a729ab44226f91943b8cd218b166d75b, type: 3}
+  baseChance: 0.25
+  chancePerLevel: 0.15
+  radius: 2.5
+  damageFactor: 0.6
+--- !u!114 &444308945315556339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4225567227736019386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 030e18c3922de494cbb6b29f00652b86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShockwaveSwingEffect
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  swingsNeeded: 3
+  radius: 3
+  damageFactor: 1
+  shockwavePrefab: {fileID: 7781800376562997726, guid: fe27c0f980816c543a2b62dc86a2046d, type: 3}
+--- !u!114 &3456454878695825970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4225567227736019386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 716c835f2529f9a4bb5594cbca6d2817, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChainLightningEffect
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  chance: 0.2
+  jumps: 2
+  jumpRange: 4
+  damageFactor: 0.5
+  arcMaterial: {fileID: 2100000, guid: a1a36f9c1dab409a909d18386ce8c872, type: 2}
+  maxArcs: 8
   arcTime: 0.15
   jitter: 0.18
   chestHeight: 1

@@ -13,6 +13,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private CanvasGroup fade;
     [SerializeField] private LevelUpUI rewards;
     [SerializeField] private RewardPool corePool;      // reward for destroying the Core (shown on the new floor)
+    [SerializeField] private TMPro.TextMeshProUGUI floorText;
     public int Floor { get; private set; } = 1;
     public event System.Action<int> FloorChanged;
     public float FloorStartedAt { get; private set; }   // Time.time when the current floor became playable
@@ -40,6 +41,7 @@ public class GameController : MonoBehaviour
         playerHealth.Heal(playerHealth.MaxHealth * 0.25f);   // heal a bit on floor change
         player.Teleport(dungeon.StartPosition);
         director.StartLoop();
+        floorText.text = $"Floor {Floor}";
     }
 
     void OnPlayerDied()

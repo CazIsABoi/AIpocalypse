@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 7
   Rarity: 2
+  Id: Turbo Mode
+  StartsUnlocked: 1
   Stat: 11
   Amount: 0.2

@@ -40,6 +40,7 @@ public class Chest : MonoBehaviour, IMapMarked
         if (distance < openRange && levelUpUI.ShowChest(chestPool))
         {
             opened = true;
+            RunTelemetry.Instance?.ChestOpened();
             AudioManager.Instance?.Play(Sfx.ChestOpen);
             GetComponentInChildren<Renderer>().sharedMaterial = openedMaterial;
 

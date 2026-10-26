@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 10
   Rarity: 1
+  Id: Sharpened Edge
+  StartsUnlocked: 1
   Stat: 13
   Amount: 0.15

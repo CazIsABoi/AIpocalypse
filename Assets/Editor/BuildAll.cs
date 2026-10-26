@@ -35,16 +35,29 @@ public static class BuildAll
         string folder = Path.Combine(Root, "Web");
         if (!Build(WebProfile, folder)) return false;
         // zip the CONTENTS, so index.html sits at the root of the zip (what itch needs)
-        Zip(folder, Path.Combine(Root, $"{PlayerSettings.productName}_Web.zip"));
+        Zip(folder, Path.Combine(Root, $"{FileName}_Web.zip"));
         return true;
     }
 
     static bool BuildWindows()
     {
         string folder = Path.Combine(Root, "Windows");
-        if (!Build(WindowsProfile, Path.Combine(folder, PlayerSettings.productName + ".exe"))) return false;
-        Zip(folder, Path.Combine(Root, $"{PlayerSettings.productName}_Windows.zip"));
+        if (!Build(WindowsProfile, Path.Combine(folder, FileName + ".exe"))) return false;
+        Zip(folder, Path.Combine(Root, $"{FileName}_Windows.zip"));
         return true;
+    }
+
+    // The product name as a safe file name: "Wrench It: The AIpocalypse" -> "Wrench It The AIpocalypse"
+    // (Windows doesn't allow : \ / * ? " < > | in file names; the in-game name keeps them)
+    static string FileName
+    {
+        get
+        {
+            string name = PlayerSettings.productName;
+            foreach (char c in Path.GetInvalidFileNameChars()) name = name.Replace(c.ToString(), "");
+            while (name.Contains("  ")) name = name.Replace("  ", " ");
+            return name.Trim();
+        }
     }
 
     static bool Build(string profilePath, string location)

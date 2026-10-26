@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 4
   Rarity: 3
+  Id: Redundant Backup
+  StartsUnlocked: 1
   Stat: 2
   Amount: 40

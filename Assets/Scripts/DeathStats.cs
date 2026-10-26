@@ -12,6 +12,8 @@ partial class DeathStats : MonoBehaviour
     [SerializeField] private PlayerStats stats;
     [SerializeField] private EntityHandler spawner;
 
+    [SerializeField] private RecallSequence recall;   // Thoughts count-up, recall bar, Idea pick
+
     // Shown as real per-hit values below instead of raw multipliers
     static readonly HashSet<StatType> replaced = new HashSet<StatType>
     {
@@ -44,19 +46,17 @@ partial class DeathStats : MonoBehaviour
         if (best > 0f && clock.Elapsed > best) text.text += "\nNEW BEST!";
         if (clock.Elapsed > best) { PlayerPrefs.SetFloat("best_time", clock.Elapsed); PlayerPrefs.Save(); }
 
-        // send the finished run to the online leaderboard / telemetry sheet (once per run)
+        // once per run: Thoughts, telemetry, then the recall sequence
         if (!submitted)
         {
             submitted = true;
-            ScoreService.Submit(new ScoreService.Run
-            {
-                name = GameSettings.PlayerName,
-                seconds = clock.Elapsed, floor = game.Floor, level = stats.Level, kills = spawner.Kills,
-                threat = spawner.Threat, gunHit = stats.GunHit, meleeHit = stats.MeleeHit,
-                killer = stats.GetComponent<PlayerHealth>()?.LastHitBy,
-                coreFound = FindAnyObjectByType<Core>() is Core c && c.Discovered ? 1 : 0,
-                floorTime = Time.time - game.FloorStartedAt
-            });
+            // calculate thoughts earned based on time survived, kills and floor reached
+            // square root = diminishing returns: a 2 min run ~25, a 15 min boss run ~85, a 30 min endless run ~185
+            float score = clock.Elapsed * 0.1f + spawner.Kills * 0.5f + game.Floor * 2f;
+            int thoughtsEarned = Mathf.RoundToInt(Mathf.Sqrt(score) * 5f);
+            Progress.AddThoughts(thoughtsEarned);   // save first...
+            RunTelemetry.Instance?.Submit("death", thoughtsEarned);   // leaderboard + telemetry sheet
+            recall.Play(thoughtsEarned);            // ...show second (count-up, bar, maybe a recall)
         }
     }
     private bool submitted;

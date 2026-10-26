@@ -17,6 +17,8 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 7
   Rarity: 2
+  Id: Adware
+  StartsUnlocked: 1
   Changes:
   - Stat: 5
     Amount: 2

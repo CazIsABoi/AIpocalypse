@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4
+  Id: Liquid Cooling
+  StartsUnlocked: 0
   Stat: 11
   Amount: 0.6

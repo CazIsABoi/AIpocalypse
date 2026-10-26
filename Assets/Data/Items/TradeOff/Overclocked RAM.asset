@@ -17,6 +17,8 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4
+  Id: Overclocked RAM
+  StartsUnlocked: 0
   Changes:
   - Stat: 9
     Amount: 1

@@ -108,6 +108,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                 // boss adds are spawned without a handler, so find the one in the scene for them
                 if (handler == null) handler = FindAnyObjectByType<EntityHandler>();
                 handler?.RegisterKill();
+                CombatEvents.Killed(transform.position);
                 Destroy(gameObject); return;
             } // Enemy died, destroy the gameobject and exit the update loop.
         }

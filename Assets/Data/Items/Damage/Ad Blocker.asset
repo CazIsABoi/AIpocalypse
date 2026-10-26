@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 7
   Rarity: 2
+  Id: Ad Blocker
+  StartsUnlocked: 1
   Stat: 3
   Amount: 1

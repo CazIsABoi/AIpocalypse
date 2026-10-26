@@ -17,5 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Weight: 4
   Rarity: 3
+  Id: Kill Switch
+  StartsUnlocked: 1
   Stat: 3
   Amount: 1.5
