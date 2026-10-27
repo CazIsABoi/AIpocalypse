@@ -634,17 +634,17 @@ public class EnemyController : MonoBehaviour, IDamageable
         if(AiType!=10)  hpSlider.transform.parent.transform.rotation = Quaternion.Euler(45f, 0f, 0f);
     }
 
-    // IDamageable entry point (hazards etc.) — no crit
+    // IDamageable entry point (hazards etc.) — no crit, and not the player's damage, so the DPS meter skips it
     public void TakeDamage(float Amount)
     {
-        TakeDamage(Amount, 0f, 1f);
+        TakeDamage(Amount, 0f, 1f, false);
     }
 
     // What hit this enemy last: Effect by default (chain lightning, explosions, hazards call TakeDamage directly),
     // CombatEvents.Hit changes it to Gun/Melee right after the player's own hits
     public HitSource LastHitSource { get; set; } = HitSource.Effect;
 
-    public float TakeDamage(float Amount, float CritChance, float CritDamage)
+    public float TakeDamage(float Amount, float CritChance, float CritDamage, bool byPlayer = true)
     {
         LastHitSource = HitSource.Effect;
         if (AiType == 10 && ProtectiveBarrierActive) Amount = 0;
@@ -655,7 +655,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
         if(IsCrit) Amount *= CritDamage;
         Health -= Amount;
-        DpsMeter.Add(Amount);
+        if (byPlayer) DpsMeter.Add(Amount);
         
         if (Amount > 0f)   // shielded boss: no "0" popups or flash for every bullet
         {

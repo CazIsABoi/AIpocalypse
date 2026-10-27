@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IdeaData
   Id: Feedback
   Title: Feedback
-  Description: Hurting you hurts them. Thorns: enemies that hit you take damage back.
+  Description: 'Hurting you hurts them. Thorns: enemies that hit you take damage back.'
   Icon: {fileID: 0}
   Rarity: 3
   Cards:

@@ -60,6 +60,7 @@ partial class RunTelemetry : MonoBehaviour
         if (stats != null) health = stats.GetComponent<PlayerHealth>();
         floorStart = Time.time;   // Time.time counts from app start, not from this run
         DpsMeter.Reset();
+        PerfMonitor.Instance?.ResetRun();
     }
 
     void OnEnable()
@@ -164,6 +165,7 @@ partial class RunTelemetry : MonoBehaviour
         var times = new List<string>(floorTimes) { Mathf.RoundToInt(Time.time - floorStart).ToString() };   // + the floor it ended on
         float elapsed = clock != null ? clock.Elapsed : Time.time;
         var effects = stats.GetComponent<PlayerEffects>();   // added mid-run by the first effect card, so look now
+        var perf = PerfMonitor.Instance;
 
         ScoreService.Submit(new ScoreService.Run
         {
@@ -215,6 +217,8 @@ partial class RunTelemetry : MonoBehaviour
 
             // performance & setup
             avgFps = frameTime > 0f ? frames / frameTime : 0f, worstFps = worstFps > 9000f ? 0f : worstFps,
+            cpuMs = perf != null ? perf.RunCpuMs : 0f, gpuMs = perf != null ? perf.RunGpuMs : 0f,
+            drawCalls = perf != null ? perf.RunDrawCalls : 0f, hitches = perf != null ? perf.RunHitches : 0,
             resolution = $"{Screen.width}x{Screen.height}", fullscreen = Screen.fullScreen ? 1 : 0,
             gpu = SystemInfo.graphicsDeviceName, ramMb = SystemInfo.systemMemorySize,
             gunSounds = GameSettings.GunSounds ? 1 : 0, hitSounds = GameSettings.HitSounds ? 1 : 0,

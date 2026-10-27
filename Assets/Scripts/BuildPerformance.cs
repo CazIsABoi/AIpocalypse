@@ -8,9 +8,9 @@ public static class BuildPerformance
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void Init()
     {
-        // Debug.Log in a release build costs time and garbage (in the browser every line goes to the console).
-        // Development builds and the editor keep logging.
-        if (!Debug.isDebugBuild) Debug.unityLogger.logEnabled = false;
+        // Debug.Log in a release build costs time and garbage (in the browser every line goes to the console),
+        // so release builds drop plain logs. Warnings, errors and exceptions stay: they're what Player.log is for.
+        if (!Debug.isDebugBuild) Debug.unityLogger.filterLogType = LogType.Warning;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
         // The web build uses the PC quality level; a browser has less headroom, so render a bit lighter.

@@ -67,7 +67,7 @@ public class PlayerHealth : MonoBehaviour
         if (attacker != null && stats.Thorns > 0f)
         {
             float thorns = stats.Damage * stats.Thorns;
-            attacker.TakeDamage(thorns);   // counts as an Effect hit (no crit, no lifesteal)
+            attacker.TakeDamage(thorns, 0f, 1f);   // counts as an Effect hit (no crit, no lifesteal), and on the DPS meter
             RunTelemetry.Instance?.ThornsDealt(thorns);
         }
         TakeDamage(amount, source);

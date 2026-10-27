@@ -58,6 +58,8 @@ public static class ScoreService
         public string loadout;       // the Ideas equipped for this run
 
         public float avgFps, worstFps;
+        public float cpuMs, gpuMs, drawCalls;   // run averages: higher GPU than CPU = rendering is the limit
+        public int hitches;                     // frames slower than 50 ms
         public string resolution, gpu;
         public int fullscreen, ramMb, gunSounds, hitSounds;
         public int gamepad;          // 1 = a controller was used at some point
