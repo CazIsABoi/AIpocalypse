@@ -27,6 +27,7 @@ public class PerkTreeUI : MonoBehaviour
     [Header("Layout")]
     [SerializeField] private float tierSpacing = 110f;    // pixels between tiers (up)
     [SerializeField] private float branchSpacing = 180f;  // pixels between branches (sideways)
+    [SerializeField] private float sideSpacing = 170f;    // how far a side perk sits from its branch
 
     [Header("Connection lines (optional)")]
     [SerializeField] private Image linePrefab;            // a plain white Image (any size: the code sizes it)
@@ -57,6 +58,14 @@ public class PerkTreeUI : MonoBehaviour
     static readonly int[] branchOrder = { 1, 3, 2 };
 
     Vector2 NodePosition(PerkNode node)
+    {
+        Vector2 pos = BranchPosition(node) + Vector2.right * node.Side * sideSpacing;
+        // side perks are drawn smaller from their bottom edge: lift them so their centre lines up with the branch node
+        if (node.Side != 0) pos.y += nodeSize.y * (1f - PerkNodeButton.ScaleOf(node)) * 0.5f;
+        return pos;
+    }
+
+    Vector2 BranchPosition(PerkNode node)
     {
         if (node.Branch == 0) return new Vector2(0f, node.Tier * tierSpacing);
         int count = 0, index = 0;
@@ -163,7 +172,7 @@ public class PerkTreeUI : MonoBehaviour
         return line;
     }
 
-    Vector2 NodeHalfSize(PerkNode node) => nodeSize * (node.IsMajor ? 1.2f : 1f) * 0.5f;   // majors are scaled 1.2 (PerkNodeButton)
+    Vector2 NodeHalfSize(PerkNode node) => nodeSize * PerkNodeButton.ScaleOf(node) * 0.5f;
 
     // How far from a rectangle's centre a ray in direction 'dir' hits its border:
     // whichever edge it reaches first, the side one (half.x) or the top/bottom one (half.y)

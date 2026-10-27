@@ -31,6 +31,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d3995e64c1b84a54a0baba229dbe27cb, type: 2}
   - {fileID: 11400000, guid: 0bb3cbb80067447386ad3ad509490874, type: 2}
   - {fileID: 11400000, guid: 0d87139002f64e8d92d8addc0d1f149c, type: 2}
-  MaxLevel: 20
+  - {fileID: 11400000, guid: ccc0b664e8744f688162247008894ad4, type: 2}
+  - {fileID: 11400000, guid: a76f329b054e4c4d94f93378339a3661, type: 2}
+  - {fileID: 11400000, guid: 8f53e640c2de454d8c4c71c7bdd8e235, type: 2}
+  - {fileID: 11400000, guid: d44bfc19db384849af9b0cafdaeae7ff, type: 2}
+  - {fileID: 11400000, guid: a34405e86a4b46428dd55a1557ad2fac, type: 2}
+  - {fileID: 11400000, guid: 92547accfd6040d190f521c5271f8223, type: 2}
+  MaxLevel: 26
   XpPerLevel: 100
   XpGrowth: 1.2

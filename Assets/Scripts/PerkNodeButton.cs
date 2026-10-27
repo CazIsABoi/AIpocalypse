@@ -18,6 +18,9 @@ public class PerkNodeButton : MonoBehaviour, IPointerEnterHandler, ISelectHandle
 
     public PerkNode Node { get; private set; }
 
+    // Majors stand out (they're the branch choices), side perks are smaller than the nodes on the branch
+    public static float ScaleOf(PerkNode node) => node.IsMajor ? 1.2f : node.Side != 0 ? 0.8f : 1f;
+
     // Fired when the mouse moves onto the node, or a gamepad/keyboard selects it, so the tree can show
     // what it does BEFORE it's bought. Works on locked nodes too: hover doesn't need the button to be clickable.
     public event System.Action<PerkNodeButton> Hovered;
@@ -30,10 +33,7 @@ public class PerkNodeButton : MonoBehaviour, IPointerEnterHandler, ISelectHandle
         Node = node;
         title.text = node.Title;
         cost.text = node.Cost.ToString();
-        if (node.IsMajor)
-        {
-            transform.localScale = Vector3.one * 1.2f;   // majors stand out: they're the branch choices
-        }
+        transform.localScale = Vector3.one * ScaleOf(node);
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(() => onClicked(this));
     }
