@@ -46,24 +46,5 @@ public class PlayerMovement : MonoBehaviour
         controller.enabled = true;
     }
 
-    private Vector3 CalculateAimingDirection()
-    {
-        Vector3 mousePos = GetMouseWorldPosition();
-        mousePos.y = 0;
-        Vector3 aimDirection = (mousePos - new Vector3(transform.position.x, 0, transform.position.z)).normalized;
-        return aimDirection;
-    }
-    private Vector3 GetMouseWorldPosition()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(
-            Mouse.current.position.ReadValue()
-        );
-
-        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
-
-        if (groundPlane.Raycast(ray, out float distance))
-            return ray.GetPoint(distance);
-
-        return Vector3.zero;
-    }
+    private Vector3 CalculateAimingDirection() => Aim.Direction(transform.position);   // mouse or right stick
 }

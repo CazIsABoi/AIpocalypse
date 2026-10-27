@@ -17,7 +17,7 @@ public abstract class Pickup : MonoBehaviour
         player = FindAnyObjectByType<PlayerStats>();
     }
 
-    protected virtual float AttractRange => player.pickupRange;
+    protected virtual float AttractRange => player.PickupRange;
     protected virtual bool CanAttract => true;            // e.g. health: only when the player is hurt
     protected abstract void Collect();
 

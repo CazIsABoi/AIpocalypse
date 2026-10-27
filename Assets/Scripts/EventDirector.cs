@@ -32,7 +32,7 @@ public class EventDirector : MonoBehaviour
     public void OnFloorChanged(int floor)
     {
         StopAllCoroutines();                 // stops the loop AND the running event
-        if (current != null) { current.End(ctx); Destroy(current); current = null; }
+        if (current != null) { current.End(ctx); RunTelemetry.Instance?.EventEnded(current, true); Destroy(current); current = null; }
         loop = null;                    
     }
 
@@ -68,6 +68,7 @@ public class EventDirector : MonoBehaviour
             }
         }
         e.End(ctx);
+        RunTelemetry.Instance?.EventEnded(e, false);
         AudioManager.Instance?.Play(Sfx.EventEnd);
         EventTimeLeft = 0f;
         Destroy(e);
@@ -77,7 +78,6 @@ public class EventDirector : MonoBehaviour
     {
         while (true)
         {
-            Debug.Log("EventDirector waiting for next event...");
             if (firstEvent)
             {
                 firstEvent = false;
@@ -89,10 +89,8 @@ public class EventDirector : MonoBehaviour
             }
             while (NextEventIn > 0f) { NextEventIn -= Time.deltaTime; yield return null; }
 
-            Debug.Log("EventDirector starting next event...");
             GameEvent picked = Pick();
             if (picked == null) continue;
-            Debug.Log($"EventDirector picked event: {picked.Title}");
             yield return StartCoroutine(RunEvent(Instantiate(picked)));
         }
     }

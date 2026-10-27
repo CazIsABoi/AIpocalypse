@@ -195,7 +195,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     {
                         if(hit.gameObject.GetComponent<PlayerHealth>())
                         {
-                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName);
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName, this);
                             DamageWindow = 5;
                         }
                     }
@@ -225,7 +225,6 @@ public class EnemyController : MonoBehaviour, IDamageable
                     AttackWindow = 6f;
                     DamageWindow = 0.7f;
                     AudioManager.Instance?.PlayAt(Sfx.EnemyAttack, transform.position);
-                    Debug.Log("attacked");
                     Anim.SetBool("IsAttacking", true);
                 }
             }
@@ -254,7 +253,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     {
                         if (hit.gameObject.GetComponent<PlayerHealth>())
                         {
-                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName);
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName, this);
                             DamageWindow = 0.54f;
                         }
                     }
@@ -277,7 +276,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     Vector3 offset = PlayerTarget.transform.position - transform.position;
                     if (offset.sqrMagnitude <= AttackRange * AttackRange) // If the player is still in range, apply damage
                     {
-                        playerHealth.TakeDamage(Damage, AttackerName);
+                        playerHealth.TakeDamage(Damage, AttackerName, this);
                         // Debug.Log($"Player hit for {Damage}");
                     }
 
@@ -304,7 +303,6 @@ public class EnemyController : MonoBehaviour, IDamageable
                     AttackWindow = 1.2f;
                     AudioManager.Instance?.PlayAt(Sfx.EnemyAttack, transform.position);
                     DamageWindow = 1.2f;
-                    Debug.Log("attacked");
                 }
             }
             if (!IsAttacking)
@@ -345,7 +343,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     {
                         if (hit.gameObject.GetComponent<PlayerHealth>())
                         {
-                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName);
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName, this);
                             //DamageWindow = 5;
                         }
                     }
@@ -394,7 +392,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     {
                         if (hit.gameObject.GetComponent<PlayerHealth>())
                         {
-                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName);
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName, this);
                             DamageWindow = 5;
                         }
                     }
@@ -427,7 +425,6 @@ public class EnemyController : MonoBehaviour, IDamageable
                     AttackWindow = 6f;
                     DamageWindow = 0f;
                     AudioManager.Instance?.PlayAt(Sfx.EnemyAttack, transform.position);
-                    Debug.Log("attacked");
                     
                 }
             }
@@ -465,7 +462,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     Vector3 offset = PlayerTarget.transform.position - transform.position;
                     if (offset.sqrMagnitude <= AttackRange * AttackRange) // If the player is still in range, apply damage
                     {
-                        playerHealth.TakeDamage(Damage, AttackerName);
+                        playerHealth.TakeDamage(Damage, AttackerName, this);
                         // Debug.Log($"Player hit for {Damage}");
                     }
 
@@ -700,7 +697,7 @@ public class EnemyController : MonoBehaviour, IDamageable
             popup.IsCrit = crit;
             total = amount;
         }
-        popup.PopupDisplayContent = ((int)total).ToString();
+        popup.PopupDisplayContent = StatNames.Compact((int)total);   // 17000 -> "17k", like the stats screen
         lastTime = Time.time;
     }
 }

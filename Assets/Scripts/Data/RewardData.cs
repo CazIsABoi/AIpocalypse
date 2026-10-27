@@ -50,7 +50,8 @@ public enum RewardPath { None, Melee, Gun }
 
 // Assets store StatType as numbers: only ever add new values at the END
 public enum StatType { MoveSpeed, MoveSpeedPercent, MaxHealth, Damage, DamagePercent, PickupRadius, BulletAmount, CritDamage, CritChance, BulletPierce, RegenAmount, AttackSpeed, Lifesteal,
-    MeleeDamagePercent, MeleeRange, MeleeSpeedPercent, GunDamagePercent, ProjectileSpeed, CritChanceCap, MeleeLifesteal}
+    MeleeDamagePercent, MeleeRange, MeleeSpeedPercent, GunDamagePercent, ProjectileSpeed, CritChanceCap, MeleeLifesteal,
+    Armor, Thorns, BlockChance}
 public enum Rarity { Auto, Common, Uncommon, Rare, Epic, Legendary }
 
 public static class StatNames
@@ -97,6 +98,12 @@ public static class StatNames
                 return "Crit Chance Cap";
             case StatType.MeleeLifesteal:
                 return "Melee Lifesteal";
+            case StatType.Armor:
+                return "Armor";
+            case StatType.Thorns:
+                return "Thorns";
+            case StatType.BlockChance:
+                return "Block Chance";
             default:
                 return type.ToString();  
         }
@@ -145,6 +152,11 @@ public static class StatNames
                 return $"{value * 100f:0.##}%";     // 0.0035 → "0.35%" (lifesteal cards are below 1%)
             case StatType.ProjectileSpeed:
                 return $"{(1 + value) * 100f:0.#}%"; // 0.2 → "120%" (it's a bonus on top of the bullet's own speed)
+            case StatType.Armor:
+                return $"{value:0} (-{(1f - 100f / (100f + Mathf.Max(0f, value))) * 100f:0}% dmg)";   // 25 → "25 (-20% dmg)", matches armorScale 100
+            case StatType.Thorns:
+            case StatType.BlockChance:
+                return $"{value * 100f:0.#}%";      // thorns 1 → "100%" of your damage, block 0.1 → "10%"
             default:
                 return $"{value:0.#}";
         }

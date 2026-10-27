@@ -71,6 +71,6 @@ public partial class ProfessionApplier : MonoBehaviour
         // With 350: 4 min / floor 5 (~80 raw) -> ~72, 15 min / floor 12 (~350) -> ~220, 37 min / floor 26 (~760) -> ~310
         int xp = Mathf.RoundToInt(runXpCap * (1f - Mathf.Exp(-raw / runXpCap)));
         int levelsGained = ProfessionProgress.AddXp(Current, xp);
-        Debug.Log($"Run XP: {xp}, Levels Gained: {levelsGained}");
+        RunTelemetry.Instance?.ProfessionXp(xp);
     }
 }

@@ -100,7 +100,8 @@ public class IdeaCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     void Update()
     {
-        float target = locked ? targetScale : (hovered ? hoverScale : 1f);
+        bool focused = button != null && EventSystem.current != null && EventSystem.current.currentSelectedGameObject == button.gameObject;   // controller: the selected card grows like a hovered one
+        float target = locked ? targetScale : (hovered || focused ? hoverScale : 1f);
         float k = 1f - Mathf.Exp(-scaleSpeed * Time.unscaledDeltaTime);
         transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one * target, k);
 

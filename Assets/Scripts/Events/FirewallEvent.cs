@@ -60,6 +60,7 @@ public class FirewallEvent : GameEvent
     public override bool IsDone(EventContext ctx) => failed || kills >= killTarget || timeLeft <= 0f;
     public override bool Started => !failed;   // couldn't lock a room → skipped without alarm/title
     public override string Status => failed ? "" : $"break out {Mathf.Min(kills, killTarget)} / {killTarget}";
+    public override string Outcome => failed ? "skipped" : $"{(kills >= killTarget ? "broke" : "held")} {kills}/{killTarget} in {timeLimit - Mathf.Max(0f, timeLeft):0}s";
 
     public override void End(EventContext ctx)
     {

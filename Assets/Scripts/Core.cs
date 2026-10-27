@@ -62,7 +62,7 @@ public class Core : MonoBehaviour, IDamageable
             popup.TargetPosition = start + Vector3.up * 1f;
             popupTotal = amount;
         }
-        popup.PopupDisplayContent = Mathf.CeilToInt(popupTotal).ToString();
+        popup.PopupDisplayContent = StatNames.Compact(Mathf.CeilToInt(popupTotal));
         lastPopupTime = Time.time;
 
         if (!destroyed) AudioManager.Instance.Play(Sfx.CoreHit);   // the killing hit plays CoreDestroyed instead

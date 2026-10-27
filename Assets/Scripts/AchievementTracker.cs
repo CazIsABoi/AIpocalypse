@@ -79,7 +79,10 @@ public class AchievementTracker : MonoBehaviour
         {
             if (a == null || AchievementProgress.IsUnlocked(a)) continue;
             if (AchievementProgress.Value(a, run) >= a.Target && AchievementProgress.Unlock(a))
+            {
                 AchievementPopup.Show(a);
+                RunTelemetry.Instance?.AchievementUnlocked(a.Id);
+            }
         }
     }
 

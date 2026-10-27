@@ -41,6 +41,14 @@ public static class ScoreService
         public float maxHp, damage, attackSpeed, critChance, critDamage, lifesteal, moveSpeed;
         public int bullets, pierce;
         public float regen, pickupRange, projectileSpeed, meleeRange;
+        public float moveSpeedRaw, pickupRangeRaw, effectivePickup;   // before / after the soft caps (moveSpeed and pickupRange stay as before)
+        public float armor, thorns, blockChance;
+        public float thornsDamage, blockedDamage, armorPrevented;  // what each defense stat actually did this run
+        public int blocks;
+        public string events;        // "3:Lockdown:broke 34/40|5:Swarm"
+        public string achievements;  // unlocked during this run
+        public string profession;
+        public int professionLevel, professionXp;   // level after this run's XP was added
 
         public int thoughtsEarned, thoughtsTotal, recalls;
         public string ideas;         // unlocked Ideas before this run's recall
@@ -49,6 +57,7 @@ public static class ScoreService
         public float avgFps, worstFps;
         public string resolution, gpu;
         public int fullscreen, ramMb, gunSounds, hitSounds;
+        public int gamepad;          // 1 = a controller was used at some point
     }
 
     // Sent after the death screen recall, so it gets its own sheet ("recall")

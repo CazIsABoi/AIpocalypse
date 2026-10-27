@@ -65,7 +65,7 @@ public class MindBarrierCore : MonoBehaviour, IDamageable
         if (amount <= 0f) return;   // barrier still up: no "0" popup spam
         GameObject spawnedPopup = Instantiate(DamagePopup, transform.position, Quaternion.identity);
         spawnedPopup.GetComponent<DamagePopup>().TargetPosition = transform.position + new Vector3(0, 3.5f, 0);
-        spawnedPopup.GetComponent<DamagePopup>().PopupDisplayContent = ((int)amount).ToString();
+        spawnedPopup.GetComponent<DamagePopup>().PopupDisplayContent = StatNames.Compact((int)amount);
 
         AudioManager.Instance?.Play(Sfx.CoreHit);
     }

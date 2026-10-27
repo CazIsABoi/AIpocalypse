@@ -1191,7 +1191,6 @@ public class DungeonGenerator : MonoBehaviour
     void Explore(RoomData room)
     {
         room.explored = true;
-        Debug.Log($"Explored {room.slot}");
 
         if (room.fog != null) StartCoroutine(FadeFog(room.fog));
 

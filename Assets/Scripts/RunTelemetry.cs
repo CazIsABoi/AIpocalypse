@@ -17,6 +17,11 @@ partial class RunTelemetry : MonoBehaviour
     bool submitted, bossReached;
     float damageGun, damageMelee, damageTaken, healed, healedOrbs, lowestHp = 1f;
     int hitsTaken, chests, healthOrbs;
+    float thornsDamage, blockedDamage, armorPrevented;
+    int blocks, professionXp;
+    bool usedGamepad;
+    readonly List<string> eventLog = new List<string>();
+    readonly List<string> achievements = new List<string>();
     float floorStart;
     readonly List<string> floorTimes = new List<string>();
     readonly List<string> picked = new List<string>();
@@ -84,6 +89,7 @@ partial class RunTelemetry : MonoBehaviour
             worstFps = Mathf.Min(worstFps, secondFrames / secondTime);
             secondFrames = 0; secondTime = 0f;
         }
+        if (!usedGamepad && UnityEngine.InputSystem.Gamepad.current != null && UnityEngine.InputSystem.Gamepad.current.wasUpdatedThisFrame) usedGamepad = true;
         if (health != null && stats != null && stats.MaxHealth > 0f)
             lowestHp = Mathf.Min(lowestHp, Mathf.Clamp01(health.Health / stats.MaxHealth));
     }
@@ -100,6 +106,19 @@ partial class RunTelemetry : MonoBehaviour
     }
 
     public void ChestOpened() => chests++;
+
+    public void ThornsDealt(float amount) => thornsDamage += amount;
+    public void HitBlocked(float amount) { blocks++; blockedDamage += amount; }
+    public void ArmorPrevented(float amount) => armorPrevented += amount;
+    public void ProfessionXp(int xp) => professionXp = xp;
+    public void AchievementUnlocked(string id) => achievements.Add(id);
+
+    // "3:Lockdown:broke 34/40" = floor 3, the event, how it ended
+    public void EventEnded(GameEvent e, bool interrupted)
+    {
+        string outcome = interrupted ? "left floor" : e.Outcome;
+        eventLog.Add($"{(game != null ? game.Floor : 0)}:{e.Title}" + (outcome != "" ? ":" + outcome : ""));
+    }
 
     public void HealthOrbCollected(float amount) { healthOrbs++; healedOrbs += amount; }
 
@@ -170,6 +189,13 @@ partial class RunTelemetry : MonoBehaviour
             moveSpeed = stats.Speed, bullets = stats.BulletAmount, pierce = stats.BulletPierce,
             regen = stats.regenAmount, pickupRange = stats.pickupRange, projectileSpeed = stats.ProjectileSpeed,
             meleeRange = stats.MeleeRadius,
+            moveSpeedRaw = stats.RawSpeed, pickupRangeRaw = stats.pickupRange, effectivePickup = stats.PickupRange,
+            armor = stats.Armor, thorns = stats.Thorns, blockChance = stats.BlockChance,
+            thornsDamage = thornsDamage, blocks = blocks, blockedDamage = blockedDamage, armorPrevented = armorPrevented,
+            events = string.Join("|", eventLog), achievements = string.Join("|", achievements),
+            profession = ProfessionApplier.Current != null ? ProfessionApplier.Current.Id : "",
+            professionLevel = ProfessionApplier.Current != null ? ProfessionProgress.Level(ProfessionApplier.Current) : 0,
+            professionXp = professionXp,
 
             // meta-progression (before this run's recall: that one is sent as its own "recall" event)
             thoughtsEarned = thoughtsEarned, thoughtsTotal = Progress.Thoughts, recalls = Progress.Recalls,
@@ -180,6 +206,7 @@ partial class RunTelemetry : MonoBehaviour
             resolution = $"{Screen.width}x{Screen.height}", fullscreen = Screen.fullScreen ? 1 : 0,
             gpu = SystemInfo.graphicsDeviceName, ramMb = SystemInfo.systemMemorySize,
             gunSounds = GameSettings.GunSounds ? 1 : 0, hitSounds = GameSettings.HitSounds ? 1 : 0,
+            gamepad = usedGamepad ? 1 : 0,
         });
     }
 

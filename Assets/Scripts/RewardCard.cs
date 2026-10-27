@@ -224,7 +224,8 @@ public class RewardCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     void Update()
     {
         // Root scale eases toward its target. 1 - Exp(-speed * dt) = same feel at any frame rate.
-        float target = locked ? targetScale : (hovered ? hoverScale : 1f);
+        bool focused = button != null && EventSystem.current != null && EventSystem.current.currentSelectedGameObject == button.gameObject;   // controller: the selected card grows like a hovered one
+        float target = locked ? targetScale : (hovered || focused ? hoverScale : 1f);
         float k = 1f - Mathf.Exp(-scaleSpeed * Time.unscaledDeltaTime);
         transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one * target, k);
 

@@ -33,6 +33,7 @@ partial class DeathStats : MonoBehaviour
         foreach (StatType type in System.Enum.GetValues(typeof(StatType)))
         {
             if (replaced.Contains(type)) continue;
+            if ((type == StatType.Armor || type == StatType.Thorns || type == StatType.BlockChance) && stats.Get(type) <= 0f) continue;   // only once picked
             string name = StatNames.Get(type);
             if (!shown.Add(name)) continue;   // MoveSpeed + MoveSpeedPercent are both "Speed"
             build += $"{name}<pos=60%>{StatNames.Format(type, stats.Get(type))}\n";
