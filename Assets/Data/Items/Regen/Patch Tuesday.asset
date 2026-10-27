@@ -18,6 +18,6 @@ MonoBehaviour:
   Weight: 7
   Rarity: 2
   Id: Patch Tuesday
-  StartsUnlocked: 0
+  StartsUnlocked: 1
   Stat: 10
   Amount: 0.006

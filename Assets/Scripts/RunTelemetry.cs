@@ -146,6 +146,7 @@ partial class RunTelemetry : MonoBehaviour
             killer = health != null ? health.LastHitBy : "",
             coreFound = FindAnyObjectByType<Core>() is Core c && c.Discovered ? 1 : 0,
             floorTime = game != null ? Time.time - game.FloorStartedAt : 0f,
+            score = ScoreService.Score(elapsed, game != null ? game.Floor : 0, spawner != null ? spawner.Kills : 0),
 
             // who & which run
             playerId = PlayerId, runNumber = runNumber, endReason = endReason,

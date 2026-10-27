@@ -8,6 +8,7 @@ public static class GameSettings
     public static int Fullscreen { get => PlayerPrefs.GetInt("fullscreen", 1); set => PlayerPrefs.SetInt("fullscreen", value); }
     public static bool GunSounds { get => PlayerPrefs.GetInt("snd_gun", 1) == 1; set => PlayerPrefs.SetInt("snd_gun", value ? 1 : 0); }
     public static bool HitSounds { get => PlayerPrefs.GetInt("snd_hit", 1) == 1; set => PlayerPrefs.SetInt("snd_hit", value ? 1 : 0); }
+    public static float Shake { get => PlayerPrefs.GetFloat("shake", 1f); set => PlayerPrefs.SetFloat("shake", value); }   // accessibility: 0 = no screen shake
 
     // Online leaderboard: players can opt out, and choose the (only) name that gets sent
     public static bool SubmitScores { get => PlayerPrefs.GetInt("submit_scores", 1) == 1; set { PlayerPrefs.SetInt("submit_scores", value ? 1 : 0); PlayerPrefs.Save(); } }

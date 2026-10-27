@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8cd26653a214259b06f5679417d7e74, type: 3}
+  m_Name: Carnage
+  m_EditorClassIdentifier: Assembly-CSharp::IdeaData
+  Id: Carnage
+  Title: Carnage
+  Description: Up close, every cut feeds you. Melee lifesteal.
+  Icon: {fileID: 0}
+  Rarity: 3
+  Cards:
+  - {fileID: 11400000, guid: 3d4045cf346b496ea03623c54f696d5d, type: 2}
+  - {fileID: 11400000, guid: c0881444ffd34fa69d4344a7febd517c, type: 2}
+  - {fileID: 11400000, guid: 3bc7206530a949d4ba72f97e2b0a4308, type: 2}
+  - {fileID: 11400000, guid: 86ffd044a24249c3865243ac798d04cf, type: 2}
+  AlwaysInPool: 0
+  Requires: {fileID: 11400000, guid: b2aba8894fc34766a1b6101e76b364a1, type: 2}

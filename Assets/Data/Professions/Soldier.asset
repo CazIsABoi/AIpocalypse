@@ -29,4 +29,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ca0049a9b2514385b302010629ea5814, type: 2}
   MaxLevel: 14
   XpPerLevel: 100
-  XpGrowth: 1.15
+  XpGrowth: 1.2

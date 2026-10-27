@@ -9,6 +9,13 @@ public class SettingsUI : MonoBehaviour
     [SerializeField] private Toggle fullscreen;
     [SerializeField] private Toggle gunSounds, hitSounds;
     [SerializeField] private Toggle submitScores;
+    [SerializeField] private Slider shake;                    // optional: screen shake strength (0 = off)
+    [SerializeField] private TMPro.TextMeshProUGUI shakeText;
+    [SerializeField] private TMPro.TMP_Text resetText;        // the reset button's label: asks for a second press
+    [SerializeField] private string resetConfirm = "Press again to erase ALL progress";
+
+    string resetLabel;
+    bool resetArmed;
 
     [SerializeField] private GameObject[] tabs;
     [SerializeField] private Button[] tabButtons;
@@ -22,6 +29,11 @@ public class SettingsUI : MonoBehaviour
         hitSounds.SetIsOnWithoutNotify(GameSettings.HitSounds);
         fullscreen.SetIsOnWithoutNotify(GameSettings.Fullscreen != 0);
         if (submitScores != null) submitScores.SetIsOnWithoutNotify(GameSettings.SubmitScores);
+        if (shake != null) { shake.SetValueWithoutNotify(GameSettings.Shake); UpdateText(shake, shakeText); }
+
+        // opening the menu again always starts with an unarmed reset button
+        if (resetText != null) { if (resetLabel == null) resetLabel = resetText.text; resetText.text = resetLabel; }
+        resetArmed = false;
 
         UpdateText(master, masterText);
         UpdateText(music, musicText);
@@ -45,10 +57,24 @@ public class SettingsUI : MonoBehaviour
     public void OnGunSounds(bool on) => GameSettings.GunSounds = on;
     public void OnHitSounds(bool on) => GameSettings.HitSounds = on;
     public void OnSubmitScores(bool on) => GameSettings.SubmitScores = on;   // hook to the toggle (Dynamic bool)
+    public void OnShake(float v) { GameSettings.Shake = v; UpdateText(shake, shakeText); }   // slider 0..1 (Dynamic float)
+
+    // Reset button: the first press only arms it (the label asks again), the second wipes everything and reloads the menu
+    public void OnResetProgress()
+    {
+        if (!resetArmed)
+        {
+            resetArmed = true;
+            if (resetText != null) resetText.text = resetConfirm;
+            return;
+        }
+        Progress.ResetEverything();
+        GoToMainMenu();
+    }
 
     private void UpdateText(Slider slider, TMPro.TextMeshProUGUI text)
     {
-        text.text = $"{slider.value * 100:0.0}%";  
+        if (text != null) text.text = $"{slider.value * 100:0.0}%";
     }
 
     // Ability to switch between tabs in the settings menu

@@ -29,6 +29,8 @@ public class PlayerStats : MonoBehaviour
     public float AttackSpeed;
     public float Lifesteal; // fraction of damage dealt that is returned as health (0.01 = 1% of damage dealt)
     [SerializeField] private float lifestealCap = 0.15f; // cap at 15% lifesteal
+    public float MeleeLifesteal;                               // extra lifesteal on melee hits only (adds to Lifesteal)
+    [SerializeField] private float meleeLifestealCap = 0.1f;
     [SerializeField] private float regenCap = 0.04f;     // cap at 4% max HP per second
 
     [Header("Build paths")]
@@ -124,6 +126,7 @@ public class PlayerStats : MonoBehaviour
             case StatType.GunDamagePercent: gunDamagePercent += amount; break;
             case StatType.MeleeRange: meleeRange = Mathf.Min(meleeRangeCap, meleeRange + amount); break;
             case StatType.ProjectileSpeed: ProjectileSpeed += amount; break;
+            case StatType.MeleeLifesteal: MeleeLifesteal = Mathf.Min(meleeLifestealCap, MeleeLifesteal + amount); break;
             case StatType.CritChanceCap:
                 critChanceCap = Mathf.Min(1f, critChanceCap + amount);
                 if (critGathered < 0f) critGathered = CritChance;
@@ -172,6 +175,7 @@ public class PlayerStats : MonoBehaviour
             case StatType.MeleeRange: return MeleeRadius;
             case StatType.ProjectileSpeed: return ProjectileSpeed;
             case StatType.CritChanceCap: return critChanceCap;
+            case StatType.MeleeLifesteal: return MeleeLifesteal;
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 return 0f;
@@ -215,6 +219,7 @@ public class PlayerStats : MonoBehaviour
             case StatType.GunDamagePercent: return gunDamagePercent + amount;
             case StatType.MeleeRange: return meleeBaseRadius + Mathf.Min(meleeRangeCap, meleeRange + amount);
             case StatType.ProjectileSpeed: return ProjectileSpeed + amount;
+            case StatType.MeleeLifesteal: return Mathf.Min(meleeLifestealCap, MeleeLifesteal + amount);
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 return 0f;
@@ -228,6 +233,7 @@ public class PlayerStats : MonoBehaviour
             case StatType.CritChance: return CritChance >= critChanceCap - 0.0001f;   // 75% unless the cap was raised
             case StatType.CritChanceCap: return critChanceCap >= 1f - 0.0001f;
             case StatType.Lifesteal: return Lifesteal >= lifestealCap - 0.0001f;
+            case StatType.MeleeLifesteal: return MeleeLifesteal >= meleeLifestealCap - 0.0001f;
             case StatType.RegenAmount: return regenAmount >= regenCap - 0.0001f;
             case StatType.MeleeRange: return meleeRange >= meleeRangeCap - 0.0001f;
             default: return false;

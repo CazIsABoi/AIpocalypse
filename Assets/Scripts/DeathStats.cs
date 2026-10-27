@@ -40,11 +40,12 @@ partial class DeathStats : MonoBehaviour
         buildText.text = build;
 
         int m = (int)(clock.Elapsed / 60), s = (int)(clock.Elapsed % 60);
-        text.text = $"TIME SURVIVED  {m:00}:{s:00}\nFLOOR  {game.Floor}\nLEVEL  {stats.Level}\nAIs DESTROYED  {spawner.Kills}";
+        int runScore = ScoreService.Score(clock.Elapsed, game.Floor, spawner.Kills);
+        text.text = $"SCORE  {runScore}\nTIME SURVIVED  {m:00}:{s:00}\nFLOOR  {game.Floor}\nLEVEL  {stats.Level}\nAIs DESTROYED  {spawner.Kills}";
 
-        float best = PlayerPrefs.GetFloat("best_time", 0f);
-        if (best > 0f && clock.Elapsed > best) text.text += "\nNEW BEST!";
-        if (clock.Elapsed > best) { PlayerPrefs.SetFloat("best_time", clock.Elapsed); PlayerPrefs.Save(); }
+        int best = PlayerPrefs.GetInt("best_score", 0);
+        if (best > 0 && runScore > best) text.text += "\nNEW BEST!";
+        if (runScore > best) { PlayerPrefs.SetInt("best_score", runScore); PlayerPrefs.Save(); }
 
         // once per run: Thoughts, telemetry, then the recall sequence
         if (!submitted)

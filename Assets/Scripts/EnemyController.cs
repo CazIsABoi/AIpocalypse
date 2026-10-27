@@ -108,7 +108,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                 // boss adds are spawned without a handler, so find the one in the scene for them
                 if (handler == null) handler = FindAnyObjectByType<EntityHandler>();
                 handler?.RegisterKill();
-                CombatEvents.Killed(transform.position);
+                CombatEvents.Killed(transform.position, LastHitSource);
                 Destroy(gameObject); return;
             } // Enemy died, destroy the gameobject and exit the update loop.
         }
@@ -655,8 +655,13 @@ public class EnemyController : MonoBehaviour, IDamageable
         TakeDamage(Amount, 0f, 1f);
     }
 
+    // What hit this enemy last: Effect by default (chain lightning, explosions, hazards call TakeDamage directly),
+    // CombatEvents.Hit changes it to Gun/Melee right after the player's own hits
+    public HitSource LastHitSource { get; set; } = HitSource.Effect;
+
     public float TakeDamage(float Amount, float CritChance, float CritDamage)
     {
+        LastHitSource = HitSource.Effect;
         if (AiType == 10 && ProtectiveBarrierActive) Amount = 0;
 
         float CritRoll = Random.Range(0f, 100f);

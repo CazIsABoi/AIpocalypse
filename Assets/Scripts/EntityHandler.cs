@@ -16,6 +16,9 @@ public class EntityHandler : MonoBehaviour
     public float SpawnMultiplier = 1f;
     public int Kills { get; private set; }
     public void RegisterKill() => Kills++;
+    // Roughly how many enemies spawn per second right now (average wave size / time between waves).
+    // Events use it to scale with the game, e.g. Lockdown's kill target.
+    public float EnemiesPerSecond => (MinSpawnCount + MaxSpawnCount) / 2f / Mathf.Max(0.1f, CurrentSpawnCD / (SpawnMultiplier * Grace(graceSpawnRate)));
 
     [Header("Grace period (new players)")]
     [SerializeField] private float[] graceSpawnRate = { 0.5f, 0.75f, 0.9f };  // spawn speed on floors 1-3 (1 = normal)

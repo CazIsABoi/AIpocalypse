@@ -27,6 +27,16 @@ static partial class Progress
 
     // debug only (UnlockDebug): back to a brand-new save, also clears the cached data
     public static void ResetAll() { PlayerPrefs.DeleteKey("ProgressData"); PlayerPrefs.Save(); data = null; }
+
+    // Settings button: wipes every kind of progress (Thoughts, Ideas, loadout, professions). Settings, best time and telemetry id stay.
+    public static void ResetEverything()
+    {
+        ResetAll();
+        RunLoadout.ResetAll();
+        ProfessionProgress.ResetAll();
+        RunProfession.ResetAll();
+        AchievementProgress.ResetAll();   // local only: Steam keeps its own copy (clear those from the Steamworks site)
+    }
     public static RewardData DrawLocked(RewardPool allCards)
     {
         List<RewardData> lockedCards = new List<RewardData>();
@@ -86,13 +96,30 @@ static partial class Progress
     public static bool CanRecall(IdeaSet ideas)
     {
         bool hasEnoughThoughts = Thoughts >= RecallCost;
-        bool hasLockedIdeas = ideas.Ideas.Exists(idea => !IsUnlocked(idea));
+        bool hasLockedIdeas = ideas.Ideas.Exists(CanBeRecalled);
         return hasEnoughThoughts && hasLockedIdeas;
+    }
+
+    // Not recalled yet, its requirement (if any) is, and it isn't an achievement's reward
+    public static bool CanBeRecalled(IdeaData idea) => idea != null && !idea.UnlockedByAchievement && !IsUnlocked(idea)
+                                                       && (idea.Requires == null || IsUnlocked(idea.Requires));
+
+    // An achievement's reward: unlocks the Idea and its cards for free (no Thoughts, doesn't count as a recall)
+    public static void Grant(IdeaData idea)
+    {
+        if (IsUnlocked(idea)) return;
+        D.unlockedIdeas.Add(idea.Id);
+        foreach (var card in idea.Cards)
+        {
+            if (card != null && !D.unlockedCards.Contains(card.Id)) D.unlockedCards.Add(card.Id);
+        }
+        Save();
+        RunLoadout.OnRecalled(idea);   // a pool Idea's cards join the pool at once, even mid-run
     }
 
     public static List<IdeaData> RecallChoices(IdeaSet ideas, int count)
     {
-        List<IdeaData> locked = ideas.Ideas.FindAll(idea => idea != null && !IsUnlocked(idea));
+        List<IdeaData> locked = ideas.Ideas.FindAll(CanBeRecalled);
         List<IdeaData> choices = new List<IdeaData>();
         while (choices.Count < count && locked.Count > 0)
         {
@@ -115,6 +142,6 @@ static partial class Progress
             if (card != null && !D.unlockedCards.Contains(card.Id)) D.unlockedCards.Add(card.Id);
         }
         Save();
-        RunLoadout.AddPool(idea);
+        RunLoadout.OnRecalled(idea);
     }
 }

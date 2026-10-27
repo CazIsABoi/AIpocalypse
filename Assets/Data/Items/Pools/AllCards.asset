@@ -108,4 +108,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8322343a27f04acdbd0b440f35b05a35, type: 2}
   - {fileID: 11400000, guid: 5417b443b1774041b596fc2075c63b18, type: 2}
   - {fileID: 11400000, guid: f864c579f72242e7b7cc7020e6cef934, type: 2}
+  - {fileID: 11400000, guid: 3d4045cf346b496ea03623c54f696d5d, type: 2}
+  - {fileID: 11400000, guid: c0881444ffd34fa69d4344a7febd517c, type: 2}
+  - {fileID: 11400000, guid: 3bc7206530a949d4ba72f97e2b0a4308, type: 2}
+  - {fileID: 11400000, guid: 86ffd044a24249c3865243ac798d04cf, type: 2}
   sourceText: AllCards

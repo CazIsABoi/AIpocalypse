@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0836927eda014ee3996473a9fb530e48, type: 3}
+  m_Name: AllAchievements
+  m_EditorClassIdentifier: Assembly-CSharp::AchievementSet
+  Achievements:
+  - {fileID: 11400000, guid: 04f73ccab88f47249b5992cefffeb288, type: 2}
+  - {fileID: 11400000, guid: 341a188c47034b9b868525234e98dc83, type: 2}
+  - {fileID: 11400000, guid: b8b72cea8d01470bb4d8b34dded89645, type: 2}
+  - {fileID: 11400000, guid: f497427efa0b46bc887614c1d35bb92d, type: 2}
+  - {fileID: 11400000, guid: 05d6433127d44b559862b9eb7b181868, type: 2}
+  - {fileID: 11400000, guid: 69733c7a6cb74664a215f41578ac2259, type: 2}
+  - {fileID: 11400000, guid: ccf15dc916e94133ac63d1b2830f125f, type: 2}
+  - {fileID: 11400000, guid: ed93143bb024452cb2c91faf1d2cf84d, type: 2}
+  - {fileID: 11400000, guid: 6731569ab9c24c228391b9e2cb137b07, type: 2}
+  - {fileID: 11400000, guid: bacceb5c81c34bc0b5539b1c5778d796, type: 2}

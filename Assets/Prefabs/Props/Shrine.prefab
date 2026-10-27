@@ -129,6 +129,7 @@ MonoBehaviour:
   activateRadius: 2
   activateTime: 1
   spawnRadius: 4
+  interactAction: {fileID: 7817858559809277995, guid: b95bd1b77317cc740a7589d3ab8ae8d5, type: 3}
   baseWave: 3
   rewardPool: {fileID: 11400000, guid: 4bf7f7e2e51e402b97e20e9a58147084, type: 2}
   usedMaterial: {fileID: 2100000, guid: 6c6f564aabe61d547ac0a69f0146cfec, type: 2}

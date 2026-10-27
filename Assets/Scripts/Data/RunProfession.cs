@@ -18,6 +18,7 @@ static partial class RunProfession
     static Data data;
     static Data D { get { if (data == null) data = JsonUtility.FromJson<Data>(PlayerPrefs.GetString("run_profession", "{}")); return data; } }
     static void Save() { PlayerPrefs.SetString("run_profession", JsonUtility.ToJson(D)); PlayerPrefs.Save(); }
+    public static void ResetAll() { PlayerPrefs.DeleteKey("run_profession"); PlayerPrefs.Save(); data = null; }
 
     public static string ProfessionId => D.profession;
     public static void SetProfession(ProfessionData profession) { D.profession = profession != null ? profession.Id : ""; Save(); }

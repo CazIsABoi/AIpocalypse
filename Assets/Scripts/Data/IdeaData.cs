@@ -16,4 +16,10 @@ public class IdeaData : ScriptableObject
     // On = a plain upgrade (stronger stats): once recalled its cards are in every run, no loadout slot needed.
     // Off = a build choice (effects, lifesteal, pierce...): only in the run when equipped in the Run Picker.
     public bool AlwaysInPool;
+
+    // Optional: this Idea is only offered on recall once that one is recalled (e.g. Melee lifesteal needs Parasitism)
+    public IdeaData Requires;
+
+    // On = never offered on recall: an achievement hands it out instead (its AchievementData.Reward)
+    public bool UnlockedByAchievement;
 }

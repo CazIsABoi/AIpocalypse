@@ -27,6 +27,7 @@ GameObject:
   - component: {fileID: 444308945315556339}
   - component: {fileID: 3456454878695825970}
   - component: {fileID: 5823019477310662914}
+  - component: {fileID: 6129384756102938475}
   m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
@@ -1456,5 +1457,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   professions: {fileID: 11400000, guid: 23e5670846a940d2b30728451d3412a0, type: 2}
   xpPerMinute: 10
-  xpPerKill: 0.2
+  xpPerKill: 0.05
   xpPerFloor: 5
+  runXpCap: 350
+--- !u!114 &6129384756102938475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4225567227736019386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d95ab96de02463cb124ccd94c0d842f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  achievements: {fileID: 11400000, guid: 869671d07af84c69a32b0c59d4f0991f, type: 2}
+  checkEvery: 0.25

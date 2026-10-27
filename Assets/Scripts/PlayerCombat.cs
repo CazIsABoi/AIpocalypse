@@ -99,7 +99,7 @@ public class PlayerCombat : MonoBehaviour
                         hitAny = true;
                         amount = enemy.TakeDamage(MeleeDamage, stats.CritChance, stats.CritDamage);   // enemies: with crits
                         if (amount > MeleeDamage) crit = true;   // damage dealt above normal = it was a crit
-                        amount = amount * stats.Lifesteal; // Lifesteal: heal for a percentage of the damage dealt
+                        amount = amount * (stats.Lifesteal + stats.MeleeLifesteal); // Lifesteal (+ melee-only lifesteal): heal for a percentage of the damage dealt
                         health.HealLifesteal(Mathf.Clamp(amount, 0f, Mathf.Max(0f, healthBefore))); // never more than the enemy had, never negative (enemy already dead this frame)
                         CameraShake.Instance?.Add(0.2f);
                         CombatEvents.Hit(enemy, healthBefore - enemy.Health, HitSource.Melee);

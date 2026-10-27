@@ -49,13 +49,20 @@ static partial class RunLoadout
         Save();
     }
 
-    // Called on recall too, so a pool Idea counts right away (Quick Start never opens the picker)
-    public static void AddPool(IdeaData idea)
+    // Called on recall, so the new Idea counts right away (Quick Start never opens the picker):
+    // a pool Idea joins the pool, any other is equipped if a slot is still free
+    public static void OnRecalled(IdeaData idea)
     {
-        if (!idea.AlwaysInPool) return;
-        AddPoolCards(idea);
+        if (idea.AlwaysInPool) AddPoolCards(idea);
+        else if (D.chosen && D.ideas.Count < MaxSlots && !D.ideas.Contains(idea.Id))
+        {
+            D.ideas.Add(idea.Id);
+            foreach (var card in idea.Cards) if (card != null && !D.cards.Contains(card.Id)) D.cards.Add(card.Id);
+        }
         Save();
     }
+
+    public static void ResetAll() { PlayerPrefs.DeleteKey("loadout"); PlayerPrefs.Save(); data = null; }
 
     static void AddPoolCards(IdeaData idea)
     {
