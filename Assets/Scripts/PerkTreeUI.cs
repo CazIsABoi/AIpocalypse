@@ -21,6 +21,7 @@ public class PerkTreeUI : MonoBehaviour
 
     [SerializeField] private TMP_Text leftBranchLabel;    // branch 1's name, from its first major ("FRONTLINE")
     [SerializeField] private TMP_Text rightBranchLabel;   // branch 2's name ("MARKSMAN")
+    [SerializeField] private TMP_Text middleBranchLabel;  // branch 3's name ("BULWARK"), between the other two
     [SerializeField, Range(0f, 1f)] private float unusedBranchAlpha = 0.4f;   // the label of the branch not in use is dimmed
 
     [Header("Layout")]
@@ -50,13 +51,31 @@ public class PerkTreeUI : MonoBehaviour
 
     void OnMaskChanged(int maskIndex) => Show(professions.ForMask(maskIndex));
 
-    // Branch 0 in the middle, odd branches to the left, even ones to the right (1 = one step left,
-    // 2 = one step right, 3 = two steps left...). Tier 0 at the bottom, higher tiers above it.
+    // Branch 0 (the trunk) in the middle. The other branches are spread evenly around it, left to right
+    // 1, 3, 2: two branches sit one step left and right, a third one goes in the middle above the trunk.
+    // Tier 0 at the bottom, higher tiers above it.
+    static readonly int[] branchOrder = { 1, 3, 2 };
+
     Vector2 NodePosition(PerkNode node)
     {
-        int steps = (node.Branch + 1) / 2;
-        float side = node.Branch == 0 ? 0f : (node.Branch % 2 == 1 ? -1f : 1f);
-        return new Vector2(side * steps * branchSpacing, node.Tier * tierSpacing);
+        if (node.Branch == 0) return new Vector2(0f, node.Tier * tierSpacing);
+        int count = 0, index = 0;
+        foreach (int b in branchOrder)
+        {
+            if (!HasBranch(b)) continue;
+            if (b == node.Branch) index = count;
+            count++;
+        }
+        float x = (index - (count - 1) * 0.5f) * branchSpacing;
+        if (count == 2) x *= 2f;                                    // two branches: one full step out each
+        return new Vector2(x, node.Tier * tierSpacing);
+    }
+
+    bool HasBranch(int branch)
+    {
+        foreach (PerkNode node in profession.Nodes)
+            if (node.Branch == branch) return true;
+        return false;
     }
 
     public void Show(ProfessionData newProfession)
@@ -77,7 +96,7 @@ public class PerkTreeUI : MonoBehaviour
         {
             professionText.text = "COMING SOON";
             pointsText.text = "";
-            for (int branch = 1; branch <= 2; branch++) if (BranchLabel(branch) != null) BranchLabel(branch).text = "";
+            for (int branch = 1; branch <= 3; branch++) if (BranchLabel(branch) != null) BranchLabel(branch).text = "";
             return;
         }
 
@@ -98,7 +117,7 @@ public class PerkTreeUI : MonoBehaviour
         }
 
         // branch headers: each branch is named after its first major (the node where the player picks it)
-        for (int branch = 1; branch <= 2; branch++)
+        for (int branch = 1; branch <= 3; branch++)
         {
             if (BranchLabel(branch) == null) continue;
             PerkNode major = BranchMajor(branch);
@@ -107,7 +126,7 @@ public class PerkTreeUI : MonoBehaviour
         Refresh();
     }
 
-    TMP_Text BranchLabel(int branch) => branch == 1 ? leftBranchLabel : branch == 2 ? rightBranchLabel : null;
+    TMP_Text BranchLabel(int branch) => branch == 1 ? leftBranchLabel : branch == 2 ? rightBranchLabel : branch == 3 ? middleBranchLabel : null;
 
     // The lowest major node on a branch, or null if the branch has none (the trunk)
     PerkNode BranchMajor(int branch)
@@ -232,12 +251,12 @@ public class PerkTreeUI : MonoBehaviour
         }
         // the branch in use keeps its header bright, the other one dims (all bright until a branch is picked)
         bool anyActive = false;
-        for (int branch = 1; branch <= 2; branch++)
+        for (int branch = 1; branch <= 3; branch++)
         {
             PerkNode major = BranchMajor(branch);
             if (major != null && RunProfession.IsActive(profession, major)) anyActive = true;
         }
-        for (int branch = 1; branch <= 2; branch++)
+        for (int branch = 1; branch <= 3; branch++)
         {
             if (BranchLabel(branch) == null) continue;
             PerkNode major = BranchMajor(branch);

@@ -79,7 +79,7 @@ public class RunPicker : MonoBehaviour
         {
             int rand = Random.Range(0, unlocked.Count);
             equipped.Add(unlocked[rand]);
-            unlocked.RemoveAt(rand);   // can't be picked twice
+            unlocked.RemoveAt(rand);
         }
         Refresh();
     }

@@ -26,7 +26,7 @@ public abstract class Pickup : MonoBehaviour
         if (player == null) return;
 
         Vector3 offset = player.transform.position - transform.position;
-        offset.y = 0; // Ignore vertical distance for attraction
+        offset.y = 0;
         float distance = offset.sqrMagnitude;
         if (!attracted && CanAttract && distance < AttractRange * AttractRange)
         {

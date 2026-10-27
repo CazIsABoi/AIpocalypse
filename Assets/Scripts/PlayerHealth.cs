@@ -48,7 +48,7 @@ public class PlayerHealth : MonoBehaviour
 
         regenTimer = Mathf.Max(0f, regenTimer - Time.deltaTime);
         bool paused = regenTimer > 0f;
-        float rate = paused ? pausedRegenFactor : 1f;          // the ternary picks one of two values
+        float rate = paused ? pausedRegenFactor : 1f;
 
         if (!IsDead && Health < MaxHealth)
             Heal(stats.MaxHealth * stats.regenAmount * rate * Time.deltaTime, false);
@@ -99,7 +99,7 @@ public class PlayerHealth : MonoBehaviour
         if (IsDead) return;
         if (invulnerableTimer > 0f)
         {
-            if (amount <= windowDamage) return;     // smaller or equal hit: blocked, as before
+            if (amount <= windowDamage) return;     // smaller or equal hit: ignored
             float extra = amount - windowDamage;    // bigger hit: only the part above what you already took
             windowDamage = amount;
             amount = extra;                         // then continue as a normal hit with 'extra'

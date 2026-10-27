@@ -47,7 +47,7 @@ public class IdeaSlot : MonoBehaviour
             detail.text = idea.Requires != null && !Progress.IsUnlocked(idea.Requires)
                 ? $"Needs {idea.Requires.Title} first"
                 : "Not yet recalled";
-            group.alpha = 0.5f; // make it see-through
+            group.alpha = 0.5f;
             button.interactable = false;
         }
 

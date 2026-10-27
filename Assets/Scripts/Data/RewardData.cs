@@ -137,7 +137,7 @@ public static class StatNames
             case StatType.CritChance:
             case StatType.CritChanceCap:
             case StatType.CritDamage:
-                return $"{value * 100f:0.#}%";      // 0.2 → "20%", 1.1 → "110%                                         
+                return $"{value * 100f:0.#}%";      // 0.2 → "20%", 1.1 → "110%"
             case StatType.MaxHealth:
                 return $"{value:0}";                // 100.5 → "100",
             case StatType.RegenAmount:

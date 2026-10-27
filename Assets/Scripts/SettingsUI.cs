@@ -44,8 +44,8 @@ public class SettingsUI : MonoBehaviour
             tabs[i].SetActive(false);
             tabButtons[i].interactable = true;
         }
-        tabButtons[0].interactable = false;  // first tab is active by default
-        tabs[0].SetActive(true); // ensure first tab is active
+        tabButtons[0].interactable = false;
+        tabs[0].SetActive(true);
     }
 
     // hook these up in each slider's On Value Changed (Dynamic float)
@@ -77,7 +77,6 @@ public class SettingsUI : MonoBehaviour
         if (text != null) text.text = $"{slider.value * 100:0.0}%";
     }
 
-    // Ability to switch between tabs in the settings menu
     public void SwitchTab(int tabIndex)
     {
         for (int i = 0; i < tabs.Length; i++)

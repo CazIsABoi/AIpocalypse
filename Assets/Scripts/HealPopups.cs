@@ -8,7 +8,7 @@ public class HealPopups : MonoBehaviour
     private float pending, timer;
 
     void Awake() => health = GetComponent<PlayerHealth>();
-    void OnEnable() { health.Healed += OnHealed; health.Blocked += OnBlocked; }     // subscribe/unsubscribe in pairs, like your other listeners
+    void OnEnable() { health.Healed += OnHealed; health.Blocked += OnBlocked; }
     void OnDisable() { health.Healed -= OnHealed; health.Blocked -= OnBlocked; }
 
     // Block Chance: show that the hit was ignored (same popup, so no new prefab needed)
@@ -26,7 +26,7 @@ public class HealPopups : MonoBehaviour
         timer -= Time.deltaTime;
         if (timer <= 0 && pending >= 1)
         {
-            Vector3 spawnPos = transform.position + Vector3.up * 1.5f;   // spawn above the player
+            Vector3 spawnPos = transform.position + Vector3.up * 1.5f;
             DamagePopup popup = Instantiate(popupPrefab, spawnPos, Quaternion.identity);
             popup.PopupDisplayContent = "+" + StatNames.Compact(Mathf.Round(pending));
             AudioManager.Instance?.Play(Sfx.Heal);   // once per summed popup, not per tiny heal

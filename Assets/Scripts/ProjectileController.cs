@@ -21,14 +21,13 @@ public class ProjectileController : MonoBehaviour
 
     [Header("Ricochet (player bullets)")]
     public int Bounces;                         // set by PlayerCombat from the Ricochet level, 0 = none
-    public LayerMask wallLayers;                // empty = bullets ignore walls (as before)
+    public LayerMask wallLayers;                // empty = bullets ignore walls
     [SerializeField] private float bounceLifetime = 0.4f;   // a bounce tops the lifetime back up to at least this
     private bool hitsWalls;                     // a Ricochet bullet: bounces, then dies on the next wall
 
     // Start runs after PlayerCombat has set Bounces (it sets fields right after Instantiate)
     void Start() => hitsWalls = Bounces > 0;
 
-    // Update is called once per frame
     void Update()
     {
         if (ProjectileType == "Player Bullet" && hitsWalls) Ricochet();
@@ -53,7 +52,7 @@ public class ProjectileController : MonoBehaviour
                             hitSomething = true;
                             healthBefore = enemy.Health;
                             amount = enemy.TakeDamage(Damage, CritChance, CritDamage);   // enemies: with crits
-                            amount = amount * Lifesteal; // Lifesteal: heal for a percentage of the damage dealt
+                            amount = amount * Lifesteal;
                             Owner?.HealLifesteal(Mathf.Clamp(amount, 0f, Mathf.Max(0f, healthBefore))); // never more than the enemy had, never negative (enemy already dead this frame)
                             CombatEvents.Hit(enemy, healthBefore - enemy.Health, HitSource.Gun);
                         }
@@ -78,13 +77,11 @@ public class ProjectileController : MonoBehaviour
             else if(ProjectileType == "Tripod Bullet")
             {
                 Collider[] hits = Physics.OverlapSphere(transform.position, 0.15f, hittableLayers);
-                //bool hitSomething = false;
                 foreach (Collider c in hits)
                 {
 
                     if (c.gameObject.GetComponent<PlayerHealth>())
                     {
-                        //hitSomething = true;
                         c.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, "Tripod shot");
 
                     }

@@ -11,7 +11,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private GameObject playerObj;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -19,10 +18,8 @@ public class PlayerMovement : MonoBehaviour
     }
     private void Start()
     {
-       // animator = GetComponentInChildren<Animator>();   
     }
 
-    // Update is called once per frame
     void Update()
     {
         Vector2 input = move.action.ReadValue<Vector2>();

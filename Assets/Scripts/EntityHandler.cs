@@ -56,7 +56,6 @@ public class EntityHandler : MonoBehaviour
         return i >= 0 && i < perFloor.Length ? perFloor[i] : 1f;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!dungeon.IsReady) return;
@@ -93,7 +92,6 @@ public class EntityHandler : MonoBehaviour
             CurrentWeightTableIndex = (int)(GameTime / 30f);
         }
         else CurrentWeightTableIndex = 20;
-        // Debug.Log("Current Index: " + CurrentWeightTableIndex);
 
         if(SpawnCD <= 0 && spawnedEnemies.Count < 100)
         {
@@ -140,7 +138,6 @@ public class EntityHandler : MonoBehaviour
         {
             if (RolledWeight >= CurrentWeight && RolledWeight < CurrentWeight + enemies[i].SpawnWeights[CurrentWeightTableIndex])
             {
-                // Debug.Log("Rolled This one");
                 PickedEnemyIndex = i; break;
             }
             else CurrentWeight += enemies[i].SpawnWeights[CurrentWeightTableIndex];

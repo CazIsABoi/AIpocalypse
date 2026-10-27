@@ -157,7 +157,7 @@ public class LevelUpUI : MonoBehaviour
         if (pendingLevelUps > 0)
         {
             showingLevelUp = true;
-            ShowChoices(levelUpPool); // next level
+            ShowChoices(levelUpPool);
         }
         else
         {

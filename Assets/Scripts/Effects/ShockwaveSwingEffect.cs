@@ -21,12 +21,12 @@ public class ShockwaveSwingEffect : PlayerEffect
     {
         if (Level == 0) return;
 
-        if (!hitAny) return; // Hits nothing, so don't count it.
+        if (!hitAny) return;
         swingsSinceLastShockwave++;
 
         if (swingsSinceLastShockwave >= swingsNeeded)
         {
-            swingsSinceLastShockwave = 0; // Reset the counter
+            swingsSinceLastShockwave = 0;
             float r = radius + 0.5f * (Level - 1);
             DamageAround(centre, r, stats.MeleeHit * damageFactor * Level, enemyLayer, buffer);
             if (shockwavePrefab != null)

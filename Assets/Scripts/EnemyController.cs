@@ -76,7 +76,6 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     [SerializeField] private List<GameObject> spawnedBossEnemies = new List<GameObject>();
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         Health = MaxHealth;
@@ -88,7 +87,6 @@ public class EnemyController : MonoBehaviour, IDamageable
         if (AiType == 10) clock = FindAnyObjectByType<RunClock>();   // only the boss needs it (a scene search per spawn adds up)
     }
 
-    // Update is called once per frame
     void Update()
     {
         
@@ -156,7 +154,6 @@ public class EnemyController : MonoBehaviour, IDamageable
                 AttackInterval = 0.1f;
                 Vector3 offset = PlayerTarget.transform.position - transform.position;
                 Debug.DrawLine(transform.position + new Vector3(0, 0.5f, 0), transform.position + (offset.normalized * AttackRange), Color.blue);
-                // Debug.Log("Distance: " + offset.sqrMagnitude + " range being: " + AttackRange * AttackRange);
 
                 if (offset.sqrMagnitude <= AttackRange * AttackRange)
                 {
@@ -165,7 +162,6 @@ public class EnemyController : MonoBehaviour, IDamageable
                     AttackWindow = 1f;
                     AudioManager.Instance?.PlayAt(Sfx.EnemyAttack, transform.position);
                     DamageWindow = 0.5f;
-                    // Debug.Log("attacked");
                     Anim.Play("Stomp");
                 }
             }
@@ -216,7 +212,6 @@ public class EnemyController : MonoBehaviour, IDamageable
                 AttackInterval = 0.1f;
                 Vector3 offset = PlayerTarget.transform.position - transform.position;
                 Debug.DrawLine(transform.position + new Vector3(0, 0.5f, 0), transform.position + (offset.normalized * AttackRange), Color.blue);
-                // Debug.Log("Distance: " + offset.sqrMagnitude + " range being: " + AttackRange * AttackRange);
 
                 if (offset.sqrMagnitude <= AttackRange * AttackRange)
                 {
@@ -268,16 +263,13 @@ public class EnemyController : MonoBehaviour, IDamageable
                 }
                 agent.speed = 1.5f;
 
-                //if (agent.isActiveAndEnabled) agent.isStopped = true;
 
                 if (AttackWindow <= 0)
                 {
-                    // Debug.Log("Attack Finished");
                     Vector3 offset = PlayerTarget.transform.position - transform.position;
                     if (offset.sqrMagnitude <= AttackRange * AttackRange) // If the player is still in range, apply damage
                     {
                         playerHealth.TakeDamage(Damage, AttackerName, this);
-                        // Debug.Log($"Player hit for {Damage}");
                     }
 
                     Anim.SetBool("IsAttacking", false);
@@ -344,7 +336,6 @@ public class EnemyController : MonoBehaviour, IDamageable
                         if (hit.gameObject.GetComponent<PlayerHealth>())
                         {
                             hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName, this);
-                            //DamageWindow = 5;
                         }
                     }
                     //GameObject spawnedExplosion = Instantiate(DroneExplosionPrefab, transform.position, Quaternion.identity);
@@ -414,7 +405,6 @@ public class EnemyController : MonoBehaviour, IDamageable
                 AttackInterval = 0.1f;
                 Vector3 offset = PlayerTarget.transform.position - transform.position;
                 Debug.DrawLine(transform.position + new Vector3(0, 0.5f, 0), transform.position + (offset.normalized * AttackRange), Color.blue);
-                // Debug.Log("Distance: " + offset.sqrMagnitude + " range being: " + AttackRange * AttackRange);
 
                 if (offset.sqrMagnitude <= AttackRange * AttackRange)
                 {
@@ -458,12 +448,10 @@ public class EnemyController : MonoBehaviour, IDamageable
                 }
                 if (AttackWindow <= 0)
                 {
-                    // Debug.Log("Attack Finished");
                     Vector3 offset = PlayerTarget.transform.position - transform.position;
                     if (offset.sqrMagnitude <= AttackRange * AttackRange) // If the player is still in range, apply damage
                     {
                         playerHealth.TakeDamage(Damage, AttackerName, this);
-                        // Debug.Log($"Player hit for {Damage}");
                     }
 
                     Anim.SetBool("IsFiring", false);

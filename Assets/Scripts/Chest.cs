@@ -35,7 +35,7 @@ public class Chest : MonoBehaviour, IMapMarked
         if (opened) return;
 
         Vector3 offset = player.transform.position - transform.position;
-        offset.y = 0; // Ignore vertical distance
+        offset.y = 0;
         float distance = offset.magnitude;
         if (distance < openRange && levelUpUI.ShowChest(chestPool))
         {

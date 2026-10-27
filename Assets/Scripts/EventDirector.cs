@@ -55,7 +55,7 @@ public class EventDirector : MonoBehaviour
                 e.Tick(ctx);
                 t += Time.deltaTime;
                 EventTimeLeft = e.TimeLeft(t);
-                yield return null;       // next frame
+                yield return null;
             }
         }
         else
@@ -64,7 +64,7 @@ public class EventDirector : MonoBehaviour
             {
                 e.Tick(ctx);
                 EventTimeLeft = e.TimeLeft(0f);   // events without a Duration report their own time (Bounty)
-                yield return null;       // next frame
+                yield return null;
             }
         }
         e.End(ctx);

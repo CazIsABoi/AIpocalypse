@@ -50,7 +50,7 @@ static partial class Progress
         if (lockedCards.Count == 0)
         {
             Debug.LogWarning("All cards are unlocked! No locked card to draw.");
-            return null; // or handle this case as needed
+            return null;
         }
         RewardData drawnCard = lockedCards[Random.Range(0, lockedCards.Count)];
         Unlock(drawnCard);
@@ -76,7 +76,7 @@ static partial class Progress
         }
         if (!success)
         {
-            return null; // or handle this case as needed
+            return null;
         }
         AddThoughts(-cost);
         return DrawLocked(allCards);

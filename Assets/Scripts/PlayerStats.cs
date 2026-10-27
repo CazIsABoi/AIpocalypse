@@ -72,7 +72,6 @@ public class PlayerStats : MonoBehaviour
 
     public void AddXp(int amount)
     {
-        // Debug.Log($"AddXp({amount}) → {Xp + amount}/{XpToNext}");
         Xp += amount;
         while (Xp >= XpToNext)
         {

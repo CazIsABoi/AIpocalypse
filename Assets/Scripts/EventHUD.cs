@@ -6,7 +6,6 @@ public class EventHUD : MonoBehaviour
     [SerializeField] private TMPro.TextMeshProUGUI eventTimerText;
     [SerializeField] private EventDirector director;
 
-    // Update is called once per frame
     void Update()
     {
         if (director.Current != null)

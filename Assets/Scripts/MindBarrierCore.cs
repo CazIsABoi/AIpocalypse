@@ -4,7 +4,6 @@ public class MindBarrierCore : MonoBehaviour, IDamageable
 {
 
     [SerializeField] private float maxHealth = 5000f;
-    //[SerializeField] private float baseHealth = 5000f;
     [SerializeField] private GameObject DamagePopup;
     private float health;
     public bool destroyed;
@@ -20,13 +19,11 @@ public class MindBarrierCore : MonoBehaviour, IDamageable
 
     [SerializeField] private float ShieldEnergyPulseInterval;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         health = maxHealth;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!BarrierActive)
