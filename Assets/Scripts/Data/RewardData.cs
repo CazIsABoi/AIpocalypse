@@ -14,6 +14,10 @@ public abstract class RewardData : ScriptableObject
     public abstract void Apply(PlayerStats stats);
 
     public virtual string GetPreview(PlayerStats stats) => "";
+    public virtual string GetDescription(PlayerStats stats) => Description;   // e.g. the real gain once a soft cap bites
+
+    // Multiplies the card's Weight: below 1 = offered less often right now
+    public virtual float OfferScale(PlayerStats stats) => 1f;
 
     // false = pointless right now (e.g. its stat is already capped), so it isn't offered
     public virtual bool CanOffer(PlayerStats stats) => true;

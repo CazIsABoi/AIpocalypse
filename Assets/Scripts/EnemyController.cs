@@ -655,6 +655,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
         if(IsCrit) Amount *= CritDamage;
         Health -= Amount;
+        DpsMeter.Add(Amount);
         
         if (Amount > 0f)   // shielded boss: no "0" popups or flash for every bullet
         {

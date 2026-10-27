@@ -22,3 +22,6 @@ MonoBehaviour:
   Effect: 5
   MaxLevel: 3
   Path: 2
+  LevelUps:
+  - +10% arc chance, +1 jump
+  - +10% arc chance, +1 jump

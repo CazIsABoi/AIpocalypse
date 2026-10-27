@@ -72,4 +72,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7660d80a51ed48e88953b6c3fb5661a9, type: 2}
   - {fileID: 11400000, guid: 41bc5f745aeb46e2b6ef374c557543f2, type: 2}
   - {fileID: 11400000, guid: a3d7ad3676e0455c98ca28e0d0c1136d, type: 2}
+  - {fileID: 11400000, guid: 66faf529c6dd4478a6c198b40fb13cd4, type: 2}
+  - {fileID: 11400000, guid: ef964c20e31c4e5fae1002476263b030, type: 2}
   sourceText: Level Up

@@ -22,3 +22,6 @@ MonoBehaviour:
   Effect: 0
   MaxLevel: 3
   Path: 0
+  LevelUps:
+  - +15% explode chance, x2 damage, +0.5 radius
+  - +15% explode chance, x3 damage, +0.5 radius

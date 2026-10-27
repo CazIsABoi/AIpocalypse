@@ -24,6 +24,7 @@ public class PlayerCombat : MonoBehaviour
     public int BulletAmount = 1;
     public int BulletPierce = 1;
     [SerializeField] private GameObject BulletPrefab;
+    [SerializeField] private float spreadAngle = 8f;   // extra bullets fan out this many degrees apart, alternating sides
     [SerializeField] private float FirearmBaseCooldown = 0.2f;
     [SerializeField] private float FirearmCooldown;
     [SerializeField] private float CurrentFirearmCooldown;
@@ -73,7 +74,6 @@ public class PlayerCombat : MonoBehaviour
                 animator.SetBool("IsAttacking", true);
                 CurrentMeleeCooldown = MeleeCooldown;
                 shootLock = MeleeCooldown * meleeShootLock;   // no shooting during the swing (it lasts ~one cooldown)
-                CancelInvoke(nameof(ShootGun));                // and stop a burst that was already queued
 
                 animator.GetComponentInChildren<Animator>().SetFloat("SlashSpeedVisual", 0.5f / MeleeCooldown);
 
@@ -121,7 +121,7 @@ public class PlayerCombat : MonoBehaviour
             if (CurrentFirearmCooldown <= 0)
             {
                 CurrentFirearmCooldown = FirearmCooldown;
-                for(int i = 0; i < BulletAmount; i++) Invoke(nameof(ShootGun), (i * 0.08f) / (1f + stats.AttackSpeed));
+                for (int i = 0; i < Mathf.Max(1, BulletAmount); i++) ShootGun(i);
             }
         }
         else if (!LeftClick.action.IsPressed())
@@ -129,11 +129,13 @@ public class PlayerCombat : MonoBehaviour
             if (CurrentFirearmCooldown < 0) CurrentFirearmCooldown = 0;
         }
     }
-    public void ShootGun()
+    // Bullet 0 goes straight, the rest fan out: +1 step, -1 step, +2 steps, -2 steps...
+    void ShootGun(int index)
     {
         GameObject shotBullet = Instantiate(BulletPrefab, RifleMuzzle.transform.position, Quaternion.identity);
         ProjectileController c = shotBullet.GetComponent<ProjectileController>();
-        c.Direction = CalculateAimingDirection();
+        float angle = (index + 1) / 2 * spreadAngle * (index % 2 == 1 ? 1f : -1f);
+        c.Direction = Quaternion.Euler(0f, angle, 0f) * CalculateAimingDirection();
         c.Damage = RangedDamage;
         c.BulletPierce = Mathf.Max(1, BulletPierce);   // 0 = bullet hits nothing
         c.CritChance = stats.CritChance;
@@ -142,7 +144,9 @@ public class PlayerCombat : MonoBehaviour
         c.Lifesteal = stats.Lifesteal;
         c.BulletSpeed = c.BulletSpeed * (1f + stats.ProjectileSpeed);
         c.Bounces = effects.Level(EffectType.Ricochet);                 // 1 bounce per Ricochet level
-        AudioManager.Instance.Play(Sfx.Shoot);
+        c.Overpenetrate = effects.Level(EffectType.Overpenetration) > 0;
+        c.FragmentLevel = effects.Level(EffectType.Fragmentation);
+        if (index == 0) AudioManager.Instance.Play(Sfx.Shoot);
     }
     private Vector3 CalculateAimingDirection() => Aim.Direction(transform.position);   // mouse or right stick
 }

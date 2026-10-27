@@ -118,4 +118,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 273c538aa5924ac9aadfddec05e88714, type: 2}
   - {fileID: 11400000, guid: f70c1f80b2a74bb99db98cbbc458b500, type: 2}
   - {fileID: 11400000, guid: c191fa82f8534e48ae8d612647b7ccd7, type: 2}
+  - {fileID: 11400000, guid: 66faf529c6dd4478a6c198b40fb13cd4, type: 2}
+  - {fileID: 11400000, guid: ef964c20e31c4e5fae1002476263b030, type: 2}
   sourceText: AllCards

@@ -17,6 +17,8 @@ public class EventDirector : MonoBehaviour
     [SerializeField] private float minWaitTime = 60f;
     [SerializeField] private float maxWaitTime = 90f;
     [SerializeField] private float textShowDuration;
+    [SerializeField] private float endlessWaitScale = 0.5f;   // after the boss events come twice as often
+    private RunClock clock;
     private bool firstEvent = true;
     private GameEvent current;
     public float NextEventIn { get; private set; }     
@@ -26,6 +28,7 @@ public class EventDirector : MonoBehaviour
 
     private void Awake()
     {
+        clock = FindAnyObjectByType<RunClock>();
         ctx = new EventContext { Spawner = spawner, Stats = stats, Dungeon = dungeon, Rewards = rewards, Player = player,
                                  Movement = player.GetComponent<PlayerMovement>() };
     }
@@ -87,6 +90,7 @@ public class EventDirector : MonoBehaviour
             {
                 NextEventIn = Random.Range(minWaitTime, maxWaitTime);
             }
+            if (clock != null && clock.Endless) NextEventIn *= endlessWaitScale;
             while (NextEventIn > 0f) { NextEventIn -= Time.deltaTime; yield return null; }
 
             GameEvent picked = Pick();

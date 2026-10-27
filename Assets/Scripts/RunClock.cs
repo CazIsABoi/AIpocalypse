@@ -4,7 +4,8 @@ using UnityEngine.UI;
 
 public class RunClock : MonoBehaviour
 {
-    [SerializeField] private int bossFloor = 20;          
+    [SerializeField] private int bossFloor = 20;
+    public int BossFloor => bossFloor;
     public float Elapsed { get; private set; }
     public float FloorTime { get; private set; }          
     public bool BossActive { get; private set; }          

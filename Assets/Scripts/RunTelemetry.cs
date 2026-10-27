@@ -59,6 +59,7 @@ partial class RunTelemetry : MonoBehaviour
         stats = FindAnyObjectByType<PlayerStats>();
         if (stats != null) health = stats.GetComponent<PlayerHealth>();
         floorStart = Time.time;   // Time.time counts from app start, not from this run
+        DpsMeter.Reset();
     }
 
     void OnEnable()
@@ -145,12 +146,16 @@ partial class RunTelemetry : MonoBehaviour
 
     void OnQuitting() => Submit("closed", 0);
 
+    // A Google Sheets cell holds at most 50,000 characters: long runs keep the end of the list
+    static string Fit(string s) => s.Length <= 45000 ? s : "..." + s.Substring(s.Length - 45000);
+
     // ---------- the one send ----------
     // endReason: "death", "quit" (back to menu), "closed" (window closed mid-run)
     public void Submit(string endReason, int thoughtsEarned)
     {
         if (submitted || stats == null) return;
         submitted = true;
+        if (endReason == "death") ProfessionApplier.AwardNow();
 
         int runNumber = PlayerPrefs.GetInt("run_count", 0) + 1;
         PlayerPrefs.SetInt("run_count", runNumber);
@@ -182,13 +187,14 @@ partial class RunTelemetry : MonoBehaviour
 
             // combat
             damageGun = damageGun, damageMelee = damageMelee, damageTaken = damageTaken, hitsTaken = hitsTaken,
+            dpsPeak = DpsMeter.Peak, dpsEnd = DpsMeter.LastMinute,
             healed = healed, healedOrbs = healedOrbs, lowestHpPct = Mathf.RoundToInt(lowestHp * 100f),
             chests = chests, healthOrbs = healthOrbs,
 
             // build
             mask = GameSettings.MaskIndex,
-            cardsPicked = string.Join("|", picked), cardsOffered = string.Join("|", offered),
-            pickSources = string.Join("|", pickSources), effects = effects != null ? effects.Describe() : "",
+            cardsPicked = Fit(string.Join("|", picked)), cardsOffered = Fit(string.Join("|", offered)),
+            pickSources = Fit(string.Join("|", pickSources)), effects = effects != null ? effects.Describe() : "",
             maxHp = stats.MaxHealth, damage = stats.Damage, attackSpeed = stats.AttackSpeed,
             critChance = stats.CritChance, critDamage = stats.CritDamage, lifesteal = stats.Lifesteal,
             moveSpeed = stats.Speed, bullets = stats.BulletAmount, pierce = stats.BulletPierce,
@@ -197,7 +203,7 @@ partial class RunTelemetry : MonoBehaviour
             moveSpeedRaw = stats.RawSpeed, pickupRangeRaw = stats.pickupRange, effectivePickup = stats.PickupRange,
             armor = stats.Armor, thorns = stats.Thorns, blockChance = stats.BlockChance,
             thornsDamage = thornsDamage, blocks = blocks, blockedDamage = blockedDamage, armorPrevented = armorPrevented,
-            events = string.Join("|", eventLog), achievements = string.Join("|", achievements),
+            events = Fit(string.Join("|", eventLog)), achievements = string.Join("|", achievements),
             profession = ProfessionApplier.Current != null ? ProfessionApplier.Current.Id : "",
             professionLevel = ProfessionApplier.Current != null ? ProfessionProgress.Level(ProfessionApplier.Current) : 0,
             professionXp = professionXp,

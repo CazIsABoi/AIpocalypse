@@ -60,9 +60,15 @@ public partial class ProfessionApplier : MonoBehaviour
         }
     }
 
+    // Telemetry sends on the death screen, which can open before OnDied runs: it awards first so the XP is in the row
+    public static void AwardNow() => FindAnyObjectByType<ProfessionApplier>()?.OnDied();
+
+    bool awarded;
+
     void OnDied()
     {
-        if (Current == null) return;
+        if (Current == null || awarded) return;
+        awarded = true;
         float minutes = FindAnyObjectByType<RunClock>().Elapsed / 60f;   // float: a 2.5-minute run counts as 2.5, not 2 or 3
         int kills = FindAnyObjectByType<EntityHandler>().Kills;
         int floor = FindAnyObjectByType<GameController>().Floor;

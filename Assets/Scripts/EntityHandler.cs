@@ -22,7 +22,7 @@ public class EntityHandler : MonoBehaviour
     [SerializeField] private float stayGrace = 45f;   // seconds on a floor before it starts
     [SerializeField] private float stayCap = 2f;      // never more than x2 from lingering
     [SerializeField] private float stayStep = 1.5f;    // x per minute on THIS floor (resets with the core)
-    float Stay => Mathf.Min(stayCap, Mathf.Pow(stayStep, Mathf.Max(0f, clock.FloorTime - stayGrace) / 60f));
+    public float Stay => Mathf.Min(stayCap, Mathf.Pow(stayStep, Mathf.Max(0f, clock.FloorTime - stayGrace) / 60f));
     [SerializeField] private float xpFloorStep = 1.04f;   // XP per enemy x this per floor (x2.1 at floor 20, x4.6 at 40)
     [SerializeField, Range(0f, 1f)] private float damageShare = 0.6f;   // damage grows slower than HP
     public void RegisterKill() => Kills++;
@@ -42,7 +42,23 @@ public class EntityHandler : MonoBehaviour
     [SerializeField] private Material eliteMapIcon;              
     private float eliteTimer;
     private int floor = 1;
-    public float Threat => Mathf.Pow(floorStep, floor - 1) * Mathf.Pow(timeStep, clock.Elapsed / 60f) * Stay;
+    public float Threat => FloorFactor() * Mathf.Pow(timeStep, clock.Elapsed / 60f) * Stay;
+
+    [Header("After the boss")]
+    [SerializeField] private float endlessFloorStep = 1.15f;   // x per floor past the boss (floorStep before it)
+    [SerializeField] private int actLength = 20;               // every this many floors past the boss a new act starts...
+    [SerializeField] private float actJump = 2f;               // ...and threat jumps by this
+    [SerializeField] private float healthPower = 1.2f;         // enemy HP = threat^this, so it outgrows threat (damage uses damageShare)
+
+    int Floor => game != null ? game.Floor : floor;   // a new floor's Core asks before this Update has seen the change
+    int FloorsPastBoss => Mathf.Max(0, Floor - clock.BossFloor);
+    public int Act => FloorsPastBoss > 0 ? 1 + FloorsPastBoss / actLength : 0;   // 0 = before the boss
+
+    float FloorFactor()
+    {
+        int before = Mathf.Min(Floor, clock.BossFloor) - 1;
+        return Mathf.Pow(floorStep, before) * Mathf.Pow(endlessFloorStep, FloorsPastBoss) * Mathf.Pow(actJump, FloorsPastBoss / actLength);
+    }
 
     void Start()
     {
@@ -216,5 +232,5 @@ public class EntityHandler : MonoBehaviour
 
     float DamageMultiplier() => Mathf.Pow(Threat, damageShare);
 
-    float HealthMultiplier() => Threat;
+    public float HealthMultiplier() => Mathf.Pow(Threat, healthPower);
 }

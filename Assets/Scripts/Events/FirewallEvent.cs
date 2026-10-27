@@ -15,6 +15,8 @@ public class FirewallEvent : GameEvent
     public float timeLimit = 30f;       // the doors open by themselves after this
     public float killWindow = 20f;      // kill target = enemies that spawn in this many seconds (during lockdown)
     public int minKills = 10;           // floor 1 spawns are slow: never ask for fewer than this
+    public int maxKills = 50;           // late spawn rates asked for 500 kills: the alive cap and the sealed room never deliver that many
+    [Range(0f, 1f)] public float targetShare = 0.6f;   // of what the spawn rate says, since most spawns land outside the room
     public RewardPool breakoutPool;     // optional: a better chest for breaking out on kills (empty = firewallPool)
 
     private List<GameObject> barriers = new List<GameObject>();
@@ -41,7 +43,7 @@ public class FirewallEvent : GameEvent
             }
             ctx.Spawner.SpawnMultiplier *= spawnMultiplier;
             // after the multiplier, so the target matches the faster lockdown spawns
-            killTarget = Mathf.Max(minKills, Mathf.RoundToInt(ctx.Spawner.EnemiesPerSecond * killWindow));
+            killTarget = Mathf.Clamp(Mathf.RoundToInt(ctx.Spawner.EnemiesPerSecond * killWindow * targetShare), minKills, maxKills);
             timeLeft = timeLimit;
             CombatEvents.EnemyKilled += OnKilled;
             AudioManager.Instance?.Play(Sfx.LockdownBarrier);

@@ -16,7 +16,7 @@ public class MainMenuController : MonoBehaviour
     private void Start()
     {
         GameSettings.ApplyAudio(mixer);
-        Screen.fullScreen = GameSettings.Fullscreen != 0;
+        GameSettings.ApplyDisplay();
     }
 
     public void ToggleCredits()

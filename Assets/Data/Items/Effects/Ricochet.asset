@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Ricochet
   m_EditorClassIdentifier: Assembly-CSharp::EffectUpgrade
   Title: Ricochet
-  Description: Bullets bounce off walls (+1 bounce per level). Levels up to 3.
+  Description: Bullets bounce off walls and on to nearby enemies (+1 bounce per level). Levels up to 3.
   Icon: {fileID: 0}
   Weight: 4
   Rarity: 3
@@ -22,3 +22,6 @@ MonoBehaviour:
   Effect: 6
   MaxLevel: 3
   Path: 2
+  LevelUps:
+  - +1 bounce
+  - +1 bounce

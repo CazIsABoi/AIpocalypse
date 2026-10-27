@@ -32,6 +32,7 @@ public static class ScoreService
 
         public float damageGun, damageMelee, damageTaken, healed, healedOrbs;
         public int hitsTaken, lowestHpPct, chests, healthOrbs;
+        public float dpsPeak, dpsEnd;   // best 5 s, and the last 60 s (all damage, effects included)
 
         public int mask;
         public string cardsPicked;   // in order, "Turbo Mode|Hollow Points"

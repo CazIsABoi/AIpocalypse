@@ -5,7 +5,8 @@ public class Core : MonoBehaviour, IDamageable
     [SerializeField] private float maxHealth = 200f;
     [SerializeField] private float baseHealth = 200f;
     [SerializeField] private float perFloor = 0.35f;     
-    [SerializeField] private float perMinute = 0.05f;   
+    [SerializeField] private float perMinute = 0.05f;
+    [SerializeField] private float endlessHealthShare = 0.5f;   // in endless also x (enemy HP multiplier)^this, so the player's damage can't outgrow it
     [SerializeField] private float bulletDamageMultiplier = 0.1f;
     [SerializeField] private GameObject DamagePopup;
     [SerializeField] private Vector3 popupOffset = new Vector3(2.2f, 2.5f, 0f);   // world offset: +X = screen right in the top-down view
@@ -26,6 +27,8 @@ public class Core : MonoBehaviour, IDamageable
         if (ph != null) player = ph.transform;
         var clock = FindAnyObjectByType<RunClock>();
         maxHealth = baseHealth * (1 + perFloor * (game.Floor - 1)) * (1 + perMinute * clock.Elapsed / 60f);
+        var spawner = FindAnyObjectByType<EntityHandler>();
+        if (clock.Endless && spawner != null) maxHealth *= Mathf.Pow(spawner.HealthMultiplier(), endlessHealthShare);
         health = maxHealth;
     }
 

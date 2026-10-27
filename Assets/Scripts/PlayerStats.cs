@@ -266,6 +266,20 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
+    // Share of a card's amount that actually arrives after the soft caps (1 = all of it)
+    public float Efficiency(StatType type, float amount)
+    {
+        if (amount <= 0f) return 1f;
+        float nominal = type switch
+        {
+            StatType.MoveSpeed => amount * (1f + speedPercent),
+            StatType.MoveSpeedPercent => (BaseSpeed + flatSpeed) * amount,
+            StatType.PickupRadius => amount,
+            _ => 0f
+        };
+        return nominal <= 0f ? 1f : (Preview(type, amount) - Get(type)) / nominal;
+    }
+
     float CalcDamage(float flat, float percent) => (baseDamage + flat) * (1f + percent);
     float CalcSpeed(float flat, float percent) => BaseSpeed + Soft((BaseSpeed + flat) * (1f + percent) - BaseSpeed, BaseSpeed * speedSoftCap);
 

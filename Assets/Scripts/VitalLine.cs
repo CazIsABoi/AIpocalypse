@@ -4,15 +4,24 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CanvasRenderer))]
 public class VitalLine : MaskableGraphic
 {
-    [SerializeField] private int points = 200;
+    [SerializeField] private int pointsPerPeriod = 120;   // hard edges (square, steps, bits) need a dense line
     [SerializeField] private float thickness = 3f;     // core line, pixels
     [SerializeField] private float glow = 10f;         // extra soft width on each side
     [SerializeField] private float repeats = 3f;       // periods across the bar
     [SerializeField] private float baseSpeed = 0.4f;
     [SerializeField] private float morphTime = 1f;
 
+    [Header("Jolts (higher tiers)")]
+    [SerializeField] private int joltFromTier = 2;          // UNSTABLE and up
+    [SerializeField] private float joltsPerSecond = 0.25f;  // per tier above joltFromTier - 1
+    [SerializeField] private float joltTime = 0.12f;
+    [SerializeField] private float joltWidth = 0.04f;       // of the bar's width
+    [SerializeField] private int shakeFromTier = 6;         // AI: the whole line trembles
+    [SerializeField] private float shake = 1.5f;            // pixels
+
     int fromTier, toTier;
     float blend = 1f, scroll, speed;
+    float joltTimer, joltAt, joltSize;
 
     // RunTimerUI calls this every frame
     public void Show(int tier, Color tint, float threat)
@@ -26,36 +35,58 @@ public class VitalLine : MaskableGraphic
     {
         scroll = (scroll + Time.deltaTime * speed) % 1f;   // one period = 1, so wrapping changes nothing on screen
         blend = Mathf.Min(1f, blend + Time.deltaTime / morphTime);
+
+        joltTimer -= Time.deltaTime;
+        float rate = joltsPerSecond * (toTier - joltFromTier + 1);
+        if (rate > 0f && joltTimer <= 0f && Random.value < rate * Time.deltaTime)
+        {
+            joltTimer = joltTime;
+            joltAt = Random.value;
+            joltSize = Random.Range(0.6f, 1f) * (Random.value < 0.5f ? -1f : 1f);
+            if (Random.value < 0.5f) scroll = (scroll + Random.Range(0.1f, 0.3f)) % 1f;   // sometimes the signal skips too
+        }
         SetVerticesDirty();
     }
 
-    Vector2[] pts, normals;
+    Vector2[] pts, offsets;
 
     protected override void OnPopulateMesh(VertexHelper vh)
     {
         vh.Clear();
-        if (points < 2) return;
-        if (pts == null || pts.Length != points) { pts = new Vector2[points]; normals = new Vector2[points]; }
+        int points = Mathf.Max(2, Mathf.RoundToInt(pointsPerPeriod * (repeats + 2f)));
+        if (pts == null || pts.Length != points) { pts = new Vector2[points]; offsets = new Vector2[points]; }
 
         Rect r = rectTransform.rect;
         float half = thickness * 0.5f;
-        float amplitude = Mathf.Max(0f, r.height * 0.5f - half - glow * 0.5f);   // the wave + most of its glow fit inside the bar
+        float amplitude = Mathf.Max(0f, r.height * 0.5f - half - glow);   // the wave and all of its glow fit inside the bar
+        Vector2 trembling = toTier >= shakeFromTier ? Random.insideUnitCircle * shake : Vector2.zero;
 
         // One extra period past each side of the bar: the line's square ends sit outside, where the RectMask2D cuts them off
         float periodWidth = r.width / Mathf.Max(0.01f, repeats);
+        float extra = 1f / (repeats + 2f);   // share of the line outside the bar on each side
         for (int i = 0; i < points; i++)
         {
             float t = i / (points - 1f);
             float x = t * (repeats + 2f) - 1f + scroll;
             float y = Mathf.Lerp(Wave(fromTier, x), Wave(toTier, x), blend);
-            pts[i] = new Vector2(Mathf.Lerp(r.xMin - periodWidth, r.xMax + periodWidth, t), r.center.y + y * amplitude);
+            if (joltTimer > 0f)
+            {
+                float d = (Mathf.InverseLerp(extra, 1f - extra, t) - joltAt) / joltWidth;
+                y += joltSize * 1.5f * Mathf.Exp(-d * d);
+            }
+            y = Mathf.Clamp(y, -1f, 1f);
+            pts[i] = new Vector2(Mathf.Lerp(r.xMin - periodWidth, r.xMax + periodWidth, t), r.center.y + y * amplitude) + trembling;
         }
 
-        // One normal per point (averaged over both neighbours), so neighbouring quads share their edges: no gaps or "hairs"
+        // Mitered offsets: the line keeps its width through sharp corners instead of pinching thin.
+        // Neighbouring quads share them, so there are no gaps or "hairs".
         for (int i = 0; i < points; i++)
         {
-            Vector2 dir = pts[Mathf.Min(i + 1, points - 1)] - pts[Mathf.Max(i - 1, 0)];
-            normals[i] = new Vector2(-dir.y, dir.x).normalized;
+            Vector2 a = i > 0 ? SegmentNormal(i - 1) : SegmentNormal(i);
+            Vector2 b = i < points - 1 ? SegmentNormal(i) : a;
+            Vector2 miter = (a + b).normalized;
+            if (miter == Vector2.zero) miter = a;
+            offsets[i] = miter / Mathf.Max(0.35f, Vector2.Dot(miter, a));   // at most ~3x wider in the sharpest corners
         }
 
         for (int i = 0; i < points - 1; i++)
@@ -66,10 +97,16 @@ public class VitalLine : MaskableGraphic
         }
     }
 
-    // A quad from point i to i + 1, offset 'inner'..'outer' pixels along the normals, alpha fading from aIn to aOut
+    Vector2 SegmentNormal(int i)
+    {
+        Vector2 dir = (pts[i + 1] - pts[i]).normalized;
+        return new Vector2(-dir.y, dir.x);
+    }
+
+    // A quad from point i to i + 1, offset 'inner'..'outer' pixels along the offsets, alpha fading from aIn to aOut
     void AddStrip(VertexHelper vh, int i, float inner, float outer, float aIn, float aOut)
     {
-        Vector2 p0 = pts[i], p1 = pts[i + 1], n0 = normals[i], n1 = normals[i + 1];
+        Vector2 p0 = pts[i], p1 = pts[i + 1], n0 = offsets[i], n1 = offsets[i + 1];
         Color cIn = color; cIn.a *= aIn;
         Color cOut = color; cOut.a *= aOut;
         int v = vh.currentVertCount;
