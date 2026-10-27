@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8cd26653a214259b06f5679417d7e74, type: 3}
+  m_Name: Error Handling
+  m_EditorClassIdentifier: Assembly-CSharp::IdeaData
+  Id: Error Handling
+  Title: Error Handling
+  Description: Some hits just never arrive. Block chance.
+  Icon: {fileID: 0}
+  Rarity: 3
+  Cards:
+  - {fileID: 11400000, guid: a3d7ad3676e0455c98ca28e0d0c1136d, type: 2}
+  - {fileID: 11400000, guid: c191fa82f8534e48ae8d612647b7ccd7, type: 2}
+  AlwaysInPool: 0
+  Requires: {fileID: 0}
+  UnlockedByAchievement: 0

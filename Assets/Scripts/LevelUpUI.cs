@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class LevelUpUI : MonoBehaviour
@@ -10,9 +11,20 @@ public class LevelUpUI : MonoBehaviour
     [SerializeField] private PlayerHealth health;
     [SerializeField] private RewardPool levelUpPool;
     [SerializeField] private GameObject panel;
-    [SerializeField] private RewardCard[] cards;      // drag the 3 cards in
+    [SerializeField] private RewardCard[] cards;      
     [SerializeField] private RectTransform cardRow;   // the parent of the cards (shaken on Legendary)
     [SerializeField] private UnityEngine.UI.Image flash;   // full-screen white, last child of the panel, raycast off
+
+    [Header("Reroll / Banish / Skip")]
+    [SerializeField] private int rerollsPerRun = 2;
+    [SerializeField] private int banishesPerRun = 1;
+    [SerializeField] private UnityEngine.UI.Button rerollButton, banishButton, skipButton;
+    [SerializeField] private TMP_Text rerollText, banishText;   // "REROLL (2)"
+    [SerializeField, Range(0f, 1f)] private float skipHeal = 0.1f;   // of max HP, so skipping isn't a dead button
+    private int rerollsLeft, banishesLeft;
+    private bool banishMode;                                   // next card click banishes instead of picks
+    private RewardPool currentPool;
+    private readonly HashSet<string> banishedLines = new HashSet<string>();
 
     // Rarity odds shift as the run goes on: early runs can't roll Legendaries, late runs lean Epic+.
     // Each value multiplies a card's own Weight for that rarity (0 = never, 1 = normal).
@@ -60,6 +72,9 @@ public class LevelUpUI : MonoBehaviour
     {
         if (cardRow != null) rowBasePos = cardRow.anchoredPosition;
         clock = FindAnyObjectByType<RunClock>();
+
+        rerollsLeft = rerollsPerRun;
+        banishesLeft = banishesPerRun;
     }
 
     RarityTier CurrentTier()
@@ -102,6 +117,8 @@ public class LevelUpUI : MonoBehaviour
         StopFlash();
         int shownLevel = stats.Level - pendingLevelUps + 1;
         sourceLabel.text = pool == levelUpPool ? $"LEVEL {shownLevel}" : pool.sourceText;
+        currentPool = pool;
+        banishMode = false;
         pickSource = pool == levelUpPool ? "Level" : pool.name;   // telemetry: where this pick came from
 
         for (int i = 0; i < cards.Length; i++)
@@ -119,6 +136,48 @@ public class LevelUpUI : MonoBehaviour
         }
         isOpen = true;
         GamePause.Add(PauseReason.LevelUp);
+        RefreshButtons();
+    }
+
+    void RefreshButtons()
+    {
+        if (rerollButton != null) rerollButton.interactable = rerollsLeft > 0;
+        if (banishButton != null) banishButton.interactable = banishesLeft > 0;
+        if (rerollText != null) rerollText.text = $"REROLL ({rerollsLeft})";
+        if (banishText != null) banishText.text = banishMode ? "PICK A CARD TO BANISH" : $"BANISH ({banishesLeft})";
+    }
+
+    public void Reroll()
+    {
+        if (!isOpen || choosing || rerollsLeft <= 0) return;
+        rerollsLeft--;
+        RunTelemetry.Instance?.CardsRerolled();
+        ShowChoices(currentPool);
+    }
+
+    public void ToggleBanish()
+    {
+        if (!isOpen || choosing || banishesLeft <= 0) return;
+        banishMode = !banishMode;
+        RefreshButtons();
+    }
+
+    // Banishes the card's whole line (e.g. every Speed card) for the rest of the run, then deals a new hand
+    void Banish(RewardData reward)
+    {
+        banishesLeft--;
+        banishedLines.Add(reward.Line);
+        RunTelemetry.Instance?.LineBanished(reward.Line);
+        AudioManager.Instance?.Play(Sfx.CardPick);
+        ShowChoices(currentPool);
+    }
+
+    public void Skip()
+    {
+        if (!isOpen || choosing) return;
+        RunTelemetry.Instance?.CardsSkipped();
+        health.Heal(stats.MaxHealth * skipHeal);
+        NextOrClose();
     }
 
     public bool ShowChest(RewardPool chestPool)
@@ -132,6 +191,7 @@ public class LevelUpUI : MonoBehaviour
     void Choose(RewardData reward)
     {
         if (choosing) return;
+        if (banishMode) { Banish(reward); return; }
         StartCoroutine(ChooseRoutine(reward));
     }
 
@@ -153,6 +213,11 @@ public class LevelUpUI : MonoBehaviour
         foreach (var card in cards) if (card.gameObject.activeSelf) shown.Add(card.Reward);
         RunTelemetry.Instance?.CardPicked(reward, shown, pickSource);
         reward.Apply(stats);
+        NextOrClose();
+    }
+
+    void NextOrClose()
+    {
         if (showingLevelUp) pendingLevelUps--;
         if (pendingLevelUps > 0)
         {
@@ -234,7 +299,7 @@ public class LevelUpUI : MonoBehaviour
         // leave out cards that would do nothing right now (capped stats)
         List<RewardData> options = new List<RewardData>();
         foreach (var reward in pool.Rewards)
-            if (reward.CanOffer(stats) && InRun(reward)) options.Add(reward);
+            if (reward.CanOffer(stats) && InRun(reward) && !banishedLines.Contains(reward.Line)) options.Add(reward);
         if (options.Count == 0) // never open an empty card screen
         { 
             for (int i = 0; i < pool.Rewards.Count; i++) // Make sure only unlocked rewards are offered if all rewards are locked

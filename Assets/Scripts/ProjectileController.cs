@@ -19,18 +19,14 @@ public class ProjectileController : MonoBehaviour
     public float Lifesteal;
     public PlayerHealth Owner;
 
-    [Header("Ricochet (player bullets)")]
+    [Header("Walls")]
     public int Bounces;                         // set by PlayerCombat from the Ricochet level, 0 = none
-    public LayerMask wallLayers;                // empty = bullets ignore walls
+    public LayerMask wallLayers;                // what stops bullets: walls (Terrain), props, barriers
     [SerializeField] private float bounceLifetime = 0.4f;   // a bounce tops the lifetime back up to at least this
-    private bool hitsWalls;                     // a Ricochet bullet: bounces, then dies on the next wall
-
-    // Start runs after PlayerCombat has set Bounces (it sets fields right after Instantiate)
-    void Start() => hitsWalls = Bounces > 0;
 
     void Update()
     {
-        if (ProjectileType == "Player Bullet" && hitsWalls) Ricochet();
+        if (HitWall()) return;
         if(ProjectileType == "Player Bullet") transform.position = Vector3.MoveTowards(transform.position, transform.position + Direction, BulletSpeed * Time.deltaTime);
         else if(ProjectileType == "Tripod Bullet") transform.position = Vector3.MoveTowards(transform.position, transform.position + Direction, BulletSpeed * Time.deltaTime);
 
@@ -96,13 +92,14 @@ public class ProjectileController : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    // Would this frame's step go into a wall? Then bounce off it instead.
-    // Only Ricochet bullets check walls, so normal bullets still fly through walls like before.
-    void Ricochet()
+    // Would this frame's step go into a wall? A ray covers the whole step, so fast bullets can't skip thin walls.
+    // Ricochet bullets bounce off it, everything else stops there. Returns true if the bullet is gone.
+    bool HitWall()
     {
         float step = BulletSpeed * Time.deltaTime;
-        if (!Physics.Raycast(transform.position, Direction, out RaycastHit hit, step, wallLayers, QueryTriggerInteraction.Ignore)) return;
-        if (Bounces <= 0) { Destroy(gameObject); return; }   // out of bounces: stop at this wall
+        if (!Physics.Raycast(transform.position, Direction, out RaycastHit hit, step, wallLayers, QueryTriggerInteraction.Ignore)) return false;
+        if (hit.normal.y > 0.5f) return false;   // the floor (also on Default): only walls and props stop bullets
+        if (Bounces <= 0) { Destroy(gameObject); return true; }
 
         Direction = Vector3.Reflect(Direction, hit.normal);
         Direction.y = 0f;   // stay flat: a sloped wall normal would send it into the floor or sky
@@ -110,5 +107,6 @@ public class ProjectileController : MonoBehaviour
         transform.position = hit.point + hit.normal * 0.05f;   // just off the wall, or the next raycast starts inside it
         Bounces--;
         Lifetime = Mathf.Max(Lifetime, bounceLifetime);
+        return false;
     }
 }

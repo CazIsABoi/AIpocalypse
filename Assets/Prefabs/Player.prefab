@@ -1456,9 +1456,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   professions: {fileID: 11400000, guid: 23e5670846a940d2b30728451d3412a0, type: 2}
-  xpPerMinute: 10
-  xpPerKill: 0.05
-  xpPerFloor: 5
+  xpPerMinute: 3
+  xpPerKill: 0.02
+  xpPerFloor: 15
   runXpCap: 350
 --- !u!114 &6129384756102938475
 MonoBehaviour:

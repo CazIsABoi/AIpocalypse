@@ -9,9 +9,9 @@ public partial class ProfessionApplier : MonoBehaviour
     [SerializeField] private ProfessionSet professions;   // Data/Professions/AllProfessions
 
     [Header("XP per run")]
-    [SerializeField] private float xpPerMinute = 10f;
-    [SerializeField] private float xpPerKill = 0.05f;
-    [SerializeField] private float xpPerFloor = 5f;
+    [SerializeField] private float xpPerMinute = 3f;
+    [SerializeField] private float xpPerKill = 0.02f;
+    [SerializeField] private float xpPerFloor = 15f;
     [SerializeField] private float runXpCap = 350f;   // diminishing returns: one run can never give more than this
 
     public static ProfessionData Current { get; private set; }   // the profession of THIS run 
@@ -68,7 +68,7 @@ public partial class ProfessionApplier : MonoBehaviour
         int floor = FindAnyObjectByType<GameController>().Floor;
         float raw = minutes * xpPerMinute + kills * xpPerKill + floor * xpPerFloor;
         // Diminishing returns: almost 1:1 for short runs, then flattening toward runXpCap.
-        // With 350: 4 min / floor 5 (~80 raw) -> ~72, 15 min / floor 12 (~350) -> ~220, 37 min / floor 26 (~760) -> ~310
+        // With 350: 4 min / floor 5 (~90 raw) -> ~78, 25 min / floor 20 (~415) -> ~245, a long endless run -> ~350
         int xp = Mathf.RoundToInt(runXpCap * (1f - Mathf.Exp(-raw / runXpCap)));
         int levelsGained = ProfessionProgress.AddXp(Current, xp);
         RunTelemetry.Instance?.ProfessionXp(xp);

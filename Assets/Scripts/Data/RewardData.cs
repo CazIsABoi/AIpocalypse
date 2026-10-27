@@ -8,6 +8,7 @@ public abstract class RewardData : ScriptableObject
     public int Weight = 10;          // how often it appears
     public Rarity Rarity;
     public string Id;              // unique identifier for saving / loading
+    public virtual string Line => Id;
     public bool StartsUnlocked = false; 
 
     public abstract void Apply(PlayerStats stats);
@@ -153,7 +154,7 @@ public static class StatNames
             case StatType.ProjectileSpeed:
                 return $"{(1 + value) * 100f:0.#}%"; // 0.2 → "120%" (it's a bonus on top of the bullet's own speed)
             case StatType.Armor:
-                return $"{value:0} (-{(1f - 100f / (100f + Mathf.Max(0f, value))) * 100f:0}% dmg)";   // 25 → "25 (-20% dmg)", matches armorScale 100
+                return $"{value:0} (-{Mathf.Min(PlayerStats.MaxArmorReduction, 1f - 100f / (100f + Mathf.Max(0f, value))) * 100f:0}% dmg)";   // 25 → "25 (-20% dmg)", matches armorScale 100
             case StatType.Thorns:
             case StatType.BlockChance:
                 return $"{value * 100f:0.#}%";      // thorns 1 → "100%" of your damage, block 0.1 → "10%"

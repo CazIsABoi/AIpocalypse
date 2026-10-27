@@ -19,6 +19,8 @@ partial class RunTelemetry : MonoBehaviour
     int hitsTaken, chests, healthOrbs;
     float thornsDamage, blockedDamage, armorPrevented;
     int blocks, professionXp;
+    int rerolls, skips;
+    readonly List<string> banished = new List<string>();
     bool usedGamepad;
     readonly List<string> eventLog = new List<string>();
     readonly List<string> achievements = new List<string>();
@@ -106,6 +108,9 @@ partial class RunTelemetry : MonoBehaviour
     }
 
     public void ChestOpened() => chests++;
+    public void CardsRerolled() => rerolls++;
+    public void CardsSkipped() => skips++;
+    public void LineBanished(string line) => banished.Add(line);
 
     public void ThornsDealt(float amount) => thornsDamage += amount;
     public void HitBlocked(float amount) { blocks++; blockedDamage += amount; }
@@ -196,6 +201,7 @@ partial class RunTelemetry : MonoBehaviour
             profession = ProfessionApplier.Current != null ? ProfessionApplier.Current.Id : "",
             professionLevel = ProfessionApplier.Current != null ? ProfessionProgress.Level(ProfessionApplier.Current) : 0,
             professionXp = professionXp,
+            rerolls = rerolls, skips = skips, banished = string.Join("|", banished),
 
             // meta-progression (before this run's recall: that one is sent as its own "recall" event)
             thoughtsEarned = thoughtsEarned, thoughtsTotal = Progress.Thoughts, recalls = Progress.Recalls,

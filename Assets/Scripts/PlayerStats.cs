@@ -42,7 +42,8 @@ public class PlayerStats : MonoBehaviour
     [Header("Defense")]
     public float Armor;                                          // points: 25 armor = 20% less damage, 100 = 50%, never 100%
     [SerializeField] private float armorScale = 100f;            // the armor that halves damage
-    public float ArmorMultiplier => armorScale / (armorScale + Mathf.Max(0f, Armor));   // what's left of a hit
+    public const float MaxArmorReduction = 0.6f;                 // armor never blocks more than 60% of a hit (long runs stack a lot)
+    public float ArmorMultiplier => Mathf.Max(1f - MaxArmorReduction, armorScale / (armorScale + Mathf.Max(0f, Armor)));   // what's left of a hit
     public float Thorns;                                         // enemies that hit you take this x Damage (1 = 100%)
     public float BlockChance;                                    // 0.1 = 10% of hits are ignored completely
     [SerializeField] private float blockChanceCap = 0.5f;
@@ -260,6 +261,7 @@ public class PlayerStats : MonoBehaviour
             case StatType.RegenAmount: return regenAmount >= regenCap - 0.0001f;
             case StatType.MeleeRange: return meleeRange >= meleeRangeCap - 0.0001f;
             case StatType.BlockChance: return BlockChance >= blockChanceCap - 0.0001f;
+            case StatType.Armor: return ArmorMultiplier <= 1f - MaxArmorReduction + 0.0001f;
             default: return false;
         }
     }

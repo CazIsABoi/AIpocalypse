@@ -18,6 +18,6 @@ MonoBehaviour:
   Weight: 7
   Rarity: 2
   Id: Static Charge
-  StartsUnlocked: 1
+  StartsUnlocked: 0
   Stat: 21
   Amount: 0.5

@@ -13,6 +13,7 @@ public class EffectUpgrade : RewardData
     public override bool CanOffer(PlayerStats stats) => Effects(stats).Level(Effect) < MaxLevel;
 
     public override RewardPath GetPath() => Path;
+    public override string Line => Effect.ToString();
 
     public override string GetPreview(PlayerStats stats)
     {

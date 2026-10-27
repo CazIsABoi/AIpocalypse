@@ -9,6 +9,7 @@ public class StatUpgrade : RewardData
     public override void Apply(PlayerStats stats) { stats.Add(Stat, Amount); }
     public override bool CanOffer(PlayerStats stats) => Amount <= 0 || !stats.IsCapped(Stat);
     public override RewardPath GetPath() => Amount > 0 ? PathOf(Stat) : RewardPath.None;
+    public override string Line => StatNames.Get(Stat);
     public override string GetPreview(PlayerStats stats)
     {
         float before = stats.Get(Stat);

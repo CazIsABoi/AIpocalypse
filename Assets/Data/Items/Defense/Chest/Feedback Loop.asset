@@ -18,6 +18,6 @@ MonoBehaviour:
   Weight: 2
   Rarity: 4
   Id: Feedback Loop
-  StartsUnlocked: 1
+  StartsUnlocked: 0
   Stat: 21
   Amount: 1.5

@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Hardened Casing
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Hardened Casing
-  Description: +10 armor (takes less damage from every hit)
+  Description: +6 armor (takes less damage from every hit)
   Icon: {fileID: 0}
   Weight: 7
   Rarity: 2
   Id: Hardened Casing
   StartsUnlocked: 1
   Stat: 20
-  Amount: 10
+  Amount: 6

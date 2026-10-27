@@ -44,7 +44,8 @@ public class IdeaCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         description.text = idea.Description;
         string names = "";
         foreach (var card in idea.Cards) if (card != null) names += $"\n{card.Title}";
-        cardList.text = $"<size=80%><alpha=#B3>UNLOCKS {idea.Cards.Count} CARDS</size><alpha=#FF>{names}";
+        cardList.text = idea.AddsSlot ? "<size=80%><alpha=#B3>EXPANDS YOUR MIND</size><alpha=#FF>\n+1 IDEA SLOT"
+                                      : $"<size=80%><alpha=#B3>UNLOCKS {idea.Cards.Count} CARDS</size><alpha=#FF>{names}";
 
         Color top = style.gradient.Evaluate(0f);
         gradient.Set(top, style.gradient.Evaluate(1f));

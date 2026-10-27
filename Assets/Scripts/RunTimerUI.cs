@@ -35,6 +35,7 @@ public class RunTimerUI : MonoBehaviour
         }
 
         slider.value = tiers.Length > 1 ? Mathf.InverseLerp(currentTier.from, tiers[Mathf.Min(tiers.Length - 1, threatIndex + 1)].from, threat) : 1f;
+        slider.fillRect.GetComponent<UnityEngine.UI.Image>().color = new Color(currentTier.color.r, currentTier.color.g, currentTier.color.b, 0.22f);
 
         int m = Mathf.FloorToInt(clock.Elapsed / 60f);
         int s = Mathf.FloorToInt(clock.Elapsed % 60f);

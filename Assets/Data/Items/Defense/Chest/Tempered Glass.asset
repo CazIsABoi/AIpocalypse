@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Tempered Glass
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
   Title: Tempered Glass
-  Description: +25 armor (takes less damage from every hit)
+  Description: +15 armor (takes less damage from every hit)
   Icon: {fileID: 0}
   Weight: 2
   Rarity: 4
   Id: Tempered Glass
   StartsUnlocked: 1
   Stat: 20
-  Amount: 25
+  Amount: 15

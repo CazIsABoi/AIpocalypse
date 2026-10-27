@@ -22,4 +22,9 @@ public class IdeaData : ScriptableObject
 
     // On = never offered on recall: an achievement hands it out instead (its AchievementData.Reward)
     public bool UnlockedByAchievement;
+
+    // On = a slot Idea: no cards, recalling it adds one loadout slot. Offered (guaranteed, every recall until taken)
+    // once this share of the other Ideas is recalled. Also tick AlwaysInPool so it's never equipped.
+    public bool AddsSlot;
+    [Range(0f, 1f)] public float OfferedAt = 0.25f;
 }

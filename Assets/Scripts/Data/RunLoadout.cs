@@ -8,7 +8,8 @@ using UnityEngine;
 [AutoStaticsCleanup]
 static partial class RunLoadout
 {
-    public const int MaxSlots = 3;
+    public const int BaseSlots = 3;
+    public static int MaxSlots => BaseSlots + Progress.ExtraSlots;
 
     [System.Serializable]
     class Data

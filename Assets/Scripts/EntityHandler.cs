@@ -23,6 +23,7 @@ public class EntityHandler : MonoBehaviour
     [SerializeField] private float stayCap = 2f;      // never more than x2 from lingering
     [SerializeField] private float stayStep = 1.5f;    // x per minute on THIS floor (resets with the core)
     float Stay => Mathf.Min(stayCap, Mathf.Pow(stayStep, Mathf.Max(0f, clock.FloorTime - stayGrace) / 60f));
+    [SerializeField] private float xpFloorStep = 1.04f;   // XP per enemy x this per floor (x2.1 at floor 20, x4.6 at 40)
     [SerializeField, Range(0f, 1f)] private float damageShare = 0.6f;   // damage grows slower than HP
     public void RegisterKill() => Kills++;
     // Roughly how many enemies spawn per second right now (average wave size / time between waves).
@@ -175,7 +176,7 @@ public class EntityHandler : MonoBehaviour
         spawnedEnemies.Add(spawnedEnemy);
         UpdateEnemyList();
         enemy.MaxHealth = enemies[index].BaseHealth * HealthMultiplier();
-        enemy.Xp = enemies[index].XpValue;
+        enemy.Xp = Mathf.RoundToInt(enemies[index].XpValue * Mathf.Pow(xpFloorStep, floor - 1));
         enemy.Damage = enemies[index].BaseDamage * DamageMultiplier() * Grace(graceDamage);
         AudioManager.Instance?.PlayAt(Sfx.EnemySpawn, pos);   // 3D + long min interval in the AudioManager, so waves don't spam
         return enemy;

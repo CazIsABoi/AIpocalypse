@@ -49,6 +49,8 @@ public static class ScoreService
         public string achievements;  // unlocked during this run
         public string profession;
         public int professionLevel, professionXp;   // level after this run's XP was added
+        public int rerolls, skips;
+        public string banished;      // banished card lines, "Speed|ChainLightning"
 
         public int thoughtsEarned, thoughtsTotal, recalls;
         public string ideas;         // unlocked Ideas before this run's recall

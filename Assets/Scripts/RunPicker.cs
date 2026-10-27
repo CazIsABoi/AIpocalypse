@@ -30,6 +30,7 @@ public class RunPicker : MonoBehaviour
             // one slot per Idea, and start from last run's loadout (if those Ideas are still unlocked)
             foreach (var idea in ideas.Ideas)
             {
+                if (idea == null || idea.AddsSlot) continue;   // nothing to equip: it only raised MaxSlots
                 var slot = Instantiate(slotPrefab, listParent);
                 slots.Add(slot);
                 bool unlocked = Progress.IsUnlocked(idea);

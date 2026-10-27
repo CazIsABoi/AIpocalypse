@@ -18,6 +18,6 @@ MonoBehaviour:
   Weight: 4
   Rarity: 3
   Id: Packet Loss
-  StartsUnlocked: 1
+  StartsUnlocked: 0
   Stat: 22
   Amount: 0.05

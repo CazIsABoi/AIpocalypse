@@ -13,8 +13,12 @@ MonoBehaviour:
   m_Name: Firewall
   m_EditorClassIdentifier: Assembly-CSharp::FirewallEvent
   Title: Lockdown
-  Weight: 10
+  Weight: 5
   Duration: 0
   barrierPrefab: {fileID: 5046058109914628148, guid: 43e086f4120aa8547a457e845797519a, type: 3}
   spawnMultiplier: 2
   firewallPool: {fileID: 11400000, guid: 422f2269c8a6b214787d1a66b9a1e076, type: 2}
+  timeLimit: 20
+  killWindow: 20
+  minKills: 10
+  breakoutPool: {fileID: 0}

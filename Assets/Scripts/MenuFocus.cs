@@ -58,7 +58,7 @@ public partial class MenuFocus : MonoBehaviour
         Selectable best = Best(out int frontOrder);
         if (best == null) return;
 
-        bool lost = current == null || !current.isActiveAndEnabled || !current.IsInteractable();
+        bool lost = current == null || !current.isActiveAndEnabled || !current.IsInteractable() || !Visible(current);
         bool behind = current != null && Order(current) < frontOrder;   // a menu opened in front of it
         if (lost || behind) events.SetSelectedGameObject(best.gameObject);
     }
@@ -95,7 +95,7 @@ public partial class MenuFocus : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             var s = buffer[i];
-            if (s == null || !s.IsInteractable() || s.navigation.mode == Navigation.Mode.None) continue;
+            if (s == null || !s.IsInteractable() || s.navigation.mode == Navigation.Mode.None || !Visible(s)) continue;
             int order = Order(s);
             Vector3 pos = s.transform.position;
             bool better = best == null || order > frontOrder
@@ -103,6 +103,19 @@ public partial class MenuFocus : MonoBehaviour
             if (better) { best = s; frontOrder = order; bestPos = pos; }
         }
         return best;
+    }
+
+    // The menu keeps every slide active in one strip, so buttons on the other slides are "usable" but hidden:
+    // cut away by the projection's RectMask2D, or off screen
+    static bool Visible(Selectable s)
+    {
+        if (s.targetGraphic != null && s.targetGraphic.canvasRenderer.cull) return false;
+        var canvas = s.GetComponentInParent<Canvas>();
+        Camera cam = null;
+        if (canvas != null && canvas.rootCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
+            cam = canvas.rootCanvas.worldCamera != null ? canvas.rootCanvas.worldCamera : Camera.main;
+        Vector2 p = RectTransformUtility.WorldToScreenPoint(cam, s.transform.position);
+        return p.x >= 0f && p.y >= 0f && p.x <= Screen.width && p.y <= Screen.height;
     }
 
     static int Order(Selectable s)

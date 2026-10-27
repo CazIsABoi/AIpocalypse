@@ -12,6 +12,7 @@ static partial class Progress
         public List<string> unlockedCards = new List<string>();
         public List<string> unlockedIdeas = new List<string>();
         public int recalls;
+        public int extraSlots;   // loadout slots added by slot Ideas
     }
 
     static Data data;
@@ -93,22 +94,40 @@ static partial class Progress
         return D.unlockedIdeas.Contains(idea.Id);
     }
 
+    public static int ExtraSlots => D.extraSlots;
+
     public static bool CanRecall(IdeaSet ideas)
     {
         bool hasEnoughThoughts = Thoughts >= RecallCost;
-        bool hasLockedIdeas = ideas.Ideas.Exists(CanBeRecalled);
+        float share = RecalledShare(ideas);
+        bool hasLockedIdeas = ideas.Ideas.Exists(idea => CanBeRecalled(idea, share));
         return hasEnoughThoughts && hasLockedIdeas;
     }
 
-    // Not recalled yet, its requirement (if any) is, and it isn't an achievement's reward
-    public static bool CanBeRecalled(IdeaData idea) => idea != null && !idea.UnlockedByAchievement && !IsUnlocked(idea)
-                                                       && (idea.Requires == null || IsUnlocked(idea.Requires));
+    // How many of the normal (non-slot) Ideas are unlocked, 0..1
+    static float RecalledShare(IdeaSet ideas)
+    {
+        int total = 0, unlocked = 0;
+        foreach (var idea in ideas.Ideas)
+        {
+            if (idea == null || idea.AddsSlot) continue;
+            total++;
+            if (IsUnlocked(idea)) unlocked++;
+        }
+        return total > 0 ? (float)unlocked / total : 0f;
+    }
+
+    // Not recalled yet, its requirement (if any) is, it isn't an achievement's reward, and a slot Idea's share is reached
+    static bool CanBeRecalled(IdeaData idea, float share) => idea != null && !idea.UnlockedByAchievement && !IsUnlocked(idea)
+                                                             && (idea.Requires == null || IsUnlocked(idea.Requires))
+                                                             && (!idea.AddsSlot || share >= idea.OfferedAt);
 
     // An achievement's reward: unlocks the Idea and its cards for free (no Thoughts, doesn't count as a recall)
     public static void Grant(IdeaData idea)
     {
         if (IsUnlocked(idea)) return;
         D.unlockedIdeas.Add(idea.Id);
+        if (idea.AddsSlot) D.extraSlots++;
         foreach (var card in idea.Cards)
         {
             if (card != null && !D.unlockedCards.Contains(card.Id)) D.unlockedCards.Add(card.Id);
@@ -119,8 +138,16 @@ static partial class Progress
 
     public static List<IdeaData> RecallChoices(IdeaSet ideas, int count)
     {
-        List<IdeaData> locked = ideas.Ideas.FindAll(CanBeRecalled);
+        float share = RecalledShare(ideas);
+        List<IdeaData> locked = ideas.Ideas.FindAll(idea => CanBeRecalled(idea, share));
         List<IdeaData> choices = new List<IdeaData>();
+
+        // a slot Idea that's due is always one of the choices (only the earliest one, never two at once)
+        IdeaData slot = null;
+        foreach (var idea in locked) if (idea.AddsSlot && (slot == null || idea.OfferedAt < slot.OfferedAt)) slot = idea;
+        locked.RemoveAll(idea => idea.AddsSlot);
+        if (slot != null) choices.Add(slot);
+
         while (choices.Count < count && locked.Count > 0)
         {
             int i = Random.Range(0, locked.Count);
@@ -137,6 +164,7 @@ static partial class Progress
         D.thoughts -= RecallCost;
         D.recalls++;
         D.unlockedIdeas.Add(idea.Id);
+        if (idea.AddsSlot) D.extraSlots++;
         foreach (var card in idea.Cards)
         {
             if (card != null && !D.unlockedCards.Contains(card.Id)) D.unlockedCards.Add(card.Id);
