@@ -4,15 +4,13 @@ using UnityEngine.UI;
 
 public class RunClock : MonoBehaviour
 {
-    [SerializeField] private float bossTime = 900f;   
+    [SerializeField] private int bossFloor = 20;          
     public float Elapsed { get; private set; }
-    public float TimeLeft => Mathf.Max(0f, bossTime - Elapsed);
-    public float BossAt => bossTime;                     // seconds into the run when the boss comes
-    public float Progress => Elapsed / bossTime;       
-    public event System.Action BossTime;               
-    private bool bossFired;
-    public bool Endless { get; private set; }            
-    public float EndlessTime { get; private set; }       // seconds since the boss died
+    public float FloorTime { get; private set; }          
+    public bool BossActive { get; private set; }          
+    public bool Endless { get; private set; }
+    public float EndlessTime { get; private set; }
+    public event System.Action BossTime;                  // telemetry listens to it
     public void StartEndless() { Endless = true; }       // call this when the boss dies to start the endless timer
 
 
@@ -24,33 +22,32 @@ public class RunClock : MonoBehaviour
     [SerializeField] private Slider xpBarSlider;
     [SerializeField] private GameObject EventHUD;
     [SerializeField] private GameObject OverallTimer;
+    GameController game;
 
     private void Start()
     {
         player = GameObject.Find("Player").GetComponent<PlayerMovement>();
         controller = FindAnyObjectByType<EventDirector>();
     }
+    void OnEnable() { game = FindAnyObjectByType<GameController>(); game.FloorChanged += ResetFloorTime; }
+    void OnDisable() { if (game != null) game.FloorChanged -= ResetFloorTime; }
+    void ResetFloorTime(int floor) => FloorTime = 0f;
+
     void Update()
     {
-        Elapsed += Time.deltaTime;
-        if (TimeLeft <= 0f && !bossFired)
-        {
-            bossFired = true;
-            BossTime?.Invoke();   // for anything else that wants to react to the boss
-            StartBoss();
-        }
-        if (Endless)
-        {
-            EndlessTime += Time.deltaTime;
-        }
+        float delta = Time.deltaTime;
+        Elapsed += delta;
+        FloorTime += delta;
+
+        if (Endless) EndlessTime += delta;  
 
 #if UNITY_EDITOR
         // debug only: skip to the boss (never in a build)
         if (TEMP != null && TEMP.action.WasPressedThisFrame())
-            Elapsed = Mathf.Max(Elapsed, bossTime);
+            bossFloor = FindAnyObjectByType<GameController>().Floor;   // skip to the next floor, which is the boss floor
 #endif
     }
-    [SerializeField] private CutScenePlayer outro;   // optional: plays when the boss dies (Play On Start off)
+    [SerializeField] private CutScenePlayer outro;   // plays when the boss dies (Play On Start off)
 
     // Boss died: outro first (if there is one), then continue the run
     public void BossDefeated()
@@ -63,8 +60,9 @@ public class RunClock : MonoBehaviour
     public void ContinueAfterBoss()
     {
         RevertBossUIChanges();
-        FindAnyObjectByType<GameController>().NextFloor();
         StartEndless();
+        BossActive = false;
+        FindAnyObjectByType<GameController>().NextFloor();
         AudioManager.Instance?.Play(Sfx.OvertimeStart);
     }
 
@@ -91,4 +89,14 @@ public class RunClock : MonoBehaviour
         player.Teleport(new Vector3(-500f, 2, -13.5f));
     }
 
+    public bool TryStartBoss(int floor)
+    {
+        if (floor == bossFloor && !Endless) {
+            BossActive = true;
+            BossTime?.Invoke();
+            StartBoss();
+            return true;
+        }
+        return false;
+    }
 }

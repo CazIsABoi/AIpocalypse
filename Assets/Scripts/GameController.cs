@@ -61,6 +61,7 @@ public class GameController : MonoBehaviour
     public void NextFloor()
     {
         if (playerHealth.IsDead) return;
+        if (FindAnyObjectByType<RunClock>().TryStartBoss(Floor)) return;   // don't change floor if the boss is starting
         director.OnFloorChanged(Floor);   // stop any running event
         StartCoroutine(NextFloorRoutine());
     }

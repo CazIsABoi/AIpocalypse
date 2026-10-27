@@ -462,7 +462,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         }
         else if(AiType == 10)
         {
-            if (clock.TimeLeft > 0f)   // the clock's own boss time, not a hardcoded 900
+            if (clock.BossActive == false)   // the clock's own boss time
             {
                 SubmergeOriginalPos = transform.position;
                 SubmergeInCountdown = Random.Range(10f, 30f);

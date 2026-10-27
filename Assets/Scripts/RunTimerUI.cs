@@ -5,11 +5,9 @@ public class RunTimerUI : MonoBehaviour
     [SerializeField] private TMPro.TextMeshProUGUI text;
     [SerializeField] private RunClock clock;
     private UnityEngine.UI.Slider slider;
-    [SerializeField] private float timerWarningAt = 60f;   // seconds left: "one minute" warning
-    [SerializeField] private float bossWarningAt = 8f;     // seconds left: BossWarning (the clip is 8 s, so it ends as the boss arrives)
-    private float lastTimeLeft = float.MaxValue;
+    [System.Serializable] public struct ThreatTier { public float from; public string label; public Color color; }
+    [SerializeField] private ThreatTier[] tiers;   
 
-    [Header("Endless threat")]
     [SerializeField] private float popScale = 1.3f;    // how big the text pops each time THREAT goes up by 0.1
     [SerializeField] private float popTime = 0.25f;
     private EntityHandler spawner;
@@ -25,34 +23,28 @@ public class RunTimerUI : MonoBehaviour
     }
     private void Update()
     {
-        if (!clock.Endless)
+        float threat = spawner != null ? spawner.Threat : 1f;
+        int threatIndex = 0;
+        if (tiers.Length == 0) return;
+        ThreatTier currentTier = tiers[0];
+        for (int i = 0; i < tiers.Length; i++)
         {
-            slider.value = 1f - clock.Progress;              // full → empty (slider Min 0, Max 1)
-            int m = Mathf.FloorToInt(clock.TimeLeft / 60f);
-            int s = Mathf.FloorToInt(clock.TimeLeft % 60f);
-            text.text = $"{m:00}:{s:00}";                    // "14:05"
-
-            // play each warning once, the frame the countdown crosses its mark
-            if (lastTimeLeft > timerWarningAt && clock.TimeLeft <= timerWarningAt) AudioManager.Instance?.Play(Sfx.TimerWarning);
-            if (lastTimeLeft > bossWarningAt && clock.TimeLeft <= bossWarningAt) AudioManager.Instance?.Play(Sfx.BossWarning);
-            lastTimeLeft = clock.TimeLeft;
+            if (threat >= tiers[i].from) { currentTier = tiers[i]; threatIndex = i; }
+            else break;
         }
-        else
-        {
-            // hide slider in endless mode
-            slider.fillRect.gameObject.SetActive(false);
-            int m = Mathf.FloorToInt(clock.EndlessTime / 60f);
-            int s = Mathf.FloorToInt(clock.EndlessTime % 60f);
-            float threat = spawner != null ? spawner.Threat : 1f;
-            text.text = $"ENDLESS: {m:00}:{s:00}   <color=#FF6464>THREAT x{threat:0.0}</color>";
 
-            // every +0.1 threat: a quick pop so the escalation is felt
-            int step = Mathf.FloorToInt(threat * 10f);
-            if (step > lastThreatStep)
-            {
-                if (lastThreatStep > 0) popTimer = popTime;   // not on the very first frame of endless
-                lastThreatStep = step;
-            }
+        slider.value = tiers.Length > 1 ? Mathf.InverseLerp(currentTier.from, tiers[Mathf.Min(tiers.Length - 1, threatIndex + 1)].from, threat) : 1f;
+
+        int m = Mathf.FloorToInt(clock.Elapsed / 60f);
+        int s = Mathf.FloorToInt(clock.Elapsed % 60f);
+        text.text = $"TIME: {m:00}:{s:00}   <color=#{ColorUtility.ToHtmlStringRGB(currentTier.color)}>{currentTier.label}</color> x{threat:0.0}";
+
+        // every +0.1 threat: a quick pop so the escalation is felt
+        int step = Mathf.FloorToInt(Mathf.Log(threat) / Mathf.Log(1.1f));
+        if (step > lastThreatStep)
+        {
+            if (lastThreatStep > 0) popTimer = popTime;   // not on the very first frame of endless
+            lastThreatStep = step;
         }
 
         // pop: jump big, ease back to normal (unscaled, so it still finishes during pauses)
