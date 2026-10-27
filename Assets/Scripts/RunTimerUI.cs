@@ -4,6 +4,7 @@ public class RunTimerUI : MonoBehaviour
 {
     [SerializeField] private TMPro.TextMeshProUGUI text;
     [SerializeField] private RunClock clock;
+    [SerializeField] private VitalLine vitals;
     private UnityEngine.UI.Slider slider;
     [System.Serializable] public struct ThreatTier { public float from; public string label; public Color color; }
     [SerializeField] private ThreatTier[] tiers;   
@@ -37,17 +38,16 @@ public class RunTimerUI : MonoBehaviour
 
         int m = Mathf.FloorToInt(clock.Elapsed / 60f);
         int s = Mathf.FloorToInt(clock.Elapsed % 60f);
-        text.text = $"TIME: {m:00}:{s:00}   <color=#{ColorUtility.ToHtmlStringRGB(currentTier.color)}>{currentTier.label}</color> x{threat:0.0}";
+        text.text = $"TIME: {m:00}:{s:00}   <color=#{ColorUtility.ToHtmlStringRGB(currentTier.color)}>{currentTier.label}</color> x{threat:0.0}"; 
+        if (vitals != null) vitals.Show(threatIndex, currentTier.color, threat);
 
-        // every +0.1 threat: a quick pop so the escalation is felt
         int step = Mathf.FloorToInt(Mathf.Log(threat) / Mathf.Log(1.1f));
         if (step > lastThreatStep)
         {
-            if (lastThreatStep > 0) popTimer = popTime;   // not on the very first frame of endless
+            if (lastThreatStep > 0) popTimer = popTime;   
             lastThreatStep = step;
         }
 
-        // pop: jump big, ease back to normal (unscaled, so it still finishes during pauses)
         if (popTimer > 0f)
         {
             popTimer -= Time.unscaledDeltaTime;
