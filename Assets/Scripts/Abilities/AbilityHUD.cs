@@ -20,7 +20,7 @@ public class AbilityHUD : MonoBehaviour
         }
         icon.enabled = true;
         icon.sprite = controller.Ability.Icon;
-        cooldownFill.fillAmount = controller.CooldownLeft / controller.Ability.Cooldown;
+        cooldownFill.fillAmount = controller.CooldownLeft / controller.Cooldown;
         if (readyText != null) readyText.enabled = controller.Ready;
     }
 }

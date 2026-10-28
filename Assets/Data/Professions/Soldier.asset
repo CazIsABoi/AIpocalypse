@@ -37,6 +37,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d44bfc19db384849af9b0cafdaeae7ff, type: 2}
   - {fileID: 11400000, guid: a34405e86a4b46428dd55a1557ad2fac, type: 2}
   - {fileID: 11400000, guid: 92547accfd6040d190f521c5271f8223, type: 2}
+  Ability: {fileID: 11400000, guid: f56f9dff897f39c4db332edaa4347bdd, type: 2}
   MaxLevel: 26
   XpPerLevel: 100
   XpGrowth: 1.2

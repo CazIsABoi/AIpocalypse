@@ -56,7 +56,7 @@ public enum RewardPath { None, Melee, Gun }
 // Assets store StatType as numbers: only ever add new values at the END
 public enum StatType { MoveSpeed, MoveSpeedPercent, MaxHealth, Damage, DamagePercent, PickupRadius, BulletAmount, CritDamage, CritChance, BulletPierce, RegenAmount, AttackSpeed, Lifesteal,
     MeleeDamagePercent, MeleeRange, MeleeSpeedPercent, GunDamagePercent, ProjectileSpeed, CritChanceCap, MeleeLifesteal,
-    Armor, Thorns, BlockChance}
+    Armor, Thorns, BlockChance, AbilityCooldown, AbilityPower}
 public enum Rarity { Auto, Common, Uncommon, Rare, Epic, Legendary }
 
 public static class StatNames
@@ -109,6 +109,10 @@ public static class StatNames
                 return "Thorns";
             case StatType.BlockChance:
                 return "Block Chance";
+            case StatType.AbilityCooldown:
+                return "Ability Cooldown";
+            case StatType.AbilityPower:
+                return "Ability Power";
             default:
                 return type.ToString();  
         }
@@ -162,6 +166,10 @@ public static class StatNames
             case StatType.Thorns:
             case StatType.BlockChance:
                 return $"{value * 100f:0.#}%";      // thorns 1 → "100%" of your damage, block 0.1 → "10%"
+            case StatType.AbilityCooldown:
+                return $"-{value * 100f:0.#}%";     // 0.1 → "-10%" (shorter cooldown)
+            case StatType.AbilityPower:
+                return $"{(1 + value) * 100f:0.#}%"; // 0.2 → "120%"
             default:
                 return $"{value:0.#}";
         }

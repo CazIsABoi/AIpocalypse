@@ -48,6 +48,14 @@ public class PlayerStats : MonoBehaviour
     public float BlockChance;                                    // 0.1 = 10% of hits are ignored completely
     [SerializeField] private float blockChanceCap = 0.5f;
 
+    [Header("Class ability")]
+    public float AbilityCooldown;                                // 0.1 = 10% shorter cooldown
+    [SerializeField] private float abilityCooldownCap = 0.5f;    // never below half the base cooldown
+    public float AbilityPower;                                   // 0.2 = +20% ability damage / healing
+    public float AbilityPowerMult => Mathf.Max(0.1f, 1f + AbilityPower);
+    // ability cards are pointless without an ability (a profession that has none yet)
+    bool HasAbility => TryGetComponent(out AbilityController a) && a.Ability != null;
+
     [Header("Build paths")]
     public float meleeDamagePercent;     // melee only (0.15 = +15%)
     public float meleeSpeedPercent;      // melee only, stacks with AttackSpeed
@@ -145,6 +153,8 @@ public class PlayerStats : MonoBehaviour
             case StatType.Armor: Armor += amount; break;
             case StatType.Thorns: Thorns = Mathf.Max(0f, Thorns + amount); break;
             case StatType.BlockChance: BlockChance = Mathf.Clamp(BlockChance + amount, 0f, blockChanceCap); break;
+            case StatType.AbilityCooldown: AbilityCooldown = Mathf.Clamp(AbilityCooldown + amount, 0f, abilityCooldownCap); break;
+            case StatType.AbilityPower: AbilityPower += amount; break;
             case StatType.CritChanceCap:
                 critChanceCap = Mathf.Min(1f, critChanceCap + amount);
                 if (critGathered < 0f) critGathered = CritChance;
@@ -197,6 +207,8 @@ public class PlayerStats : MonoBehaviour
             case StatType.Armor: return Armor;
             case StatType.Thorns: return Thorns;
             case StatType.BlockChance: return BlockChance;
+            case StatType.AbilityCooldown: return AbilityCooldown;
+            case StatType.AbilityPower: return AbilityPower;
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 return 0f;
@@ -244,6 +256,8 @@ public class PlayerStats : MonoBehaviour
             case StatType.Armor: return Armor + amount;
             case StatType.Thorns: return Mathf.Max(0f, Thorns + amount);
             case StatType.BlockChance: return Mathf.Clamp(BlockChance + amount, 0f, blockChanceCap);
+            case StatType.AbilityCooldown: return Mathf.Clamp(AbilityCooldown + amount, 0f, abilityCooldownCap);
+            case StatType.AbilityPower: return AbilityPower + amount;
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 return 0f;
@@ -262,6 +276,8 @@ public class PlayerStats : MonoBehaviour
             case StatType.MeleeRange: return meleeRange >= meleeRangeCap - 0.0001f;
             case StatType.BlockChance: return BlockChance >= blockChanceCap - 0.0001f;
             case StatType.Armor: return ArmorMultiplier <= 1f - MaxArmorReduction + 0.0001f;
+            case StatType.AbilityCooldown: return !HasAbility || AbilityCooldown >= abilityCooldownCap - 0.0001f;
+            case StatType.AbilityPower: return !HasAbility;
             default: return false;
         }
     }

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PerkNode
   Id: Soldier.Unbreakable
   Title: Unbreakable
-  Description: They broke first. +30 armor, +100% thorns
+  Description: They broke first. +30 armor, +100% thorns, +25% ability power
   Icon: {fileID: 0}
   Tier: 5
   Branch: 3
@@ -27,6 +27,8 @@ MonoBehaviour:
     Amount: 30
   - Stat: 21
     Amount: 1
+  - Stat: 24
+    Amount: 0.25
   GivesEffect: 0
   Effect: 0
   EffectLevels: 1

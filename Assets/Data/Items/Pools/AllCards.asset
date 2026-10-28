@@ -120,4 +120,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c191fa82f8534e48ae8d612647b7ccd7, type: 2}
   - {fileID: 11400000, guid: 66faf529c6dd4478a6c198b40fb13cd4, type: 2}
   - {fileID: 11400000, guid: ef964c20e31c4e5fae1002476263b030, type: 2}
+  - {fileID: 11400000, guid: 241401520be743e486a59c0fabaee61d, type: 2}
+  - {fileID: 11400000, guid: a6770f95ef67465e8aa12558f82b15ba, type: 2}
+  - {fileID: 11400000, guid: 5bb013ecf95c447a8536eb5713691c8e, type: 2}
+  - {fileID: 11400000, guid: 505e050e584948f2b5246a7910c5cc28, type: 2}
   sourceText: AllCards

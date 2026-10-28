@@ -125,12 +125,13 @@ public class PerkTreeUI : MonoBehaviour
                 if (required != null) lines.Add((MakeLine(required, node), required, node));
         }
 
-        // branch headers: each branch is named after its first major (the node where the player picks it)
+        // branch headers: what the branch is about, from its first major (the node where the player picks it)
         for (int branch = 1; branch <= 3; branch++)
         {
             if (BranchLabel(branch) == null) continue;
             PerkNode major = BranchMajor(branch);
-            BranchLabel(branch).text = major != null ? major.Title.ToUpper() : "";
+            if (major == null) BranchLabel(branch).text = "";
+            else BranchLabel(branch).text = string.IsNullOrEmpty(major.BranchName) ? major.Title.ToUpper() : major.BranchName;
         }
         Refresh();
     }

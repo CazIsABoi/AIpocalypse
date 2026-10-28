@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PerkNode
   Id: Soldier.Frontline
   Title: Frontline
-  Description: Stand in front, take the hits. +40 max HP, +20% melee damage
+  Description: 'Stand in front, take the hits. +40 max HP, +20% melee damage. Grenade: 50% bigger blast, heals 2% max HP per enemy hit'
   Icon: {fileID: 0}
   Tier: 2
   Branch: 1
@@ -30,3 +30,5 @@ MonoBehaviour:
   GivesEffect: 0
   Effect: 0
   EffectLevels: 1
+  AbilityUpgrade: 1
+  BranchName: MELEE

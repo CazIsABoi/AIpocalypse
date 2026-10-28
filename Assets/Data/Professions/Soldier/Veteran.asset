@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PerkNode
   Id: Soldier.Veteran
   Title: Veteran
-  Description: Seen it all, still standing. +60 max HP
+  Description: Seen it all, still standing. +60 max HP, +25% ability power
   Icon: {fileID: 0}
   Tier: 5
   Branch: 1
@@ -25,6 +25,8 @@ MonoBehaviour:
   Changes:
   - Stat: 2
     Amount: 60
+  - Stat: 24
+    Amount: 0.25
   GivesEffect: 0
   Effect: 0
   EffectLevels: 1

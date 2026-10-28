@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PerkNode
   Id: Soldier.Drill
   Title: Drill
-  Description: Again. And again. +10% attack speed
+  Description: Again. And again. +10% attack speed, -10% ability cooldown
   Icon: {fileID: 0}
   Tier: 1
   Branch: 0
@@ -24,6 +24,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0bcff4e9e75e426d9bbc400a11cb98ef, type: 2}
   Changes:
   - Stat: 11
+    Amount: 0.1
+  - Stat: 23
     Amount: 0.1
   GivesEffect: 0
   Effect: 0

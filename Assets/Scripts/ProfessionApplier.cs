@@ -45,6 +45,9 @@ public partial class ProfessionApplier : MonoBehaviour
 
         if (Current == null) return;   // no tree made for this mask yet
 
+        var abilities = GetComponent<AbilityController>();
+        if (abilities != null) abilities.Equip(Current.Ability);
+
         // same as applying a trade-off card, plus an optional effect level
         var activeNodes = RunProfession.ActiveNodes(Current);
         foreach (var node in activeNodes)
@@ -56,6 +59,10 @@ public partial class ProfessionApplier : MonoBehaviour
             if (node.GivesEffect)
             {
                 effects.Add(node.Effect, node.EffectLevels);
+            }
+            if (node.AbilityUpgrade != AbilityUpgrade.None && abilities != null)
+            {
+                abilities.AddUpgrade(node.AbilityUpgrade);
             }
         }
     }

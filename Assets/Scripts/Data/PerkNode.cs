@@ -17,6 +17,7 @@ public class PerkNode : ScriptableObject
     public int Branch;                  // 0 = trunk, 1 = left, 2 = right...
     public int Side;                    // 0 = on the branch, -1 / 1 = a small side perk sticking out left / right of it
     public bool IsMajor;                // majors on the same tier are exclusive: one per run
+    public string BranchName;           // a branch's first major: the header above the branch ("MELEE"), empty = its Title
     public int Cost = 1;                // profession points to unlock it (the root should be 0)
     public List<PerkNode> Requires;     // must be unlocked AND active first (usually the node just below)
 
@@ -25,4 +26,5 @@ public class PerkNode : ScriptableObject
     public bool GivesEffect;                       // tick to also give an on-hit effect
     public EffectType Effect;
     public int EffectLevels = 1;
+    public AbilityUpgrade AbilityUpgrade;          // changes how the class ability works (branch majors: one per run)
 }

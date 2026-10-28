@@ -11,6 +11,7 @@ public class ProfessionData : ScriptableObject
     [TextArea] public string Description;
     public int MaskIndex;               // which mask in MaskSet picks this profession
     public List<PerkNode> Nodes;        // the WHOLE tree, root included
+    public ClassAbility Ability;        // the active on the ability button (none = no button this run)
 
     [Header("Levelling")]
     public int MaxLevel = 15;           // one point per level; keep it close to the tree's total cost
