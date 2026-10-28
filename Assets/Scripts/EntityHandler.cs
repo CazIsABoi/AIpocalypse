@@ -131,7 +131,7 @@ public class EntityHandler : MonoBehaviour
             for (int i = spawnedEnemies.Count - 1; i >= 0; i--)
             {
                 if (spawnedEnemies[i] != null) spawnedEnemies[i].GetComponent<EnemyController>().SpeedBoostIncrease = true;
-                else UpdateEnemyList();
+                else spawnedEnemies.RemoveAt(i);   // UpdateEnemyList() here shrank the list under this loop's index
             }
         }
     }

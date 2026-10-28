@@ -8226,6 +8226,7 @@ MonoBehaviour:
   unusedBranchAlpha: 0.4
   tierSpacing: 130
   branchSpacing: 450
+  sideSpacing: 170
   linePrefab: {fileID: 79238145721341610, guid: e00b7bbc5ef65114b9c6eed94ea8527c, type: 3}
   lineWidth: 6
   nodeSize: {x: 140, y: 90}

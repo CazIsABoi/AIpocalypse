@@ -1,8 +1,14 @@
 using System.Collections.Generic;
+using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 
-public class ProjectileController : MonoBehaviour
+[AutoStaticsCleanup]
+public partial class ProjectileController : MonoBehaviour
 {
+    // Shared by every bullet: OverlapSphere made a new array per bullet per frame, which is a lot of garbage with 1000 bullets
+    static Collider[] hitBuffer = new Collider[32];
+    static Collider[] bounceBuffer = new Collider[128];   // its own, BounceToEnemy runs while hitBuffer is being read
+
     public Vector3 Direction;
     public LayerMask hittableLayers;
 
@@ -51,10 +57,10 @@ public class ProjectileController : MonoBehaviour
             }
             else if(ProjectileType == "Tripod Bullet")
             {
-                Collider[] hits = Physics.OverlapSphere(transform.position, 0.15f, hittableLayers);
-                foreach (Collider c in hits)
+                int n = Physics.OverlapSphereNonAlloc(transform.position, 0.15f, hitBuffer, hittableLayers);
+                for (int i = 0; i < n; i++)
                 {
-
+                    Collider c = hitBuffer[i];
                     if (c.gameObject.GetComponent<PlayerHealth>())
                     {
                         c.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, "Tripod shot");
@@ -74,9 +80,11 @@ public class ProjectileController : MonoBehaviour
     // Returns true if the bullet is gone
     bool PlayerHits()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, 0.15f, hittableLayers);
-        foreach (Collider c in hits)
+        int n = Physics.OverlapSphereNonAlloc(transform.position, 0.15f, hitBuffer, hittableLayers);
+        for (int i = 0; i < n; i++)
         {
+            Collider c = hitBuffer[i];
+            if (c == null) continue;   // destroyed by an earlier hit this loop
             if (c.TryGetComponent(out EnemyController enemy))
             {
                 if (!hitEnemies.Add(enemy)) continue;
@@ -114,9 +122,11 @@ public class ProjectileController : MonoBehaviour
         if (Bounces <= 0) return false;
         EnemyController next = null;
         float best = float.MaxValue;
-        foreach (Collider c in Physics.OverlapSphere(transform.position, enemyBounceRange, hittableLayers))
+        int n = Physics.OverlapSphereNonAlloc(transform.position, enemyBounceRange, bounceBuffer, hittableLayers);
+        for (int i = 0; i < n; i++)
         {
-            if (!c.TryGetComponent(out EnemyController e) || e.Health <= 0f || hitEnemies.Contains(e)) continue;
+            Collider c = bounceBuffer[i];
+            if (c == null || !c.TryGetComponent(out EnemyController e) || e.Health <= 0f || hitEnemies.Contains(e)) continue;
             float d = (e.transform.position - transform.position).sqrMagnitude;
             if (d < best) { best = d; next = e; }
         }

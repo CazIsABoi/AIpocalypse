@@ -25,6 +25,7 @@ public class PlayerCombat : MonoBehaviour
     public int BulletPierce = 1;
     [SerializeField] private GameObject BulletPrefab;
     [SerializeField] private float spreadAngle = 8f;   // extra bullets fan out this many degrees apart, alternating sides
+    [SerializeField] private int maxVolley = 16;       // more bullets than this: fire this many, each hitting harder, over the same fan width (1000 bullets alive was tanking the frame rate)
     [SerializeField] private float FirearmBaseCooldown = 0.2f;
     [SerializeField] private float FirearmCooldown;
     [SerializeField] private float CurrentFirearmCooldown;
@@ -121,7 +122,11 @@ public class PlayerCombat : MonoBehaviour
             if (CurrentFirearmCooldown <= 0)
             {
                 CurrentFirearmCooldown = FirearmCooldown;
-                for (int i = 0; i < Mathf.Max(1, BulletAmount); i++) ShootGun(i);
+                int wanted = Mathf.Max(1, BulletAmount);
+                int count = Mathf.Min(wanted, Mathf.Max(1, maxVolley));
+                float damageScale = (float)wanted / count;
+                float step = count > 1 ? spreadAngle * (wanted - 1) / (count - 1) : 0f;
+                for (int i = 0; i < count; i++) ShootGun(i, step, damageScale);
             }
         }
         else if (!LeftClick.action.IsPressed())
@@ -130,13 +135,13 @@ public class PlayerCombat : MonoBehaviour
         }
     }
     // Bullet 0 goes straight, the rest fan out: +1 step, -1 step, +2 steps, -2 steps...
-    void ShootGun(int index)
+    void ShootGun(int index, float step, float damageScale)
     {
         GameObject shotBullet = Instantiate(BulletPrefab, RifleMuzzle.transform.position, Quaternion.identity);
         ProjectileController c = shotBullet.GetComponent<ProjectileController>();
-        float angle = (index + 1) / 2 * spreadAngle * (index % 2 == 1 ? 1f : -1f);
+        float angle = (index + 1) / 2 * step * (index % 2 == 1 ? 1f : -1f);
         c.Direction = Quaternion.Euler(0f, angle, 0f) * CalculateAimingDirection();
-        c.Damage = RangedDamage;
+        c.Damage = RangedDamage * damageScale;
         c.BulletPierce = Mathf.Max(1, BulletPierce);   // 0 = bullet hits nothing
         c.CritChance = stats.CritChance;
         c.CritDamage = stats.CritDamage;

@@ -38,8 +38,14 @@ public partial class PerfMonitor : MonoBehaviour
     float intervalTime;
     double mainSum, renderSum, gpuSum;
     long drawSum, allocSum;
-    int hitches, lastGcCount;
+    int hitches, lastGcCount, collections;
     float lastHitchLog = -10f;
+    bool drawsSeen, garbageSeen;        // release builds don't fill these counters: "n/a" instead of a fake 0
+
+    // Alt-tab freezes the game, and the frame after comes in at many seconds: that's not a hitch
+    int focusFrame = -10;
+    void OnApplicationFocus(bool focused) => focusFrame = Time.frameCount;
+    public bool Stalled => !Application.isFocused || Time.frameCount - focusFrame <= 1;
 
     // this run (telemetry, reset by RunTelemetry)
     long runFrames, runDraws;
@@ -47,7 +53,7 @@ public partial class PerfMonitor : MonoBehaviour
     int runHitches;
     public float RunCpuMs => runFrames > 0 ? (float)(runMain / runFrames) : 0f;
     public float RunGpuMs => runFrames > 0 ? (float)(runGpu / runFrames) : 0f;
-    public float RunDrawCalls => runFrames > 0 ? (float)runDraws / runFrames : 0f;
+    public float RunDrawCalls => !drawsSeen ? -1f : runFrames > 0 ? (float)runDraws / runFrames : 0f;   // -1 = not available in this build
     public int RunHitches => runHitches;
     public void ResetRun() { runFrames = runDraws = 0; runMain = runGpu = 0; runHitches = 0; }
 
@@ -84,15 +90,25 @@ public partial class PerfMonitor : MonoBehaviour
     void Update()
     {
         float ms = Time.unscaledDeltaTime * 1000f;
+        if (Keyboard.current != null && Keyboard.current.f3Key.wasPressedThisFrame) overlay = !overlay;
+
+        if (Stalled && ms > hitchMs)
+        {
+            if (ms > 1000f) CrashLog.Note($"[Perf] window in the background for {ms / 1000f:0} s (not counted)");
+            return;
+        }
 
         FrameTimingManager.CaptureFrameTimings();
         if (FrameTimingManager.GetLatestTimings(1, timing) > 0)
         {
-            mainMs = timing[0].cpuMainThreadFrameTime;
-            renderMs = timing[0].cpuRenderThreadFrameTime;
-            gpuMs = timing[0].gpuFrameTime;
+            // some drivers now and then report nonsense (27 million ms): keep the last good value
+            mainMs = Sane(timing[0].cpuMainThreadFrameTime, mainMs);
+            renderMs = Sane(timing[0].cpuRenderThreadFrameTime, renderMs);
+            gpuMs = Sane(timing[0].gpuFrameTime, gpuMs);
         }
         long draws = Last(drawCalls);
+        if (draws > 0) drawsSeen = true;
+        if (Last(gcAllocated) > 0) garbageSeen = true;
 
         if (frames < frameMs.Length) frameMs[frames] = ms;
         frames++;
@@ -105,6 +121,7 @@ public partial class PerfMonitor : MonoBehaviour
 
         int gcCount = GC.CollectionCount(0);
         bool collected = gcCount != lastGcCount;
+        if (collected) collections++;
         lastGcCount = gcCount;
 
         if (ms > hitchMs && Time.frameCount > 10)
@@ -120,7 +137,6 @@ public partial class PerfMonitor : MonoBehaviour
 
         if (intervalTime >= logInterval) LogSummary();
 
-        if (Keyboard.current != null && Keyboard.current.f3Key.wasPressedThisFrame) overlay = !overlay;
         if (overlay)
         {
             graph[graphHead] = ms;
@@ -136,9 +152,9 @@ public partial class PerfMonitor : MonoBehaviour
         Array.Sort(frameMs, 0, n);
         float worst1 = frameMs[Mathf.Clamp(n - 1 - n / 100, 0, n - 1)];   // the slowest 1% of frames
         CrashLog.Note($"[Perf] {intervalTime:0}s: fps {frames / intervalTime:0} (1% low {1000f / Mathf.Max(0.01f, worst1):0}, worst {frameMs[n - 1]:0} ms, hitches {hitches}) | " +
-                      $"main {mainSum / frames:0.0} ms, render {renderSum / frames:0.0}, gpu {gpuSum / frames:0.0} | draws {drawSum / frames} | " +
-                      $"garbage {allocSum / intervalTime / 1024f:0} KB/s, managed {Last(gcUsed) / 1048576} MB | {Counts()}{CrashLog.Context()}");
-        frames = 0; intervalTime = 0f; hitches = 0;
+                      $"main {mainSum / frames:0.0} ms, render {renderSum / frames:0.0}, gpu {gpuSum / frames:0.0} | draws {(drawsSeen ? (drawSum / frames).ToString() : "n/a")} | " +
+                      $"garbage {(garbageSeen ? $"{allocSum / intervalTime / 1024f:0} KB/s" : "n/a")}, collections {collections}, managed {Last(gcUsed) / 1048576} MB | {Counts()}{CrashLog.Context()}");
+        frames = 0; intervalTime = 0f; hitches = 0; collections = 0;
         mainSum = renderSum = gpuSum = 0; drawSum = allocSum = 0;
     }
 
@@ -156,6 +172,7 @@ public partial class PerfMonitor : MonoBehaviour
         $"popups {FindObjectsByType<DamagePopup>().Length}";
 
     static long Last(ProfilerRecorder r) => r.Valid ? r.LastValue : 0;
+    static double Sane(double v, double previous) => v >= 0 && v < 1000 ? v : previous;
 
     void OnGUI()
     {

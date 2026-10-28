@@ -86,6 +86,7 @@ partial class RunTelemetry : MonoBehaviour
     void Update()
     {
         float dt = Time.unscaledDeltaTime;
+        if (PerfMonitor.Instance != null && PerfMonitor.Instance.Stalled && dt > 0.05f) { secondFrames = 0; secondTime = 0f; return; }   // alt-tab, not slow frames
         frames++; frameTime += dt;
         secondFrames++; secondTime += dt;
         if (secondTime >= 1f)
