@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a43f53720f8737468d4afd219df44c2, type: 3}
   m_Name: cd_Thermal Paste
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
-  Title: Thermal Paste
+  Title: Find the Seam
   Description: +60% crit damage
   Icon: {fileID: 0}
   Weight: 4

@@ -8,7 +8,8 @@ public class MaskSelectUI : MonoBehaviour
 {
     [SerializeField] private MaskSet maskSet;
     [SerializeField] private GameObject panel;           // the whole selector, hidden until "initialize" is pressed
-    [SerializeField] private TMP_Text nameText;          // "// mask: GLITCH_RED"
+    [SerializeField] private TMP_Text nameText;          // "// soldier · lv 2" (or "// mask: Green" if the mask has no profession yet)
+    [SerializeField] private ProfessionSet professions;  // optional: names the mask after its profession
     [SerializeField] private TMP_Text counterText;       // optional "2 / 5"
     [SerializeField] private PlayerMask preview;         // the preview model
     [SerializeField] private Transform spinTarget;       // what rotates in the preview (usually the preview model)
@@ -42,6 +43,11 @@ public class MaskSelectUI : MonoBehaviour
     public void Next() { index = Wrap(index + 1); Refresh(); }           // ArrowRight
     public void Previous() { index = Wrap(index - 1); Refresh(); }       // ArrowLeft
 
+    public int Index => index;
+    // A mask is a profession: without one made for it yet it can be looked at, but not played (RunPicker checks this)
+    public bool IsLocked => professions != null && professions.ForMask(index) == null;
+    public event System.Action<int> Changed;   // the perk tree follows the selected mask (its profession)
+
     public void Apply() => GameSettings.MaskIndex = index;   // the Run Picker saves the mask without loading a scene
 
     public void Confirm()
@@ -56,8 +62,25 @@ public class MaskSelectUI : MonoBehaviour
     void Refresh()
     {
         if (maskSet == null || maskSet.Count == 0) return;
-        if (nameText != null) nameText.text = $"// mask: {maskSet.Get(index).name}";
+        if (nameText != null) nameText.text = NameLine();
         if (counterText != null) counterText.text = $"{index + 1} / {maskSet.Count}";
         if (preview != null) preview.Show(index);
+        Changed?.Invoke(index);
     }
+
+    // "// soldier · lv 2 · 1 point to spend": the profession behind the mask, so players know who they pick
+    // and that the perk tree has something waiting. Masks without a profession keep their colour name.
+    string NameLine()
+    {
+        ProfessionData profession = professions != null ? professions.ForMask(index) : null;
+        if (profession == null) return IsLocked ? $"// {maskSet.Get(index).name.ToLower()} · locked" : $"// mask: {maskSet.Get(index).name}";
+
+        string line = $"// {profession.Title.ToLower()} · lv {ProfessionProgress.Level(profession)}";
+        int points = ProfessionProgress.PointsLeft(profession);
+        if (points > 0) line += $" · {points} point{(points == 1 ? "" : "s")} to spend";
+        return line;
+    }
+
+    // The perk tree changes levels/points: call this so the line above stays right (e.g. from BACK on the tree slide)
+    public void RefreshName() { if (nameText != null && maskSet != null && maskSet.Count > 0) nameText.text = NameLine(); }
 }

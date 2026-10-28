@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a43f53720f8737468d4afd219df44c2, type: 3}
   m_Name: Hyperthreading
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
-  Title: Hyperthreading
+  Title: Muscle Memory
   Description: +35% attack speed
   Icon: {fileID: 0}
   Weight: 4

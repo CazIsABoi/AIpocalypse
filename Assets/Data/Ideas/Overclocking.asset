@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Overclocking
   m_EditorClassIdentifier: Assembly-CSharp::IdeaData
   Id: Overclocking
-  Title: Overclocking
+  Title: Adrenaline
   Description: Push past the safe limits. High attack speed.
   Icon: {fileID: 0}
   Rarity: 4

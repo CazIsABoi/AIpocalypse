@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a43f53720f8737468d4afd219df44c2, type: 3}
+  m_Name: cr_Sixth Sense
+  m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
+  Title: Sixth Sense
+  Description: Crit chance can go 25% higher (max 100%)
+  Icon: {fileID: 0}
+  Weight: 2
+  Rarity: 4
+  Id: Sixth Sense
+  StartsUnlocked: 0
+  Stat: 18
+  Amount: 0.25

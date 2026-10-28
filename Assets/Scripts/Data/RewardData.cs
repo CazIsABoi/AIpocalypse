@@ -50,7 +50,7 @@ public enum RewardPath { None, Melee, Gun }
 
 // Assets store StatType as numbers: only ever add new values at the END
 public enum StatType { MoveSpeed, MoveSpeedPercent, MaxHealth, Damage, DamagePercent, PickupRadius, BulletAmount, CritDamage, CritChance, BulletPierce, RegenAmount, AttackSpeed, Lifesteal,
-    MeleeDamagePercent, MeleeRange, MeleeSpeedPercent, GunDamagePercent, ProjectileSpeed}
+    MeleeDamagePercent, MeleeRange, MeleeSpeedPercent, GunDamagePercent, ProjectileSpeed, CritChanceCap}
 public enum Rarity { Auto, Common, Uncommon, Rare, Epic, Legendary }
 
 public static class StatNames
@@ -93,6 +93,8 @@ public static class StatNames
                 return "Gun Damage";
             case StatType.ProjectileSpeed:
                 return "Projectile Speed";
+            case StatType.CritChanceCap:
+                return "Crit Chance Cap";
             default:
                 return type.ToString();  
         }
@@ -124,6 +126,7 @@ public static class StatNames
         switch (type)
         {
             case StatType.CritChance:
+            case StatType.CritChanceCap:
             case StatType.CritDamage:
                 return $"{value * 100f:0.#}%";      // 0.2 → "20%", 1.1 → "110%                                         
             case StatType.MaxHealth:
@@ -136,7 +139,7 @@ public static class StatNames
             case StatType.GunDamagePercent:
                 return $"{(1 + value) * 100f:0.#}%"; // 0.2 → "120%", 1.1 → "210%"
             case StatType.Lifesteal:
-                return $"{value * 100f:0.#}%";      // 0.2 → "20%", 1.1 → "110%"
+                return $"{value * 100f:0.##}%";     // 0.0035 → "0.35%" (lifesteal cards are below 1%)
             case StatType.ProjectileSpeed:
                 return $"{(1 + value) * 100f:0.#}%"; // 0.2 → "120%" (it's a bonus on top of the bullet's own speed)
             default:

@@ -91,9 +91,10 @@ partial class RunTelemetry : MonoBehaviour
     // ---------- things other scripts report ----------
     public void CardPicked(RewardData card, List<RewardData> shown, string source)
     {
-        picked.Add(card.Title);
+        // Ids, not Titles: renaming a card must not split its history in the sheet
+        picked.Add(card.Id);
         var names = new List<string>();
-        foreach (var r in shown) if (r != null) names.Add(r.Title);
+        foreach (var r in shown) if (r != null) names.Add(r.Id);
         offered.Add(string.Join(",", names));
         pickSources.Add(source);
     }

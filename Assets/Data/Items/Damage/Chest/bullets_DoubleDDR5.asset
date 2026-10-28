@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a43f53720f8737468d4afd219df44c2, type: 3}
   m_Name: bullets_DoubleDDR5
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
-  Title: Double DDR5 Sticks
+  Title: Bandolier
   Description: Geez, that's expensive. +2 Bullets
   Icon: {fileID: 0}
   Weight: 1

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Parallel Processing
   m_EditorClassIdentifier: Assembly-CSharp::IdeaData
   Id: Parallel Processing
-  Title: Parallel Processing
+  Title: Improvised Arsenal
   Description: Why fire one thought when you can fire many? Extra bullets.
   Icon: {fileID: 0}
   Rarity: 4

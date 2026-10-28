@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a43f53720f8737468d4afd219df44c2, type: 3}
   m_Name: Server Farm
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgrade
-  Title: Server Farm
+  Title: Unbreakable Will
   Description: +150 max HP
   Icon: {fileID: 0}
   Weight: 1

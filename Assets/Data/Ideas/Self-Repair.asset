@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Self-Repair
   m_EditorClassIdentifier: Assembly-CSharp::IdeaData
   Id: Self-Repair
-  Title: Self-Repair
+  Title: Resilience
   Description: A mind that mends itself. Health regeneration.
   Icon: {fileID: 0}
   Rarity: 3

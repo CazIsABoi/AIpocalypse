@@ -2,13 +2,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+// One Idea in the Run Picker's list (a prefab). Click to equip / unequip; locked Ideas show as "???".
 public class IdeaSlot : MonoBehaviour
 {
     [SerializeField] private Button button;
     [SerializeField] private TMP_Text title;
-    [SerializeField] private TMP_Text detail;         
-    [SerializeField] private GameObject equippedMark;  
-    [SerializeField] private CanvasGroup group;       
+    [SerializeField] private TMP_Text detail;          // "6 cards · Hits heal you."
+    [SerializeField] private GameObject equippedMark;  // on while equipped
+    [SerializeField] private CanvasGroup group;        // greys out locked Ideas
 
     public IdeaData Idea { get; private set; }
 
@@ -30,6 +31,7 @@ public class IdeaSlot : MonoBehaviour
             button.interactable = false;
         }
 
+        // hand the button a function to call on click (Setup can run again on the same slot, so clear first)
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(() => onClicked(this));
     }
