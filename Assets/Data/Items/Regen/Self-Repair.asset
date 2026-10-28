@@ -18,6 +18,6 @@ MonoBehaviour:
   Weight: 10
   Rarity: 1
   Id: Self-Repair
-  StartsUnlocked: 0
+  StartsUnlocked: 1
   Stat: 10
   Amount: 0.003

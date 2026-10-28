@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca0135c58692c2e43a32db5be483515b, type: 3}
+  m_Name: Overpenetration
+  m_EditorClassIdentifier: Assembly-CSharp::EffectUpgrade
+  Title: Overpenetration
+  Description: Bullets that destroy an enemy keep going without losing pierce.
+  Icon: {fileID: 0}
+  Weight: 7
+  Rarity: 2
+  Id: Overpenetration
+  StartsUnlocked: 1
+  Effect: 8
+  MaxLevel: 1
+  Path: 2
+  LevelUps: []

@@ -15,30 +15,50 @@ public class EntityHandler : MonoBehaviour
     [SerializeField] private List<GameObject> spawnedEnemies = new List<GameObject>();
     public float SpawnMultiplier = 1f;
     public int Kills { get; private set; }
+
+    [Header("Threat")]
+    [SerializeField] private float floorStep = 1.11f;   // x per floor
+    [SerializeField] private float timeStep = 1.03f;    // x per minute of the whole run
+    [SerializeField] private float stayGrace = 45f;   // seconds on a floor before it starts
+    [SerializeField] private float stayCap = 2f;      // never more than x2 from lingering
+    [SerializeField] private float stayStep = 1.5f;    // x per minute on THIS floor (resets with the core)
+    public float Stay => Mathf.Min(stayCap, Mathf.Pow(stayStep, Mathf.Max(0f, clock.FloorTime - stayGrace) / 60f));
+    [SerializeField] private float xpFloorStep = 1.04f;   // XP per enemy x this per floor (x2.1 at floor 20, x4.6 at 40)
+    [SerializeField, Range(0f, 1f)] private float damageShare = 0.6f;   // damage grows slower than HP
     public void RegisterKill() => Kills++;
+    // Roughly how many enemies spawn per second right now (average wave size / time between waves).
+    // Events use it to scale with the game, e.g. Lockdown's kill target.
+    public float EnemiesPerSecond => (MinSpawnCount + MaxSpawnCount) / 2f / Mathf.Max(0.1f, CurrentSpawnCD / (SpawnMultiplier * Grace(graceSpawnRate)));
 
     [Header("Grace period (new players)")]
-    [SerializeField] private float[] graceSpawnRate = { 0.5f, 0.7f, 0.85f };  // spawn speed on floors 1-3 (1 = normal)
-    [SerializeField] private float[] graceDamage = { 0.5f, 0.7f, 0.85f };     // enemy damage on floors 1-3
+    [SerializeField] private float[] graceSpawnRate = { 0.5f, 0.75f, 0.9f };  // spawn speed on floors 1-3 (1 = normal)
+    [SerializeField] private float[] graceDamage = { 0.6f, 0.8f, 0.9f };      // enemy damage on floors 1-3
     private GameController game;
 
-    [Header("Enemy HP scaling")]
-    [SerializeField] private float preBossHealthGrowth = 1.0034f;  // HP x this per second until the boss (~x2.6 at 5:00, ~x7.5 at 10:00, ~x20 at 15:00)
-    [SerializeField] private float preBossDamageGrowth = 1.0012f;  // damage x this per second until 12:00 (~x1.4 at 5:00, ~x2 at 10:00, ~x2.3 max)
-
     [Header("Endless (after the boss)")]
-    [SerializeField] private float endlessHealthGrowth = 1.08f;   // enemy HP x this per minute...
-    [SerializeField] private float endlessHealthAccel = 0.003f;   // ...and the growth itself speeds up: late minutes scale much harder
-    [SerializeField] private float endlessDamageGrowth = 1.13f;   // enemy damage x this per minute: danger leads, sponginess trails
     [SerializeField] private float eliteInterval = 150f;          // seconds between elites
     [SerializeField] private float eliteHealth = 3f, eliteDamage = 2f, eliteXp = 3f, eliteSize = 1.35f;
     [SerializeField] private Color eliteTint = new Color(1f, 0.35f, 0.3f, 1f);
-    [SerializeField] private Material eliteMapIcon;               // optional: e.g. the bounty's yellow icon
+    [SerializeField] private Material eliteMapIcon;              
     private float eliteTimer;
+    private int floor = 1;
+    public float Threat => FloorFactor() * Mathf.Pow(timeStep, clock.Elapsed / 60f) * Stay;
 
-    float EndlessMinutes => clock.EndlessTime / 60f;
-    // How much harder enemies hit than when endless began (1.0 = just started). Shown as THREAT on the timer.
-    public float Threat => clock.Endless ? Mathf.Pow(endlessDamageGrowth, EndlessMinutes) : 1f;
+    [Header("After the boss")]
+    [SerializeField] private float endlessFloorStep = 1.15f;   // x per floor past the boss (floorStep before it)
+    [SerializeField] private int actLength = 20;               // every this many floors past the boss a new act starts...
+    [SerializeField] private float actJump = 2f;               // ...and threat jumps by this
+    [SerializeField] private float healthPower = 1.2f;         // enemy HP = threat^this, so it outgrows threat (damage uses damageShare)
+
+    int Floor => game != null ? game.Floor : floor;   // a new floor's Core asks before this Update has seen the change
+    int FloorsPastBoss => Mathf.Max(0, Floor - clock.BossFloor);
+    public int Act => FloorsPastBoss > 0 ? 1 + FloorsPastBoss / actLength : 0;   // 0 = before the boss
+
+    float FloorFactor()
+    {
+        int before = Mathf.Min(Floor, clock.BossFloor) - 1;
+        return Mathf.Pow(floorStep, before) * Mathf.Pow(endlessFloorStep, FloorsPastBoss) * Mathf.Pow(actJump, FloorsPastBoss / actLength);
+    }
 
     void Start()
     {
@@ -53,9 +73,10 @@ public class EntityHandler : MonoBehaviour
         return i >= 0 && i < perFloor.Length ? perFloor[i] : 1f;
     }
 
-    // Update is called once per frame
     void Update()
     {
+        if (game != null && floor != game.Floor) floor = game.Floor;
+
         if (!dungeon.IsReady) return;
         SpawnCD -= Time.deltaTime;
 
@@ -90,7 +111,6 @@ public class EntityHandler : MonoBehaviour
             CurrentWeightTableIndex = (int)(GameTime / 30f);
         }
         else CurrentWeightTableIndex = 20;
-        // Debug.Log("Current Index: " + CurrentWeightTableIndex);
 
         if(SpawnCD <= 0 && spawnedEnemies.Count < 100)
         {
@@ -111,7 +131,7 @@ public class EntityHandler : MonoBehaviour
             for (int i = spawnedEnemies.Count - 1; i >= 0; i--)
             {
                 if (spawnedEnemies[i] != null) spawnedEnemies[i].GetComponent<EnemyController>().SpeedBoostIncrease = true;
-                else UpdateEnemyList();
+                else spawnedEnemies.RemoveAt(i);   // UpdateEnemyList() here shrank the list under this loop's index
             }
         }
     }
@@ -137,7 +157,6 @@ public class EntityHandler : MonoBehaviour
         {
             if (RolledWeight >= CurrentWeight && RolledWeight < CurrentWeight + enemies[i].SpawnWeights[CurrentWeightTableIndex])
             {
-                // Debug.Log("Rolled This one");
                 PickedEnemyIndex = i; break;
             }
             else CurrentWeight += enemies[i].SpawnWeights[CurrentWeightTableIndex];
@@ -173,7 +192,7 @@ public class EntityHandler : MonoBehaviour
         spawnedEnemies.Add(spawnedEnemy);
         UpdateEnemyList();
         enemy.MaxHealth = enemies[index].BaseHealth * HealthMultiplier();
-        enemy.Xp = enemies[index].XpValue;
+        enemy.Xp = Mathf.RoundToInt(enemies[index].XpValue * Mathf.Pow(xpFloorStep, floor - 1));
         enemy.Damage = enemies[index].BaseDamage * DamageMultiplier() * Grace(graceDamage);
         AudioManager.Instance?.PlayAt(Sfx.EnemySpawn, pos);   // 3D + long min interval in the AudioManager, so waves don't spam
         return enemy;
@@ -210,39 +229,8 @@ public class EntityHandler : MonoBehaviour
     {
         SpawnCD = 0f;
     }
-    float PreBossDamageMax => Mathf.Pow(preBossDamageGrowth, 700f);   // the value reached at 12:00 (720 - 20 seconds of growth)
 
-    float DamageMultiplier()
-    {
-        if (clock.Endless)
-            return PreBossDamageMax * Mathf.Pow(endlessDamageGrowth, EndlessMinutes);   // continues from where pre-boss stopped
+    float DamageMultiplier() => Mathf.Pow(Threat, damageShare);
 
-        if (GameTime < 20)
-        {
-            return 1f;
-        }
-        else if (GameTime < 720)
-        {
-            return Mathf.Pow(preBossDamageGrowth, GameTime - 20f);
-        }
-        else if (GameTime >= 720)
-        {
-            return PreBossDamageMax;   // flat from 12:00 until the boss
-        }
-        return 1f;
-    }
-
-    // HP keeps growing all the way to the boss, then endless continues from there and accelerates:
-    // exp(a*m + b*m^2): x2.9 after 10 min of endless, x13 after 20, x150 after 30 (on top of the boss value)
-    float HealthMultiplier()
-    {
-        float atBoss = Mathf.Pow(preBossHealthGrowth, Mathf.Max(0f, clock.BossAt - 20f));
-        if (clock.Endless)
-        {
-            float m = EndlessMinutes;
-            return atBoss * Mathf.Exp(Mathf.Log(endlessHealthGrowth) * m + endlessHealthAccel * m * m);
-        }
-        if (GameTime < 20) return 1f;
-        return Mathf.Pow(preBossHealthGrowth, Mathf.Min(GameTime, clock.BossAt) - 20f);
-    }
- }
+    public float HealthMultiplier() => Mathf.Pow(Threat, healthPower);
+}

@@ -33,6 +33,7 @@ partial class DeathStats : MonoBehaviour
         foreach (StatType type in System.Enum.GetValues(typeof(StatType)))
         {
             if (replaced.Contains(type)) continue;
+            if ((type == StatType.Armor || type == StatType.Thorns || type == StatType.BlockChance) && stats.Get(type) <= 0f) continue;   // only once picked
             string name = StatNames.Get(type);
             if (!shown.Add(name)) continue;   // MoveSpeed + MoveSpeedPercent are both "Speed"
             build += $"{name}<pos=60%>{StatNames.Format(type, stats.Get(type))}\n";
@@ -40,17 +41,17 @@ partial class DeathStats : MonoBehaviour
         buildText.text = build;
 
         int m = (int)(clock.Elapsed / 60), s = (int)(clock.Elapsed % 60);
-        text.text = $"TIME SURVIVED  {m:00}:{s:00}\nFLOOR  {game.Floor}\nLEVEL  {stats.Level}\nAIs DESTROYED  {spawner.Kills}";
+        int runScore = ScoreService.Score(clock.Elapsed, game.Floor, spawner.Kills);
+        text.text = $"SCORE  {runScore}\nTIME SURVIVED  {m:00}:{s:00}\nFLOOR  {game.Floor}\nLEVEL  {stats.Level}\nAIs DESTROYED  {spawner.Kills}";
 
-        float best = PlayerPrefs.GetFloat("best_time", 0f);
-        if (best > 0f && clock.Elapsed > best) text.text += "\nNEW BEST!";
-        if (clock.Elapsed > best) { PlayerPrefs.SetFloat("best_time", clock.Elapsed); PlayerPrefs.Save(); }
+        int best = PlayerPrefs.GetInt("best_score", 0);
+        if (best > 0 && runScore > best) text.text += "\nNEW BEST!";
+        if (runScore > best) { PlayerPrefs.SetInt("best_score", runScore); PlayerPrefs.Save(); }
 
         // once per run: Thoughts, telemetry, then the recall sequence
         if (!submitted)
         {
             submitted = true;
-            // calculate thoughts earned based on time survived, kills and floor reached
             // square root = diminishing returns: a 2 min run ~25, a 15 min boss run ~85, a 30 min endless run ~185
             float score = clock.Elapsed * 0.1f + spawner.Kills * 0.5f + game.Floor * 2f;
             int thoughtsEarned = Mathf.RoundToInt(Mathf.Sqrt(score) * 5f);

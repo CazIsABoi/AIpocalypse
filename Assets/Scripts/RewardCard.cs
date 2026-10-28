@@ -34,6 +34,7 @@ public class RewardCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     [Header("Fly in")]
     [SerializeField] float flyTime = 0.35f;
+    [SerializeField] float clickGuard = 0.3f;   // after landing, before the card can be clicked
     [SerializeField] float flyOffset = 900f;        // starts this many pixels below its slot
     [SerializeField]
     AnimationCurve flyCurve = new AnimationCurve(   // ease-out: fast start, soft landing
@@ -69,7 +70,7 @@ public class RewardCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             _ => ""
         };
         title.text = $"{reward.Title}\n<size=60%><alpha=#B3><cspace=0.15em>{reward.GetRarity().ToString().ToUpper()}</cspace><alpha=#FF>{tag}";
-        description.text = ColorSigns(reward.Description);
+        description.text = ColorSigns(stats != null ? reward.GetDescription(stats) : reward.Description);
         change.text = stats != null ? reward.GetPreview(stats) : "";
 
         Color top = style.gradient.Evaluate(0f);
@@ -137,6 +138,8 @@ public class RewardCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             yield return null;
         }
         visual.anchoredPosition = Vector2.zero;
+        // Players are often mid-click (shooting) when the screen opens: a short wait so that click can't pick a card
+        for (float g = 0; g < clickGuard; g += Time.unscaledDeltaTime) yield return null;
         button.interactable = !locked;
     }
 
@@ -224,7 +227,8 @@ public class RewardCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     void Update()
     {
         // Root scale eases toward its target. 1 - Exp(-speed * dt) = same feel at any frame rate.
-        float target = locked ? targetScale : (hovered ? hoverScale : 1f);
+        bool focused = button != null && EventSystem.current != null && EventSystem.current.currentSelectedGameObject == button.gameObject;   // controller: the selected card grows like a hovered one
+        float target = locked ? targetScale : (hovered || focused ? hoverScale : 1f);
         float k = 1f - Mathf.Exp(-scaleSpeed * Time.unscaledDeltaTime);
         transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one * target, k);
 

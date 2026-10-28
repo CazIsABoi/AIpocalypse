@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8cd26653a214259b06f5679417d7e74, type: 3}
+  m_Name: Expanded Memory
+  m_EditorClassIdentifier: Assembly-CSharp::IdeaData
+  Id: Expanded Memory
+  Title: Expanded Memory
+  Description: More room to think. Bring one more Idea into every run.
+  Icon: {fileID: 0}
+  Rarity: 5
+  Cards: []
+  AlwaysInPool: 1
+  Requires: {fileID: 0}
+  UnlockedByAchievement: 0
+  AddsSlot: 1
+  OfferedAt: 0.25

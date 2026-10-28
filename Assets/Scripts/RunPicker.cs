@@ -30,10 +30,11 @@ public class RunPicker : MonoBehaviour
             // one slot per Idea, and start from last run's loadout (if those Ideas are still unlocked)
             foreach (var idea in ideas.Ideas)
             {
+                if (idea == null || idea.AddsSlot) continue;   // nothing to equip: it only raised MaxSlots
                 var slot = Instantiate(slotPrefab, listParent);
                 slots.Add(slot);
                 bool unlocked = Progress.IsUnlocked(idea);
-                bool isEquipped = RunLoadout.IsEquipped(idea) && unlocked;
+                bool isEquipped = RunLoadout.IsEquipped(idea) && unlocked && !idea.AlwaysInPool;
                 if (isEquipped)
                     equipped.Add(idea);
                 slot.Setup(idea, unlocked, OnSlotClicked);
@@ -74,12 +75,12 @@ public class RunPicker : MonoBehaviour
     public void Surprise()
     {
         equipped.Clear();
-        List<IdeaData> unlocked = ideas.Ideas.FindAll(idea => idea != null && Progress.IsUnlocked(idea));   // a copy: removing from it never touches the asset
+        List<IdeaData> unlocked = ideas.Ideas.FindAll(idea => idea != null && !idea.AlwaysInPool && Progress.IsUnlocked(idea));   // a copy: removing from it never touches the asset
         while (equipped.Count < RunLoadout.MaxSlots && unlocked.Count > 0)
         {
             int rand = Random.Range(0, unlocked.Count);
             equipped.Add(unlocked[rand]);
-            unlocked.RemoveAt(rand);   // can't be picked twice
+            unlocked.RemoveAt(rand);
         }
         Refresh();
     }
@@ -96,7 +97,7 @@ public class RunPicker : MonoBehaviour
     {
         if (masks.IsLocked) return;   // the button is greyed out, but Enter/gamepad could still press it
         masks.Apply();
-        RunLoadout.Set(equipped);
+        RunLoadout.Set(equipped, ideas.Ideas);
         SceneManager.LoadScene(mainScene);
     }
 }

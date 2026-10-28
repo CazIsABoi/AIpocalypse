@@ -684,9 +684,12 @@ MonoBehaviour:
   baseHealth: 200
   perFloor: 0.35
   perMinute: 0.05
-  bulletDamageMultiplier: 0.1
+  endlessHealthShare: 0.5
+  bulletDamageMultiplier: 0.25
   DamagePopup: {fileID: 3937980857255322814, guid: 0e3792d5caef44f4494d3b453acbd366, type: 3}
+  popupOffset: {x: 2.2, y: 2.5, z: 0}
   popupSumWindow: 0.5
+  discoverDistance: 10
 --- !u!65 &7900748274156152609
 BoxCollider:
   m_ObjectHideFlags: 0

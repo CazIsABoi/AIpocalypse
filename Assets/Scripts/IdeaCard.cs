@@ -44,7 +44,8 @@ public class IdeaCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         description.text = idea.Description;
         string names = "";
         foreach (var card in idea.Cards) if (card != null) names += $"\n{card.Title}";
-        cardList.text = $"<size=80%><alpha=#B3>UNLOCKS {idea.Cards.Count} CARDS</size><alpha=#FF>{names}";
+        cardList.text = idea.AddsSlot ? "<size=80%><alpha=#B3>EXPANDS YOUR MIND</size><alpha=#FF>\n+1 IDEA SLOT"
+                                      : $"<size=80%><alpha=#B3>UNLOCKS {idea.Cards.Count} CARDS</size><alpha=#FF>{names}";
 
         Color top = style.gradient.Evaluate(0f);
         gradient.Set(top, style.gradient.Evaluate(1f));
@@ -100,7 +101,8 @@ public class IdeaCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     void Update()
     {
-        float target = locked ? targetScale : (hovered ? hoverScale : 1f);
+        bool focused = button != null && EventSystem.current != null && EventSystem.current.currentSelectedGameObject == button.gameObject;   // controller: the selected card grows like a hovered one
+        float target = locked ? targetScale : (hovered || focused ? hoverScale : 1f);
         float k = 1f - Mathf.Exp(-scaleSpeed * Time.unscaledDeltaTime);
         transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one * target, k);
 

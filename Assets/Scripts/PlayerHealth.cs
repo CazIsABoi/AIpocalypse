@@ -48,7 +48,7 @@ public class PlayerHealth : MonoBehaviour
 
         regenTimer = Mathf.Max(0f, regenTimer - Time.deltaTime);
         bool paused = regenTimer > 0f;
-        float rate = paused ? pausedRegenFactor : 1f;          // the ternary picks one of two values
+        float rate = paused ? pausedRegenFactor : 1f;
 
         if (!IsDead && Health < MaxHealth)
             Heal(stats.MaxHealth * stats.regenAmount * rate * Time.deltaTime, false);
@@ -58,10 +58,39 @@ public class PlayerHealth : MonoBehaviour
 
     public string LastHitBy { get; private set; } = "Unknown";   // for death telemetry
 
+    public event System.Action Blocked;                       // a hit was blocked completely
+
+    // Enemy attacks pass themselves as 'attacker' so Thorns can hit back
+    public void TakeDamage(float amount, string source, EnemyController attacker)
+    {
+        if (IsDead) return;
+        if (attacker != null && stats.Thorns > 0f)
+        {
+            float thorns = stats.Damage * stats.Thorns;
+            attacker.TakeDamage(thorns, 0f, 1f);   // counts as an Effect hit (no crit, no lifesteal), and on the DPS meter
+            RunTelemetry.Instance?.ThornsDealt(thorns);
+        }
+        TakeDamage(amount, source);
+    }
+
     public void TakeDamage(float amount, string source)
     {
-        if (!IsDead && invulnerableTimer <= 0f && !string.IsNullOrEmpty(source)) LastHitBy = source;
-        else if (!IsDead && amount > windowDamage && !string.IsNullOrEmpty(source)) LastHitBy = source;   // bigger hit in the window
+        if (IsDead) return;
+        // Armor: every hit is cut by the same share, so it stays useful when enemies scale up
+        float reduced = amount * stats.ArmorMultiplier;
+        if (invulnerableTimer > 0f && reduced <= windowDamage) return;   // the i-frames ignore it anyway: no block roll, no telemetry
+        // Block: the whole hit is ignored (no i-frames start, regen keeps going)
+        if (stats.BlockChance > 0f && Random.value < stats.BlockChance)
+        {
+            Blocked?.Invoke();
+            RunTelemetry.Instance?.HitBlocked(reduced);
+            return;
+        }
+        RunTelemetry.Instance?.ArmorPrevented(amount - reduced);
+        amount = reduced;
+
+        if (invulnerableTimer <= 0f && !string.IsNullOrEmpty(source)) LastHitBy = source;
+        else if (amount > windowDamage && !string.IsNullOrEmpty(source)) LastHitBy = source;   // bigger hit in the window
         TakeDamage(amount);
     }
 
@@ -70,7 +99,7 @@ public class PlayerHealth : MonoBehaviour
         if (IsDead) return;
         if (invulnerableTimer > 0f)
         {
-            if (amount <= windowDamage) return;     // smaller or equal hit: blocked, as before
+            if (amount <= windowDamage) return;     // smaller or equal hit: ignored
             float extra = amount - windowDamage;    // bigger hit: only the part above what you already took
             windowDamage = amount;
             amount = extra;                         // then continue as a normal hit with 'extra'

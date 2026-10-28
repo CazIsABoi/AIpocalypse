@@ -14,12 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IdeaData
   Id: Self-Repair
   Title: Resilience
-  Description: A mind that mends itself. Health regeneration.
+  Description: A mind that mends itself. Stronger health regeneration.
   Icon: {fileID: 0}
   Rarity: 3
   Cards:
-  - {fileID: 11400000, guid: f981a531c318407ca8b95460948f9afd, type: 2}
-  - {fileID: 11400000, guid: a4c2b485c94f44c092e55e492c4e4d8d, type: 2}
   - {fileID: 11400000, guid: b84331b7aaae4bae961f3ad50b013618, type: 2}
   - {fileID: 11400000, guid: 93fb561cc48444fb928f36d30d4c5c5d, type: 2}
   - {fileID: 11400000, guid: ebe588dd81b9478191723dc02787e9e1, type: 2}

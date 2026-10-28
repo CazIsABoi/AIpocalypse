@@ -143,7 +143,7 @@ MonoBehaviour:
   Bounces: 0
   wallLayers:
     serializedVersion: 2
-    m_Bits: 129
+    m_Bits: 4289
   bounceLifetime: 0.4
 --- !u!96 &-8172137948295864796
 TrailRenderer:

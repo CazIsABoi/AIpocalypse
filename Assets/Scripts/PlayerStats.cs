@@ -7,6 +7,8 @@ public class PlayerStats : MonoBehaviour
     public float flatSpeed;
     public float speedPercent;
     public float Speed => CalcSpeed(flatSpeed, speedPercent);
+    [SerializeField] private float speedSoftCap = 3f;   // bonus speed approaches +300% of BaseSpeed, never reaches it (telemetry: 126 speed = 16x)
+    public float RawSpeed => (BaseSpeed + flatSpeed) * (1f + speedPercent);   // telemetry: before the soft cap
     public float baseDamage = 10f;
     private float flatDamage;        // sum of all "+X damage" upgrades
     private float damagePercent;     // sum of all "+X% damage" upgrades (0.1 = 10%)
@@ -23,13 +25,28 @@ public class PlayerStats : MonoBehaviour
     public int BulletPierce;
     public float ProjectileSpeed;   // bonus: 0 = normal speed, 0.2 = +20%, 1 = double
 
-    public float pickupRange = 3;
+    public float pickupRange = 3;   // raw: every pickup card added up
+    [SerializeField] private float pickupSoftCap = 15f;   // extra range slowly approaches this, never reaches it (telemetry: 84 range = the whole floor)
+    public float PickupRange => BasePickup + Soft(pickupRange - BasePickup, pickupSoftCap);
+    private float basePickupRange = -1f;
+    public float PickupBonus => PickupRange - BasePickup;   // what cards added (after the soft cap)
     public float regenAmount = 0.01f; // fraction of max HP per second (0.01 = 1%/s)
     public event System.Action<StatType> StatsChanged;
     public float AttackSpeed;
     public float Lifesteal; // fraction of damage dealt that is returned as health (0.01 = 1% of damage dealt)
     [SerializeField] private float lifestealCap = 0.15f; // cap at 15% lifesteal
+    public float MeleeLifesteal;                               // extra lifesteal on melee hits only (adds to Lifesteal)
+    [SerializeField] private float meleeLifestealCap = 0.1f;
     [SerializeField] private float regenCap = 0.04f;     // cap at 4% max HP per second
+
+    [Header("Defense")]
+    public float Armor;                                          // points: 25 armor = 20% less damage, 100 = 50%, never 100%
+    [SerializeField] private float armorScale = 100f;            // the armor that halves damage
+    public const float MaxArmorReduction = 0.6f;                 // armor never blocks more than 60% of a hit (long runs stack a lot)
+    public float ArmorMultiplier => Mathf.Max(1f - MaxArmorReduction, armorScale / (armorScale + Mathf.Max(0f, Armor)));   // what's left of a hit
+    public float Thorns;                                         // enemies that hit you take this x Damage (1 = 100%)
+    public float BlockChance;                                    // 0.1 = 10% of hits are ignored completely
+    [SerializeField] private float blockChanceCap = 0.5f;
 
     [Header("Build paths")]
     public float meleeDamagePercent;     // melee only (0.15 = +15%)
@@ -56,7 +73,6 @@ public class PlayerStats : MonoBehaviour
 
     public void AddXp(int amount)
     {
-        // Debug.Log($"AddXp({amount}) → {Xp + amount}/{XpToNext}");
         Xp += amount;
         while (Xp >= XpToNext)
         {
@@ -94,6 +110,7 @@ public class PlayerStats : MonoBehaviour
                 damagePercent += amount;
                 break;
             case StatType.PickupRadius:
+                if (basePickupRange < 0f) basePickupRange = pickupRange;   // first change: remember the starting range
                 pickupRange += amount;
                 break;
             case StatType.BulletAmount:
@@ -124,6 +141,10 @@ public class PlayerStats : MonoBehaviour
             case StatType.GunDamagePercent: gunDamagePercent += amount; break;
             case StatType.MeleeRange: meleeRange = Mathf.Min(meleeRangeCap, meleeRange + amount); break;
             case StatType.ProjectileSpeed: ProjectileSpeed += amount; break;
+            case StatType.MeleeLifesteal: MeleeLifesteal = Mathf.Min(meleeLifestealCap, MeleeLifesteal + amount); break;
+            case StatType.Armor: Armor += amount; break;
+            case StatType.Thorns: Thorns = Mathf.Max(0f, Thorns + amount); break;
+            case StatType.BlockChance: BlockChance = Mathf.Clamp(BlockChance + amount, 0f, blockChanceCap); break;
             case StatType.CritChanceCap:
                 critChanceCap = Mathf.Min(1f, critChanceCap + amount);
                 if (critGathered < 0f) critGathered = CritChance;
@@ -151,7 +172,7 @@ public class PlayerStats : MonoBehaviour
             case StatType.DamagePercent:
                 return CalcDamage(flatDamage, damagePercent);
             case StatType.PickupRadius:
-                return pickupRange;
+                return PickupRange;
             case StatType.CritDamage:
                 return CritDamage;
             case StatType.CritChance:
@@ -172,6 +193,10 @@ public class PlayerStats : MonoBehaviour
             case StatType.MeleeRange: return MeleeRadius;
             case StatType.ProjectileSpeed: return ProjectileSpeed;
             case StatType.CritChanceCap: return critChanceCap;
+            case StatType.MeleeLifesteal: return MeleeLifesteal;
+            case StatType.Armor: return Armor;
+            case StatType.Thorns: return Thorns;
+            case StatType.BlockChance: return BlockChance;
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 return 0f;
@@ -193,7 +218,7 @@ public class PlayerStats : MonoBehaviour
             case StatType.DamagePercent:
                 return CalcDamage(flatDamage, damagePercent + amount);
             case StatType.PickupRadius:
-                return pickupRange + amount;
+                return BasePickup + Soft(pickupRange + amount - BasePickup, pickupSoftCap);
             case StatType.CritDamage:
                 return CritDamage + amount;
             case StatType.CritChance:
@@ -215,6 +240,10 @@ public class PlayerStats : MonoBehaviour
             case StatType.GunDamagePercent: return gunDamagePercent + amount;
             case StatType.MeleeRange: return meleeBaseRadius + Mathf.Min(meleeRangeCap, meleeRange + amount);
             case StatType.ProjectileSpeed: return ProjectileSpeed + amount;
+            case StatType.MeleeLifesteal: return Mathf.Min(meleeLifestealCap, MeleeLifesteal + amount);
+            case StatType.Armor: return Armor + amount;
+            case StatType.Thorns: return Mathf.Max(0f, Thorns + amount);
+            case StatType.BlockChance: return Mathf.Clamp(BlockChance + amount, 0f, blockChanceCap);
             default:
                 Debug.LogError($"Unknown stat type: {type}");
                 return 0f;
@@ -228,12 +257,34 @@ public class PlayerStats : MonoBehaviour
             case StatType.CritChance: return CritChance >= critChanceCap - 0.0001f;   // 75% unless the cap was raised
             case StatType.CritChanceCap: return critChanceCap >= 1f - 0.0001f;
             case StatType.Lifesteal: return Lifesteal >= lifestealCap - 0.0001f;
+            case StatType.MeleeLifesteal: return MeleeLifesteal >= meleeLifestealCap - 0.0001f;
             case StatType.RegenAmount: return regenAmount >= regenCap - 0.0001f;
             case StatType.MeleeRange: return meleeRange >= meleeRangeCap - 0.0001f;
+            case StatType.BlockChance: return BlockChance >= blockChanceCap - 0.0001f;
+            case StatType.Armor: return ArmorMultiplier <= 1f - MaxArmorReduction + 0.0001f;
             default: return false;
         }
     }
 
+    // Share of a card's amount that actually arrives after the soft caps (1 = all of it)
+    public float Efficiency(StatType type, float amount)
+    {
+        if (amount <= 0f) return 1f;
+        float nominal = type switch
+        {
+            StatType.MoveSpeed => amount * (1f + speedPercent),
+            StatType.MoveSpeedPercent => (BaseSpeed + flatSpeed) * amount,
+            StatType.PickupRadius => amount,
+            _ => 0f
+        };
+        return nominal <= 0f ? 1f : (Preview(type, amount) - Get(type)) / nominal;
+    }
+
     float CalcDamage(float flat, float percent) => (baseDamage + flat) * (1f + percent);
-    float CalcSpeed(float flat, float percent) => (BaseSpeed + flat) * (1f + percent);
+    float CalcSpeed(float flat, float percent) => BaseSpeed + Soft((BaseSpeed + flat) * (1f + percent) - BaseSpeed, BaseSpeed * speedSoftCap);
+
+    // Diminishing returns: small bonuses count almost fully, big ones less and less, never above 'cap'.
+    // e.g. cap 24: +8 -> +6, +24 -> +12, +118 -> +20. Losses (negative bonus) count fully.
+    static float Soft(float bonus, float cap) => bonus <= 0f ? bonus : bonus / (1f + bonus / cap);
+    float BasePickup => basePickupRange < 0f ? pickupRange : basePickupRange;
 }

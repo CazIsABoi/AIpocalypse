@@ -47,7 +47,7 @@ public class UnlockScreen : MonoBehaviour
     {
         unlocked.Clear();
         foreach (var card in newCards) if (card != null) unlocked.Add(card);
-        if (unlocked.Count == 0) { onClosed?.Invoke(); return; }   // nothing to show
+        if (unlocked.Count == 0) { onClosed?.Invoke(); return; }
 
         revealed.Clear();
         closed = onClosed;

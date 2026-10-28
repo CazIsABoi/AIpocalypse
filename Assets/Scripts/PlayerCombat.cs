@@ -18,25 +18,25 @@ public class PlayerCombat : MonoBehaviour
     private OverloadDischarge overload;
 
     [SerializeField] private GameObject RiflePivot;
-    [SerializeField] private GameObject RifleMuzzle;        // Its shooting Point.
+    [SerializeField] private GameObject RifleMuzzle;
 
     [SerializeField] private Animator animator;
     public int BulletAmount = 1;
     public int BulletPierce = 1;
     [SerializeField] private GameObject BulletPrefab;
-    [SerializeField] private float FirearmBaseCooldown = 0.2f;   // Will be 0.2
+    [SerializeField] private float spreadAngle = 8f;   // extra bullets fan out this many degrees apart, alternating sides
+    [SerializeField] private int maxVolley = 16;       // more bullets than this: fire this many, each hitting harder, over the same fan width (1000 bullets alive was tanking the frame rate)
+    [SerializeField] private float FirearmBaseCooldown = 0.2f;
     [SerializeField] private float FirearmCooldown;
     [SerializeField] private float CurrentFirearmCooldown;
 
-    [SerializeField] private float MeleeBaseCooldown = 0.5f;   // Will be 0.5
+    [SerializeField] private float MeleeBaseCooldown = 0.5f;
     [SerializeField] private float MeleeCooldown;
     [SerializeField] private float CurrentMeleeCooldown;
     [SerializeField] private List<GameObject> hitEnemies = new List<GameObject>();
 
     public float MeleeDamage;
     public float RangedDamage;
-    //public float CritChance = 0.1f;        // 0 -> 1, aka 0 -> 100%, 10% by default
-    //public float CritDamage = 2f;          // Multiplies Damage Upright, 2f is 2x damage, 3f is 3x damage
 
     void Awake()
     {
@@ -47,7 +47,6 @@ public class PlayerCombat : MonoBehaviour
         if (effects == null) effects = gameObject.AddComponent<PlayerEffects>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Time.timeScale == 0f) return;
@@ -55,15 +54,14 @@ public class PlayerCombat : MonoBehaviour
         Quaternion rotation = Quaternion.LookRotation(direction);
         RiflePivot.transform.rotation = rotation;
 
-        //Debug.DrawLine(transform.position, GetMouseWorldPosition(), Color.red);
         Debug.DrawLine(transform.position, transform.position + CalculateAimingDirection() * 1.25f);
         
         MeleeCooldown = MeleeBaseCooldown / Mathf.Max(0.2f, 1f + stats.AttackSpeed + stats.meleeSpeedPercent);   // shared + melee-only speed
         MeleeDamage = stats.MeleeHit;          // Damage x 4 x Melee Damage % (PlayerStats)
         if (CurrentMeleeCooldown > 0) CurrentMeleeCooldown -= Time.deltaTime;
 
-        FirearmCooldown = FirearmBaseCooldown / (1f + stats.AttackSpeed);  // Add all multipliers here
-        RangedDamage = stats.GunHit;           // Damage x Gun Damage % (PlayerStats)         // Add melee damage multipliers here. 5 dmg per bullet by default, 25 dps, melee is 40.
+        FirearmCooldown = FirearmBaseCooldown / (1f + stats.AttackSpeed);
+        RangedDamage = stats.GunHit;           // Damage x Gun Damage % (PlayerStats), melee is 40.
         if (CurrentFirearmCooldown > 0) CurrentFirearmCooldown -= Time.deltaTime;
         if (shootLock > 0) shootLock -= Time.deltaTime;
 
@@ -77,12 +75,8 @@ public class PlayerCombat : MonoBehaviour
                 animator.SetBool("IsAttacking", true);
                 CurrentMeleeCooldown = MeleeCooldown;
                 shootLock = MeleeCooldown * meleeShootLock;   // no shooting during the swing (it lasts ~one cooldown)
-                CancelInvoke(nameof(ShootGun));                // and stop a burst that was already queued
 
                 animator.GetComponentInChildren<Animator>().SetFloat("SlashSpeedVisual", 0.5f / MeleeCooldown);
-                //RiflePivot.GetComponentInChildren<Animator>().SetFloat("MeleeSpeed", 0.5f / MeleeCooldown);
-                //RiflePivot.GetComponentInChildren<Animator>().SetBool("IsSlashing", true);
-                //RiflePivot.GetComponentInChildren<Animator>().Play("RifleSlash");
 
                 AudioManager.Instance.Play(Sfx.Melee);
 
@@ -99,7 +93,7 @@ public class PlayerCombat : MonoBehaviour
                         hitAny = true;
                         amount = enemy.TakeDamage(MeleeDamage, stats.CritChance, stats.CritDamage);   // enemies: with crits
                         if (amount > MeleeDamage) crit = true;   // damage dealt above normal = it was a crit
-                        amount = amount * stats.Lifesteal; // Lifesteal: heal for a percentage of the damage dealt
+                        amount = amount * (stats.Lifesteal + stats.MeleeLifesteal); // Lifesteal (+ melee-only lifesteal): heal for a percentage of the damage dealt
                         health.HealLifesteal(Mathf.Clamp(amount, 0f, Mathf.Max(0f, healthBefore))); // never more than the enemy had, never negative (enemy already dead this frame)
                         CameraShake.Instance?.Add(0.2f);
                         CombatEvents.Hit(enemy, healthBefore - enemy.Health, HitSource.Melee);
@@ -120,7 +114,6 @@ public class PlayerCombat : MonoBehaviour
         else if (!RightClick.action.IsPressed())
         {
             if (CurrentMeleeCooldown < 0) CurrentMeleeCooldown = 0;
-            //RiflePivot.GetComponentInChildren<Animator>().SetBool("IsSlashing", false);
             animator.SetBool("IsAttacking", false);
         }
 
@@ -129,7 +122,11 @@ public class PlayerCombat : MonoBehaviour
             if (CurrentFirearmCooldown <= 0)
             {
                 CurrentFirearmCooldown = FirearmCooldown;
-                for(int i = 0; i < BulletAmount; i++) Invoke(nameof(ShootGun), (i * 0.08f) / (1f + stats.AttackSpeed));
+                int wanted = Mathf.Max(1, BulletAmount);
+                int count = Mathf.Min(wanted, Mathf.Max(1, maxVolley));
+                float damageScale = (float)wanted / count;
+                float step = count > 1 ? spreadAngle * (wanted - 1) / (count - 1) : 0f;
+                for (int i = 0; i < count; i++) ShootGun(i, step, damageScale);
             }
         }
         else if (!LeftClick.action.IsPressed())
@@ -137,39 +134,24 @@ public class PlayerCombat : MonoBehaviour
             if (CurrentFirearmCooldown < 0) CurrentFirearmCooldown = 0;
         }
     }
-    public void ShootGun()
+    // Bullet 0 goes straight, the rest fan out: +1 step, -1 step, +2 steps, -2 steps...
+    void ShootGun(int index, float step, float damageScale)
     {
         GameObject shotBullet = Instantiate(BulletPrefab, RifleMuzzle.transform.position, Quaternion.identity);
         ProjectileController c = shotBullet.GetComponent<ProjectileController>();
-        c.Direction = CalculateAimingDirection();
-        c.Damage = RangedDamage;
-        c.BulletPierce = Mathf.Max(1, BulletPierce);   // was never passed on: pierce cards did nothing (0 = bullet hits nothing)
+        float angle = (index + 1) / 2 * step * (index % 2 == 1 ? 1f : -1f);
+        c.Direction = Quaternion.Euler(0f, angle, 0f) * CalculateAimingDirection();
+        c.Damage = RangedDamage * damageScale;
+        c.BulletPierce = Mathf.Max(1, BulletPierce);   // 0 = bullet hits nothing
         c.CritChance = stats.CritChance;
         c.CritDamage = stats.CritDamage;
         c.Owner = health;
         c.Lifesteal = stats.Lifesteal;
-        c.BulletSpeed = c.BulletSpeed * (1f + stats.ProjectileSpeed);   // projectile speed multiplier
+        c.BulletSpeed = c.BulletSpeed * (1f + stats.ProjectileSpeed);
         c.Bounces = effects.Level(EffectType.Ricochet);                 // 1 bounce per Ricochet level
-        AudioManager.Instance.Play(Sfx.Shoot);
+        c.Overpenetrate = effects.Level(EffectType.Overpenetration) > 0;
+        c.FragmentLevel = effects.Level(EffectType.Fragmentation);
+        if (index == 0) AudioManager.Instance.Play(Sfx.Shoot);
     }
-    private Vector3 CalculateAimingDirection()
-    {
-        Vector3 mousePos = GetMouseWorldPosition();
-        mousePos.y = 0;
-        Vector3 aimDirection = (mousePos - new Vector3(transform.position.x, 0, transform.position.z)).normalized;
-        return aimDirection;
-    }
-    private Vector3 GetMouseWorldPosition()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(
-            Mouse.current.position.ReadValue()
-        );
-
-        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
-
-        if (groundPlane.Raycast(ray, out float distance))
-            return ray.GetPoint(distance);
-
-        return Vector3.zero;
-    }
+    private Vector3 CalculateAimingDirection() => Aim.Direction(transform.position);   // mouse or right stick
 }

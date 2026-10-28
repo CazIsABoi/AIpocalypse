@@ -4,7 +4,6 @@ public class MindBarrierCore : MonoBehaviour, IDamageable
 {
 
     [SerializeField] private float maxHealth = 5000f;
-    //[SerializeField] private float baseHealth = 5000f;
     [SerializeField] private GameObject DamagePopup;
     private float health;
     public bool destroyed;
@@ -20,13 +19,11 @@ public class MindBarrierCore : MonoBehaviour, IDamageable
 
     [SerializeField] private float ShieldEnergyPulseInterval;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         health = maxHealth;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!BarrierActive)
@@ -65,7 +62,7 @@ public class MindBarrierCore : MonoBehaviour, IDamageable
         if (amount <= 0f) return;   // barrier still up: no "0" popup spam
         GameObject spawnedPopup = Instantiate(DamagePopup, transform.position, Quaternion.identity);
         spawnedPopup.GetComponent<DamagePopup>().TargetPosition = transform.position + new Vector3(0, 3.5f, 0);
-        spawnedPopup.GetComponent<DamagePopup>().PopupDisplayContent = ((int)amount).ToString();
+        spawnedPopup.GetComponent<DamagePopup>().PopupDisplayContent = StatNames.Compact((int)amount);
 
         AudioManager.Instance?.Play(Sfx.CoreHit);
     }

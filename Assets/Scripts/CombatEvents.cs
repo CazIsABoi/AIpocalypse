@@ -12,8 +12,17 @@ static partial class CombatEvents
     public static event System.Action<EnemyController, float, HitSource> EnemyHit;   // (enemy, damage dealt, source)
     public static event System.Action<Vector3> EnemyKilled;                           // where it died (any cause)
     public static event System.Action<Vector3, bool> MeleeSwung;                      // (swing centre, hit anything?)
+    public static event System.Action<HitSource> EnemyKilledBy;                      // what landed the killing blow (achievements)
 
-    public static void Hit(EnemyController enemy, float damage, HitSource source) => EnemyHit?.Invoke(enemy, damage, source);
-    public static void Killed(Vector3 position) => EnemyKilled?.Invoke(position);
+    public static void Hit(EnemyController enemy, float damage, HitSource source)
+    {
+        enemy.LastHitSource = source;   // TakeDamage set it to Effect; the gun/melee that reported this hit overrides it
+        EnemyHit?.Invoke(enemy, damage, source);
+    }
+    public static void Killed(Vector3 position, HitSource source)
+    {
+        EnemyKilled?.Invoke(position);
+        EnemyKilledBy?.Invoke(source);
+    }
     public static void Swung(Vector3 centre, bool hitAny) => MeleeSwung?.Invoke(centre, hitAny);
 }

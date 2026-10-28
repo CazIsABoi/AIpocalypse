@@ -9,9 +9,10 @@ public partial class ProfessionApplier : MonoBehaviour
     [SerializeField] private ProfessionSet professions;   // Data/Professions/AllProfessions
 
     [Header("XP per run")]
-    [SerializeField] private float xpPerMinute = 10f;
-    [SerializeField] private float xpPerKill = 0.2f;
-    [SerializeField] private float xpPerFloor = 5f;
+    [SerializeField] private float xpPerMinute = 3f;
+    [SerializeField] private float xpPerKill = 0.02f;
+    [SerializeField] private float xpPerFloor = 15f;
+    [SerializeField] private float runXpCap = 350f;   // diminishing returns: one run can never give more than this
 
     public static ProfessionData Current { get; private set; }   // the profession of THIS run 
 
@@ -59,15 +60,23 @@ public partial class ProfessionApplier : MonoBehaviour
         }
     }
 
+    // Telemetry sends on the death screen, which can open before OnDied runs: it awards first so the XP is in the row
+    public static void AwardNow() => FindAnyObjectByType<ProfessionApplier>()?.OnDied();
+
+    bool awarded;
+
     void OnDied()
     {
-        if (Current == null) return;
-        // a 2-minute run (25 kills, floor 1) is ~30 XP, a 15-minute run ~270 XP
+        if (Current == null || awarded) return;
+        awarded = true;
         float minutes = FindAnyObjectByType<RunClock>().Elapsed / 60f;   // float: a 2.5-minute run counts as 2.5, not 2 or 3
         int kills = FindAnyObjectByType<EntityHandler>().Kills;
         int floor = FindAnyObjectByType<GameController>().Floor;
-        int xp = Mathf.RoundToInt(minutes * xpPerMinute + kills * xpPerKill + floor * xpPerFloor);
+        float raw = minutes * xpPerMinute + kills * xpPerKill + floor * xpPerFloor;
+        // Diminishing returns: almost 1:1 for short runs, then flattening toward runXpCap.
+        // With 350: 4 min / floor 5 (~90 raw) -> ~78, 25 min / floor 20 (~415) -> ~245, a long endless run -> ~350
+        int xp = Mathf.RoundToInt(runXpCap * (1f - Mathf.Exp(-raw / runXpCap)));
         int levelsGained = ProfessionProgress.AddXp(Current, xp);
-        Debug.Log($"Run XP: {xp}, Levels Gained: {levelsGained}");
+        RunTelemetry.Instance?.ProfessionXp(xp);
     }
 }

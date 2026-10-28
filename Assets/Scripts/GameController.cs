@@ -30,7 +30,7 @@ public class GameController : MonoBehaviour
         playerHealth.Died += OnPlayerDied;
     } 
     void OnDisable() {
-        dungeon.Generated -= OnDungeonReady;   // stop listening
+        dungeon.Generated -= OnDungeonReady;
         playerHealth.Died -= OnPlayerDied;
     }
 
@@ -61,6 +61,7 @@ public class GameController : MonoBehaviour
     public void NextFloor()
     {
         if (playerHealth.IsDead) return;
+        if (FindAnyObjectByType<RunClock>().TryStartBoss(Floor)) return;   // don't change floor if the boss is starting
         director.OnFloorChanged(Floor);   // stop any running event
         StartCoroutine(NextFloorRoutine());
     }
@@ -72,21 +73,21 @@ public class GameController : MonoBehaviour
         while (fade.alpha < 1f)
         {
             fade.alpha += Time.unscaledDeltaTime / 0.4f;       // fade alpha 0 → 1 over ~0.4 s
-            yield return null;                                  // wait for next frame
+            yield return null;
         }
 
         Floor++;
         FloorChanged?.Invoke(Floor);
         dungeon.SetFloor(Floor);
         dungeon.Regenerate();
-        yield return new WaitUntil(() => dungeon.IsReady);     // wait for generation to finish
+        yield return new WaitUntil(() => dungeon.IsReady);
         AudioManager.Instance?.Play(Sfx.FloorComplete);                // new floor is ready, plays as the screen fades back in
 
         // fade alpha 1 → 0 the same way
         while (fade.alpha > 0f)
         {
-            fade.alpha -= Time.unscaledDeltaTime / 0.4f;       // fade alpha 1 → 0 over ~0.4 s
-            yield return null;                                  // wait for next frame
+            fade.alpha -= Time.unscaledDeltaTime / 0.4f;
+            yield return null;
         }
 
         GamePause.Remove(PauseReason.FloorChange);             // still paused if something else (death, level-up) is active

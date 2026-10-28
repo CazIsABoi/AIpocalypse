@@ -17,6 +17,8 @@ public class EventDirector : MonoBehaviour
     [SerializeField] private float minWaitTime = 60f;
     [SerializeField] private float maxWaitTime = 90f;
     [SerializeField] private float textShowDuration;
+    [SerializeField] private float endlessWaitScale = 0.5f;   // after the boss events come twice as often
+    private RunClock clock;
     private bool firstEvent = true;
     private GameEvent current;
     public float NextEventIn { get; private set; }     
@@ -26,13 +28,14 @@ public class EventDirector : MonoBehaviour
 
     private void Awake()
     {
+        clock = FindAnyObjectByType<RunClock>();
         ctx = new EventContext { Spawner = spawner, Stats = stats, Dungeon = dungeon, Rewards = rewards, Player = player,
                                  Movement = player.GetComponent<PlayerMovement>() };
     }
     public void OnFloorChanged(int floor)
     {
         StopAllCoroutines();                 // stops the loop AND the running event
-        if (current != null) { current.End(ctx); Destroy(current); current = null; }
+        if (current != null) { current.End(ctx); RunTelemetry.Instance?.EventEnded(current, true); Destroy(current); current = null; }
         loop = null;                    
     }
 
@@ -55,7 +58,7 @@ public class EventDirector : MonoBehaviour
                 e.Tick(ctx);
                 t += Time.deltaTime;
                 EventTimeLeft = e.TimeLeft(t);
-                yield return null;       // next frame
+                yield return null;
             }
         }
         else
@@ -64,10 +67,11 @@ public class EventDirector : MonoBehaviour
             {
                 e.Tick(ctx);
                 EventTimeLeft = e.TimeLeft(0f);   // events without a Duration report their own time (Bounty)
-                yield return null;       // next frame
+                yield return null;
             }
         }
         e.End(ctx);
+        RunTelemetry.Instance?.EventEnded(e, false);
         AudioManager.Instance?.Play(Sfx.EventEnd);
         EventTimeLeft = 0f;
         Destroy(e);
@@ -77,7 +81,6 @@ public class EventDirector : MonoBehaviour
     {
         while (true)
         {
-            Debug.Log("EventDirector waiting for next event...");
             if (firstEvent)
             {
                 firstEvent = false;
@@ -87,12 +90,11 @@ public class EventDirector : MonoBehaviour
             {
                 NextEventIn = Random.Range(minWaitTime, maxWaitTime);
             }
+            if (clock != null && clock.Endless) NextEventIn *= endlessWaitScale;
             while (NextEventIn > 0f) { NextEventIn -= Time.deltaTime; yield return null; }
 
-            Debug.Log("EventDirector starting next event...");
             GameEvent picked = Pick();
             if (picked == null) continue;
-            Debug.Log($"EventDirector picked event: {picked.Title}");
             yield return StartCoroutine(RunEvent(Instantiate(picked)));
         }
     }

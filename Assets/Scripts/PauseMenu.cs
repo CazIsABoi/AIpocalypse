@@ -5,6 +5,14 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private InputActionReference pauseAction, pauseActionWebGL;
     [SerializeField] private GameObject pauseMenuUI;
     private bool isOpen;
+
+    // actions only fire while enabled
+    void OnEnable()
+    {
+        if (pauseAction != null) pauseAction.action.Enable();
+        if (pauseActionWebGL != null) pauseActionWebGL.action.Enable();
+    }
+
     void Update()
     {
 #if UNITY_WEBPLAYER || UNITY_WEBGL // WebGL build

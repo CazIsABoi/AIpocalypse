@@ -22,3 +22,6 @@ MonoBehaviour:
   Effect: 4
   MaxLevel: 3
   Path: 1
+  LevelUps:
+  - x2 shockwave damage, +0.5 radius
+  - x3 shockwave damage, +0.5 radius

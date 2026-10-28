@@ -76,7 +76,6 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     [SerializeField] private List<GameObject> spawnedBossEnemies = new List<GameObject>();
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         Health = MaxHealth;
@@ -88,7 +87,6 @@ public class EnemyController : MonoBehaviour, IDamageable
         if (AiType == 10) clock = FindAnyObjectByType<RunClock>();   // only the boss needs it (a scene search per spawn adds up)
     }
 
-    // Update is called once per frame
     void Update()
     {
         
@@ -108,7 +106,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                 // boss adds are spawned without a handler, so find the one in the scene for them
                 if (handler == null) handler = FindAnyObjectByType<EntityHandler>();
                 handler?.RegisterKill();
-                CombatEvents.Killed(transform.position);
+                CombatEvents.Killed(transform.position, LastHitSource);
                 Destroy(gameObject); return;
             } // Enemy died, destroy the gameobject and exit the update loop.
         }
@@ -156,7 +154,6 @@ public class EnemyController : MonoBehaviour, IDamageable
                 AttackInterval = 0.1f;
                 Vector3 offset = PlayerTarget.transform.position - transform.position;
                 Debug.DrawLine(transform.position + new Vector3(0, 0.5f, 0), transform.position + (offset.normalized * AttackRange), Color.blue);
-                // Debug.Log("Distance: " + offset.sqrMagnitude + " range being: " + AttackRange * AttackRange);
 
                 if (offset.sqrMagnitude <= AttackRange * AttackRange)
                 {
@@ -165,7 +162,6 @@ public class EnemyController : MonoBehaviour, IDamageable
                     AttackWindow = 1f;
                     AudioManager.Instance?.PlayAt(Sfx.EnemyAttack, transform.position);
                     DamageWindow = 0.5f;
-                    // Debug.Log("attacked");
                     Anim.Play("Stomp");
                 }
             }
@@ -195,7 +191,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     {
                         if(hit.gameObject.GetComponent<PlayerHealth>())
                         {
-                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName);
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName, this);
                             DamageWindow = 5;
                         }
                     }
@@ -216,7 +212,6 @@ public class EnemyController : MonoBehaviour, IDamageable
                 AttackInterval = 0.1f;
                 Vector3 offset = PlayerTarget.transform.position - transform.position;
                 Debug.DrawLine(transform.position + new Vector3(0, 0.5f, 0), transform.position + (offset.normalized * AttackRange), Color.blue);
-                // Debug.Log("Distance: " + offset.sqrMagnitude + " range being: " + AttackRange * AttackRange);
 
                 if (offset.sqrMagnitude <= AttackRange * AttackRange)
                 {
@@ -225,7 +220,6 @@ public class EnemyController : MonoBehaviour, IDamageable
                     AttackWindow = 6f;
                     DamageWindow = 0.7f;
                     AudioManager.Instance?.PlayAt(Sfx.EnemyAttack, transform.position);
-                    Debug.Log("attacked");
                     Anim.SetBool("IsAttacking", true);
                 }
             }
@@ -254,7 +248,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     {
                         if (hit.gameObject.GetComponent<PlayerHealth>())
                         {
-                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName);
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName, this);
                             DamageWindow = 0.54f;
                         }
                     }
@@ -269,16 +263,13 @@ public class EnemyController : MonoBehaviour, IDamageable
                 }
                 agent.speed = 1.5f;
 
-                //if (agent.isActiveAndEnabled) agent.isStopped = true;
 
                 if (AttackWindow <= 0)
                 {
-                    // Debug.Log("Attack Finished");
                     Vector3 offset = PlayerTarget.transform.position - transform.position;
                     if (offset.sqrMagnitude <= AttackRange * AttackRange) // If the player is still in range, apply damage
                     {
-                        playerHealth.TakeDamage(Damage, AttackerName);
-                        // Debug.Log($"Player hit for {Damage}");
+                        playerHealth.TakeDamage(Damage, AttackerName, this);
                     }
 
                     Anim.SetBool("IsAttacking", false);
@@ -304,7 +295,6 @@ public class EnemyController : MonoBehaviour, IDamageable
                     AttackWindow = 1.2f;
                     AudioManager.Instance?.PlayAt(Sfx.EnemyAttack, transform.position);
                     DamageWindow = 1.2f;
-                    Debug.Log("attacked");
                 }
             }
             if (!IsAttacking)
@@ -345,8 +335,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     {
                         if (hit.gameObject.GetComponent<PlayerHealth>())
                         {
-                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName);
-                            //DamageWindow = 5;
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName, this);
                         }
                     }
                     //GameObject spawnedExplosion = Instantiate(DroneExplosionPrefab, transform.position, Quaternion.identity);
@@ -394,7 +383,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                     {
                         if (hit.gameObject.GetComponent<PlayerHealth>())
                         {
-                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName);
+                            hit.gameObject.GetComponent<PlayerHealth>().TakeDamage(Damage, AttackerName, this);
                             DamageWindow = 5;
                         }
                     }
@@ -416,7 +405,6 @@ public class EnemyController : MonoBehaviour, IDamageable
                 AttackInterval = 0.1f;
                 Vector3 offset = PlayerTarget.transform.position - transform.position;
                 Debug.DrawLine(transform.position + new Vector3(0, 0.5f, 0), transform.position + (offset.normalized * AttackRange), Color.blue);
-                // Debug.Log("Distance: " + offset.sqrMagnitude + " range being: " + AttackRange * AttackRange);
 
                 if (offset.sqrMagnitude <= AttackRange * AttackRange)
                 {
@@ -427,7 +415,6 @@ public class EnemyController : MonoBehaviour, IDamageable
                     AttackWindow = 6f;
                     DamageWindow = 0f;
                     AudioManager.Instance?.PlayAt(Sfx.EnemyAttack, transform.position);
-                    Debug.Log("attacked");
                     
                 }
             }
@@ -461,12 +448,10 @@ public class EnemyController : MonoBehaviour, IDamageable
                 }
                 if (AttackWindow <= 0)
                 {
-                    // Debug.Log("Attack Finished");
                     Vector3 offset = PlayerTarget.transform.position - transform.position;
                     if (offset.sqrMagnitude <= AttackRange * AttackRange) // If the player is still in range, apply damage
                     {
-                        playerHealth.TakeDamage(Damage, AttackerName);
-                        // Debug.Log($"Player hit for {Damage}");
+                        playerHealth.TakeDamage(Damage, AttackerName, this);
                     }
 
                     Anim.SetBool("IsFiring", false);
@@ -477,7 +462,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         }
         else if(AiType == 10)
         {
-            if (clock.TimeLeft > 0f)   // the clock's own boss time, not a hardcoded 900
+            if (clock.BossActive == false)   // the clock's own boss time
             {
                 SubmergeOriginalPos = transform.position;
                 SubmergeInCountdown = Random.Range(10f, 30f);
@@ -649,14 +634,19 @@ public class EnemyController : MonoBehaviour, IDamageable
         if(AiType!=10)  hpSlider.transform.parent.transform.rotation = Quaternion.Euler(45f, 0f, 0f);
     }
 
-    // IDamageable entry point (hazards etc.) — no crit
+    // IDamageable entry point (hazards etc.) — no crit, and not the player's damage, so the DPS meter skips it
     public void TakeDamage(float Amount)
     {
-        TakeDamage(Amount, 0f, 1f);
+        TakeDamage(Amount, 0f, 1f, false);
     }
 
-    public float TakeDamage(float Amount, float CritChance, float CritDamage)
+    // What hit this enemy last: Effect by default (chain lightning, explosions, hazards call TakeDamage directly),
+    // CombatEvents.Hit changes it to Gun/Melee right after the player's own hits
+    public HitSource LastHitSource { get; set; } = HitSource.Effect;
+
+    public float TakeDamage(float Amount, float CritChance, float CritDamage, bool byPlayer = true)
     {
+        LastHitSource = HitSource.Effect;
         if (AiType == 10 && ProtectiveBarrierActive) Amount = 0;
 
         float CritRoll = Random.Range(0f, 100f);
@@ -665,6 +655,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
         if(IsCrit) Amount *= CritDamage;
         Health -= Amount;
+        if (byPlayer) DpsMeter.Add(Amount);
         
         if (Amount > 0f)   // shielded boss: no "0" popups or flash for every bullet
         {
@@ -695,7 +686,7 @@ public class EnemyController : MonoBehaviour, IDamageable
             popup.IsCrit = crit;
             total = amount;
         }
-        popup.PopupDisplayContent = ((int)total).ToString();
+        popup.PopupDisplayContent = StatNames.Compact((int)total);   // 17000 -> "17k", like the stats screen
         lastTime = Time.time;
     }
 }

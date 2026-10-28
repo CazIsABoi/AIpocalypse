@@ -16,6 +16,7 @@ public static class ScoreService
         public float seconds;
         public int floor, level, kills;
         public float threat, gunHit, meleeHit;
+        public int score;            // Score(): the sheet recomputes it, this is just for reading the rows
         public string version, platform;
         public string killer;        // what dealt the last hit
         public int coreFound;        // 1 = they got near this floor's Core
@@ -31,6 +32,7 @@ public static class ScoreService
 
         public float damageGun, damageMelee, damageTaken, healed, healedOrbs;
         public int hitsTaken, lowestHpPct, chests, healthOrbs;
+        public float dpsPeak, dpsEnd;   // best 5 s, and the last 60 s (all damage, effects included)
 
         public int mask;
         public string cardsPicked;   // in order, "Turbo Mode|Hollow Points"
@@ -40,14 +42,27 @@ public static class ScoreService
         public float maxHp, damage, attackSpeed, critChance, critDamage, lifesteal, moveSpeed;
         public int bullets, pierce;
         public float regen, pickupRange, projectileSpeed, meleeRange;
+        public float moveSpeedRaw, pickupRangeRaw, effectivePickup;   // before / after the soft caps (moveSpeed and pickupRange stay as before)
+        public float armor, thorns, blockChance;
+        public float thornsDamage, blockedDamage, armorPrevented;  // what each defense stat actually did this run
+        public int blocks;
+        public string events;        // "3:Lockdown:broke 34/40|5:Swarm"
+        public string achievements;  // unlocked during this run
+        public string profession;
+        public int professionLevel, professionXp;   // level after this run's XP was added
+        public int rerolls, skips;
+        public string banished;      // banished card lines, "Speed|ChainLightning"
 
         public int thoughtsEarned, thoughtsTotal, recalls;
         public string ideas;         // unlocked Ideas before this run's recall
         public string loadout;       // the Ideas equipped for this run
 
         public float avgFps, worstFps;
+        public float cpuMs, gpuMs, drawCalls;   // run averages: higher GPU than CPU = rendering is the limit
+        public int hitches;                     // frames slower than 50 ms
         public string resolution, gpu;
         public int fullscreen, ramMb, gunSounds, hitSounds;
+        public int gamepad;          // 1 = a controller was used at some point
     }
 
     // Sent after the death screen recall, so it gets its own sheet ("recall")
@@ -59,7 +74,7 @@ public static class ScoreService
         public int recallNumber, cost, thoughtsLeft;
     }
 
-    [Serializable] public class Entry { public string name; public float seconds; public int floor; public float threat; }
+    [Serializable] public class Entry { public string name; public int score; public float seconds; public int floor, kills; public float threat; }
     [Serializable] class Board { public Entry[] entries; }
 
     public static void Submit(Run run)
@@ -108,6 +123,12 @@ public static class ScoreService
             done(entries);
         };
     }
+
+    // How well a run went: floors count the most, then kills, then time survived.
+    // KEEP IN SYNC with score() in WrenchTelemetry.gs (the leaderboard sorts by the sheet's copy).
+    // floor 9, 1131 kills, 14 min = 9000 + 5655 + 836 = 15491 · a rush to floor 7 in 5.5 min, 89 kills = 7777
+    public const int PerFloor = 1000, PerKill = 5, PerSecond = 1;
+    public static int Score(float seconds, int floor, int kills) => floor * PerFloor + kills * PerKill + Mathf.FloorToInt(seconds) * PerSecond;
 
     // "1:23:45" or "23:45"
     public static string FormatTime(float seconds)

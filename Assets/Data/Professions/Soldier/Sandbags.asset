@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bcf3a1d05313dc45af77a57889f0c72, type: 3}
+  m_Name: Sandbags
+  m_EditorClassIdentifier: Assembly-CSharp::PerkNode
+  Id: Soldier.Sandbags
+  Title: Sandbags
+  Description: Pile them high. +30 max HP
+  Icon: {fileID: 0}
+  Tier: 3
+  Branch: 3
+  Side: -1
+  IsMajor: 0
+  Cost: 1
+  Requires:
+  - {fileID: 11400000, guid: d3995e64c1b84a54a0baba229dbe27cb, type: 2}
+  Changes:
+  - Stat: 2
+    Amount: 30
+  GivesEffect: 0
+  Effect: 0
+  EffectLevels: 1

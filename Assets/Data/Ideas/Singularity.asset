@@ -23,3 +23,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ed37c034cae84ffb9458ad59ffda5ac1, type: 2}
   - {fileID: 11400000, guid: 1782d90f92394198955f01748129065d, type: 2}
   - {fileID: 11400000, guid: efcaa0e62374f2d4ea60fc04d0cf0299, type: 2}
+  AlwaysInPool: 1
+  UnlockedByAchievement: 1

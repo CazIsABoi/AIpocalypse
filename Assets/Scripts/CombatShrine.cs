@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem;
 
 public class CombatShrine : MonoBehaviour, IMapMarked
 {
@@ -14,6 +15,7 @@ public class CombatShrine : MonoBehaviour, IMapMarked
     private GameController game;
 
     [SerializeField] float activateRadius = 2f, activateTime = 1f, spawnRadius = 4f;
+    [SerializeField] InputActionReference interactAction;   // e.g. E / gamepad X: press inside the radius to start. Empty = stand still to charge
     [SerializeField] int baseWave = 3;                 // + current floor
     [SerializeField] RewardPool rewardPool;
     [SerializeField] Material usedMaterial;            // palette without emission: runes/crystal go dark
@@ -31,6 +33,8 @@ public class CombatShrine : MonoBehaviour, IMapMarked
         game = FindAnyObjectByType<GameController>();
     }
 
+    void OnEnable() { if (interactAction != null) interactAction.action.Enable(); }   // actions only fire while enabled
+
     void Update()
     {
         switch (state)
@@ -38,7 +42,11 @@ public class CombatShrine : MonoBehaviour, IMapMarked
             case State.Idle:
                 Vector3 offset = player.position - transform.position;
                 offset.y = 0f;                                   // flat distance, height doesn't matter
-                if (offset.magnitude < activateRadius)
+                if (interactAction != null)
+                {
+                    if (offset.magnitude < activateRadius && interactAction.action.WasPressedThisFrame()) Activate();
+                }
+                else if (offset.magnitude < activateRadius)
                 {
                     charge += Time.deltaTime;
                     if (charge >= activateTime) Activate();

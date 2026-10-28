@@ -11,7 +11,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private GameObject playerObj;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -19,10 +18,8 @@ public class PlayerMovement : MonoBehaviour
     }
     private void Start()
     {
-       // animator = GetComponentInChildren<Animator>();   
     }
 
-    // Update is called once per frame
     void Update()
     {
         Vector2 input = move.action.ReadValue<Vector2>();
@@ -46,24 +43,5 @@ public class PlayerMovement : MonoBehaviour
         controller.enabled = true;
     }
 
-    private Vector3 CalculateAimingDirection()
-    {
-        Vector3 mousePos = GetMouseWorldPosition();
-        mousePos.y = 0;
-        Vector3 aimDirection = (mousePos - new Vector3(transform.position.x, 0, transform.position.z)).normalized;
-        return aimDirection;
-    }
-    private Vector3 GetMouseWorldPosition()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(
-            Mouse.current.position.ReadValue()
-        );
-
-        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
-
-        if (groundPlane.Raycast(ray, out float distance))
-            return ray.GetPoint(distance);
-
-        return Vector3.zero;
-    }
+    private Vector3 CalculateAimingDirection() => Aim.Direction(transform.position);   // mouse or right stick
 }

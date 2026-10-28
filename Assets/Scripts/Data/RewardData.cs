@@ -8,11 +8,16 @@ public abstract class RewardData : ScriptableObject
     public int Weight = 10;          // how often it appears
     public Rarity Rarity;
     public string Id;              // unique identifier for saving / loading
+    public virtual string Line => Id;
     public bool StartsUnlocked = false; 
 
     public abstract void Apply(PlayerStats stats);
 
     public virtual string GetPreview(PlayerStats stats) => "";
+    public virtual string GetDescription(PlayerStats stats) => Description;   // e.g. the real gain once a soft cap bites
+
+    // Multiplies the card's Weight: below 1 = offered less often right now
+    public virtual float OfferScale(PlayerStats stats) => 1f;
 
     // false = pointless right now (e.g. its stat is already capped), so it isn't offered
     public virtual bool CanOffer(PlayerStats stats) => true;
@@ -23,7 +28,7 @@ public abstract class RewardData : ScriptableObject
     {
         switch (t)
         {
-            case StatType.MeleeDamagePercent: case StatType.MeleeRange: case StatType.MeleeSpeedPercent:
+            case StatType.MeleeDamagePercent: case StatType.MeleeRange: case StatType.MeleeSpeedPercent: case StatType.MeleeLifesteal:
                 return RewardPath.Melee;
             case StatType.GunDamagePercent: case StatType.BulletAmount: case StatType.BulletPierce: case StatType.ProjectileSpeed:
                 return RewardPath.Gun;
@@ -50,7 +55,8 @@ public enum RewardPath { None, Melee, Gun }
 
 // Assets store StatType as numbers: only ever add new values at the END
 public enum StatType { MoveSpeed, MoveSpeedPercent, MaxHealth, Damage, DamagePercent, PickupRadius, BulletAmount, CritDamage, CritChance, BulletPierce, RegenAmount, AttackSpeed, Lifesteal,
-    MeleeDamagePercent, MeleeRange, MeleeSpeedPercent, GunDamagePercent, ProjectileSpeed, CritChanceCap}
+    MeleeDamagePercent, MeleeRange, MeleeSpeedPercent, GunDamagePercent, ProjectileSpeed, CritChanceCap, MeleeLifesteal,
+    Armor, Thorns, BlockChance}
 public enum Rarity { Auto, Common, Uncommon, Rare, Epic, Legendary }
 
 public static class StatNames
@@ -95,6 +101,14 @@ public static class StatNames
                 return "Projectile Speed";
             case StatType.CritChanceCap:
                 return "Crit Chance Cap";
+            case StatType.MeleeLifesteal:
+                return "Melee Lifesteal";
+            case StatType.Armor:
+                return "Armor";
+            case StatType.Thorns:
+                return "Thorns";
+            case StatType.BlockChance:
+                return "Block Chance";
             default:
                 return type.ToString();  
         }
@@ -128,7 +142,7 @@ public static class StatNames
             case StatType.CritChance:
             case StatType.CritChanceCap:
             case StatType.CritDamage:
-                return $"{value * 100f:0.#}%";      // 0.2 → "20%", 1.1 → "110%                                         
+                return $"{value * 100f:0.#}%";      // 0.2 → "20%", 1.1 → "110%"
             case StatType.MaxHealth:
                 return $"{value:0}";                // 100.5 → "100",
             case StatType.RegenAmount:
@@ -139,9 +153,15 @@ public static class StatNames
             case StatType.GunDamagePercent:
                 return $"{(1 + value) * 100f:0.#}%"; // 0.2 → "120%", 1.1 → "210%"
             case StatType.Lifesteal:
+            case StatType.MeleeLifesteal:
                 return $"{value * 100f:0.##}%";     // 0.0035 → "0.35%" (lifesteal cards are below 1%)
             case StatType.ProjectileSpeed:
                 return $"{(1 + value) * 100f:0.#}%"; // 0.2 → "120%" (it's a bonus on top of the bullet's own speed)
+            case StatType.Armor:
+                return $"{value:0} (-{Mathf.Min(PlayerStats.MaxArmorReduction, 1f - 100f / (100f + Mathf.Max(0f, value))) * 100f:0}% dmg)";   // 25 → "25 (-20% dmg)", matches armorScale 100
+            case StatType.Thorns:
+            case StatType.BlockChance:
+                return $"{value * 100f:0.#}%";      // thorns 1 → "100%" of your damage, block 0.1 → "10%"
             default:
                 return $"{value:0.#}";
         }

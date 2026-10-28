@@ -40,7 +40,7 @@ public class XpBar : MonoBehaviour
     private void Update()
     {
         // boss bar only while the fight is on: after the boss dies (endless) it's the XP bar again
-        bool bossFight = clock.TimeLeft <= 0f && !clock.Endless && boss != null;
+        bool bossFight = clock.BossActive && !clock.Endless && boss != null;
         if (bossFight != showingBoss)
         {
             showingBoss = bossFight;

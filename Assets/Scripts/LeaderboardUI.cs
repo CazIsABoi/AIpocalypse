@@ -34,7 +34,7 @@ public class LeaderboardUI : MonoBehaviour
             for (int i = 0; i < entries.Length; i++)
             {
                 var e = entries[i];
-                string row = $"{i + 1}.<pos=12%>{e.name}<pos=60%>{ScoreService.FormatTime(e.seconds)}<pos=82%>F{e.floor}";
+                string row = $"{i + 1}.<pos=10%>{e.name}<pos=48%>{e.score}<pos=68%>F{e.floor}<pos=80%>{ScoreService.FormatTime(e.seconds)}";
                 // highlight your own runs in the game's green
                 if (!string.IsNullOrEmpty(me) && e.name == me) row = $"<color=#00FF41>{row}</color>";
                 sb.AppendLine(row);

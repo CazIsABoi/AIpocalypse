@@ -17,6 +17,13 @@ partial class RunTelemetry : MonoBehaviour
     bool submitted, bossReached;
     float damageGun, damageMelee, damageTaken, healed, healedOrbs, lowestHp = 1f;
     int hitsTaken, chests, healthOrbs;
+    float thornsDamage, blockedDamage, armorPrevented;
+    int blocks, professionXp;
+    int rerolls, skips;
+    readonly List<string> banished = new List<string>();
+    bool usedGamepad;
+    readonly List<string> eventLog = new List<string>();
+    readonly List<string> achievements = new List<string>();
     float floorStart;
     readonly List<string> floorTimes = new List<string>();
     readonly List<string> picked = new List<string>();
@@ -52,6 +59,8 @@ partial class RunTelemetry : MonoBehaviour
         stats = FindAnyObjectByType<PlayerStats>();
         if (stats != null) health = stats.GetComponent<PlayerHealth>();
         floorStart = Time.time;   // Time.time counts from app start, not from this run
+        DpsMeter.Reset();
+        PerfMonitor.Instance?.ResetRun();
     }
 
     void OnEnable()
@@ -77,6 +86,7 @@ partial class RunTelemetry : MonoBehaviour
     void Update()
     {
         float dt = Time.unscaledDeltaTime;
+        if (PerfMonitor.Instance != null && PerfMonitor.Instance.Stalled && dt > 0.05f) { secondFrames = 0; secondTime = 0f; return; }   // alt-tab, not slow frames
         frames++; frameTime += dt;
         secondFrames++; secondTime += dt;
         if (secondTime >= 1f)
@@ -84,6 +94,7 @@ partial class RunTelemetry : MonoBehaviour
             worstFps = Mathf.Min(worstFps, secondFrames / secondTime);
             secondFrames = 0; secondTime = 0f;
         }
+        if (!usedGamepad && UnityEngine.InputSystem.Gamepad.current != null && UnityEngine.InputSystem.Gamepad.current.wasUpdatedThisFrame) usedGamepad = true;
         if (health != null && stats != null && stats.MaxHealth > 0f)
             lowestHp = Mathf.Min(lowestHp, Mathf.Clamp01(health.Health / stats.MaxHealth));
     }
@@ -100,6 +111,22 @@ partial class RunTelemetry : MonoBehaviour
     }
 
     public void ChestOpened() => chests++;
+    public void CardsRerolled() => rerolls++;
+    public void CardsSkipped() => skips++;
+    public void LineBanished(string line) => banished.Add(line);
+
+    public void ThornsDealt(float amount) => thornsDamage += amount;
+    public void HitBlocked(float amount) { blocks++; blockedDamage += amount; }
+    public void ArmorPrevented(float amount) => armorPrevented += amount;
+    public void ProfessionXp(int xp) => professionXp = xp;
+    public void AchievementUnlocked(string id) => achievements.Add(id);
+
+    // "3:Lockdown:broke 34/40" = floor 3, the event, how it ended
+    public void EventEnded(GameEvent e, bool interrupted)
+    {
+        string outcome = interrupted ? "left floor" : e.Outcome;
+        eventLog.Add($"{(game != null ? game.Floor : 0)}:{e.Title}" + (outcome != "" ? ":" + outcome : ""));
+    }
 
     public void HealthOrbCollected(float amount) { healthOrbs++; healedOrbs += amount; }
 
@@ -121,12 +148,16 @@ partial class RunTelemetry : MonoBehaviour
 
     void OnQuitting() => Submit("closed", 0);
 
+    // A Google Sheets cell holds at most 50,000 characters: long runs keep the end of the list
+    static string Fit(string s) => s.Length <= 45000 ? s : "..." + s.Substring(s.Length - 45000);
+
     // ---------- the one send ----------
     // endReason: "death", "quit" (back to menu), "closed" (window closed mid-run)
     public void Submit(string endReason, int thoughtsEarned)
     {
         if (submitted || stats == null) return;
         submitted = true;
+        if (endReason == "death") ProfessionApplier.AwardNow();
 
         int runNumber = PlayerPrefs.GetInt("run_count", 0) + 1;
         PlayerPrefs.SetInt("run_count", runNumber);
@@ -135,6 +166,7 @@ partial class RunTelemetry : MonoBehaviour
         var times = new List<string>(floorTimes) { Mathf.RoundToInt(Time.time - floorStart).ToString() };   // + the floor it ended on
         float elapsed = clock != null ? clock.Elapsed : Time.time;
         var effects = stats.GetComponent<PlayerEffects>();   // added mid-run by the first effect card, so look now
+        var perf = PerfMonitor.Instance;
 
         ScoreService.Submit(new ScoreService.Run
         {
@@ -146,6 +178,7 @@ partial class RunTelemetry : MonoBehaviour
             killer = health != null ? health.LastHitBy : "",
             coreFound = FindAnyObjectByType<Core>() is Core c && c.Discovered ? 1 : 0,
             floorTime = game != null ? Time.time - game.FloorStartedAt : 0f,
+            score = ScoreService.Score(elapsed, game != null ? game.Floor : 0, spawner != null ? spawner.Kills : 0),
 
             // who & which run
             playerId = PlayerId, runNumber = runNumber, endReason = endReason,
@@ -157,18 +190,27 @@ partial class RunTelemetry : MonoBehaviour
 
             // combat
             damageGun = damageGun, damageMelee = damageMelee, damageTaken = damageTaken, hitsTaken = hitsTaken,
+            dpsPeak = DpsMeter.Peak, dpsEnd = DpsMeter.LastMinute,
             healed = healed, healedOrbs = healedOrbs, lowestHpPct = Mathf.RoundToInt(lowestHp * 100f),
             chests = chests, healthOrbs = healthOrbs,
 
             // build
             mask = GameSettings.MaskIndex,
-            cardsPicked = string.Join("|", picked), cardsOffered = string.Join("|", offered),
-            pickSources = string.Join("|", pickSources), effects = effects != null ? effects.Describe() : "",
+            cardsPicked = Fit(string.Join("|", picked)), cardsOffered = Fit(string.Join("|", offered)),
+            pickSources = Fit(string.Join("|", pickSources)), effects = effects != null ? effects.Describe() : "",
             maxHp = stats.MaxHealth, damage = stats.Damage, attackSpeed = stats.AttackSpeed,
             critChance = stats.CritChance, critDamage = stats.CritDamage, lifesteal = stats.Lifesteal,
             moveSpeed = stats.Speed, bullets = stats.BulletAmount, pierce = stats.BulletPierce,
             regen = stats.regenAmount, pickupRange = stats.pickupRange, projectileSpeed = stats.ProjectileSpeed,
             meleeRange = stats.MeleeRadius,
+            moveSpeedRaw = stats.RawSpeed, pickupRangeRaw = stats.pickupRange, effectivePickup = stats.PickupRange,
+            armor = stats.Armor, thorns = stats.Thorns, blockChance = stats.BlockChance,
+            thornsDamage = thornsDamage, blocks = blocks, blockedDamage = blockedDamage, armorPrevented = armorPrevented,
+            events = Fit(string.Join("|", eventLog)), achievements = string.Join("|", achievements),
+            profession = ProfessionApplier.Current != null ? ProfessionApplier.Current.Id : "",
+            professionLevel = ProfessionApplier.Current != null ? ProfessionProgress.Level(ProfessionApplier.Current) : 0,
+            professionXp = professionXp,
+            rerolls = rerolls, skips = skips, banished = string.Join("|", banished),
 
             // meta-progression (before this run's recall: that one is sent as its own "recall" event)
             thoughtsEarned = thoughtsEarned, thoughtsTotal = Progress.Thoughts, recalls = Progress.Recalls,
@@ -176,9 +218,12 @@ partial class RunTelemetry : MonoBehaviour
 
             // performance & setup
             avgFps = frameTime > 0f ? frames / frameTime : 0f, worstFps = worstFps > 9000f ? 0f : worstFps,
+            cpuMs = perf != null ? perf.RunCpuMs : 0f, gpuMs = perf != null ? perf.RunGpuMs : 0f,
+            drawCalls = perf != null ? perf.RunDrawCalls : 0f, hitches = perf != null ? perf.RunHitches : 0,
             resolution = $"{Screen.width}x{Screen.height}", fullscreen = Screen.fullScreen ? 1 : 0,
             gpu = SystemInfo.graphicsDeviceName, ramMb = SystemInfo.systemMemorySize,
             gunSounds = GameSettings.GunSounds ? 1 : 0, hitSounds = GameSettings.HitSounds ? 1 : 0,
+            gamepad = usedGamepad ? 1 : 0,
         });
     }
 

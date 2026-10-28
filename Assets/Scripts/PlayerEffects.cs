@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Assets store EffectType as numbers: only ever add new values at the END
-public enum EffectType { VolatileCode, Riposte, OverclockedCore, FirewallAura, ShockwaveSwing, ChainLightning, Ricochet, SecondBoost }
+public enum EffectType { VolatileCode, Riposte, OverclockedCore, FirewallAura, ShockwaveSwing, ChainLightning, Ricochet, SecondBoost, Overpenetration, Fragmentation }
 
 // Per-run effect levels, on the Player. Cards (EffectUpgrade) raise a level; effect components read it.
 // Level 0 = the player doesn't have it, so the effect does nothing.

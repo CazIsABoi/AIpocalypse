@@ -121,7 +121,7 @@ partial class AudioManager : MonoBehaviour
     private void Start()
     {
         GameSettings.ApplyAudio(mixer);
-        Screen.fullScreen = GameSettings.Fullscreen != 0;
+        GameSettings.ApplyDisplay();
     }
 
     public void Play(Sfx id)

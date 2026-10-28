@@ -20,6 +20,7 @@ public class CutScenePlayer : MonoBehaviour
     void Start()
     {
         video.loopPointReached += OnVideoEnd;
+        video.errorReceived += (vp, message) => { Debug.LogWarning($"Cutscene {fileName}: {message}"); Finish(); };
         if (playOnStart) Play();
         else if (screen != null) screen.SetActive(false);
     }
@@ -39,15 +40,21 @@ public class CutScenePlayer : MonoBehaviour
         if (screen != null) screen.SetActive(true);
         if (musicToPause != null) musicToPause.Pause();
         GamePause.Add(PauseReason.Cutscene);
+        startedAt = Time.unscaledTime;
         video.Play();
     }
+
+    private float startedAt;
+    const float startTimeout = 3f;   // a missing or empty file never starts and never ends: don't strand the player
 
     void OnVideoEnd(VideoPlayer vp) => Finish();
     public void Skip() => Finish();                    // for a Skip button
 
     void Update()
     {
-        if (playing && skipAction != null && skipAction.action.WasPressedThisFrame()) Finish();
+        if (!playing) return;
+        if (skipAction != null && skipAction.action.WasPressedThisFrame()) Finish();
+        else if (!video.isPlaying && Time.unscaledTime - startedAt > startTimeout) Finish();
     }
 
     void Finish()
