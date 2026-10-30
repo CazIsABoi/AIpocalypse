@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PerkNode
   Id: Soldier.Marksman
   Title: Marksman
-  Description: Keep your distance. +25% gun damage, +5% crit chance
+  Description: 'Keep your distance. +25% gun damage, +5% crit chance. Grenade: can crit and splits into 4 bomblets'
   Icon: {fileID: 0}
   Tier: 2
   Branch: 2
@@ -30,3 +30,5 @@ MonoBehaviour:
   GivesEffect: 0
   Effect: 0
   EffectLevels: 1
+  AbilityUpgrade: 2
+  BranchName: GUN

@@ -1,9 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-
-// Menu camera: press (or hold) an input to glide closer to the projection so the small text is readable,
-// press again (or let go) to glide back. Put it on the menu's Main Camera.
-// The camera's position in the scene when the game starts is the "rest" view; Focus Point is the close-up.
 public class CameraFocus : MonoBehaviour
 {
     [SerializeField] private InputActionReference focusAction;   // e.g. Z, right mouse button or a gamepad shoulder
@@ -11,6 +7,8 @@ public class CameraFocus : MonoBehaviour
     [SerializeField] private bool holdToFocus = false;           // false = press to toggle, true = only while held
     [SerializeField] private float smoothing = 6f;               // higher = snappier
     [SerializeField] private CanvasGroup[] hideWhenFocused;      // e.g. the credits/config/terminate buttons: fade out while zoomed in
+    // bool to stop the camera from moving while another script is moving it (e.g. MenuFlow's MoveCamera coroutine). The other script should set this to true while it's moving the camera, and false when done.
+    public bool StopMoving;
 
     private Vector3 restPosition;
     private Quaternion restRotation;
@@ -20,6 +18,7 @@ public class CameraFocus : MonoBehaviour
     {
         restPosition = transform.position;
         restRotation = transform.rotation;
+        StopMoving = false;
     }
 
     void OnEnable() { if (focusAction != null) focusAction.action.Enable(); }   // actions only fire while enabled
@@ -31,6 +30,8 @@ public class CameraFocus : MonoBehaviour
             if (holdToFocus) focused = focusAction.action.IsPressed();
             else if (focusAction.action.WasPressedThisFrame()) focused = !focused;
         }
+
+        if (StopMoving) return;   // another script is moving the camera, so don't override it
 
         Vector3 targetPosition = focused ? focusPoint.position : restPosition;
         Quaternion targetRotation = focused ? focusPoint.rotation : restRotation;
@@ -52,4 +53,10 @@ public class CameraFocus : MonoBehaviour
     // Buttons can call these too (e.g. a magnifier icon next to the tree)
     public void Toggle() => focused = !focused;
     public void Unfocus() => focused = false;
+
+    public void SetRestPoint(Transform point)
+    {
+        restPosition = point.position;
+        restRotation = point.rotation;
+    }
 }

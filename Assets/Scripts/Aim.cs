@@ -26,6 +26,19 @@ public static partial class Aim
         return dir.sqrMagnitude > 0.0001f ? dir.normalized : Vector3.forward;   // LookRotation(zero) logs a warning
     }
 
+    // Where to throw/place something: the mouse on the ground, pulled in to maxRange if it's further.
+    // Gamepad has no cursor, so it throws the full range in the aim direction. Keeps from's height.
+    public static Vector3 Point(Vector3 from, float maxRange)
+    {
+        Vector3 offset = Direction(from) * maxRange;
+        if (!(MenuFocus.UsingGamepad && Gamepad.current != null))
+        {
+            Vector3 mouse = MouseOnGround();
+            offset = Vector3.ClampMagnitude(new Vector3(mouse.x - from.x, 0, mouse.z - from.z), maxRange);
+        }
+        return from + offset;
+    }
+
     static Vector3 MouseOnGround()
     {
         if (Mouse.current == null || Camera.main == null) return Vector3.zero;

@@ -48,7 +48,7 @@ public enum Sfx
     CardHover,        // mouse over a reward card
     RareCardReveal,   // extra sound for Epic / Legendary cards (later: explosion)
     ButtonClick,      // menus, settings
-    ButtonHover,      // menus, settings                                          → needs a sound
+    ButtonHover,      // menus, settings                                          → needs a sound (no entry yet)
 
     // --- run timer & boss ---
     TimerWarning,     // last minute before the boss (e.g. a tick each second)
@@ -65,11 +65,16 @@ public enum Sfx
     RareCardFlyIn,    // a Rare+ card slides in (a hint before the flip; RareCardReveal plays on the flip)
 
     // --- Effects ---
-    Shockwave,         // ShockwaveSwingEffect (long min interval)                 → needs a sound
+    Shockwave,         // ShockwaveSwingEffect (long min interval)                 → needs a sound (no entry yet)
 
     // --- meta-progression & pickups ---
-    ThoughtTick,       // Thoughts counting up on the death screen (short, plays often) → needs a sound
-    HealthPickup,      // health orb collected                                     → needs a sound
+    ThoughtTick,       // Thoughts counting up on the death screen (short, plays often)
+    HealthPickup,      // health orb collected
+
+    // --- class abilities ---
+    AbilityReady,      // cooldown finished, the ability can be used again           → needs a sound
+    GrenadeThrow,      // Frag Grenade thrown                                         → needs a sound
+    GrenadeExplode,    // Frag Grenade lands and explodes (3D, at the blast)          → needs a sound
 }
 
 [AutoStaticsCleanup]

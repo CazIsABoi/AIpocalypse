@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PerkNode
   Id: Soldier.Bulwark
   Title: Bulwark
-  Description: Dig in and let them come. +15 armor, +5% block chance
+  Description: 'Dig in and let them come. +15 armor, +5% block chance. Grenade: leaves smoke for 5 s, +30 armor while you stand in it'
   Icon: {fileID: 0}
   Tier: 2
   Branch: 3
@@ -30,3 +30,5 @@ MonoBehaviour:
   GivesEffect: 0
   Effect: 0
   EffectLevels: 1
+  AbilityUpgrade: 3
+  BranchName: ARMOR / THORNS
