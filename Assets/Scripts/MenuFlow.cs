@@ -29,6 +29,19 @@ partial class MenuFlow : MonoBehaviour
     [SerializeField] private float timeBeforeInputAllowed = 0.5f;
     private float inputTimer;
     private Coroutine moveCamera;
+
+    [Header("Bunker entry")]
+    [SerializeField] private Transform divePoint;
+    [SerializeField] private Transform bunkerCeilingPoint;
+    [SerializeField] private Animator hatch;
+    [SerializeField] private string hatchTrigger = "Open";
+    [SerializeField] private CanvasGroup blackout;
+    [SerializeField] private float diveTime = 1.5f;
+    [SerializeField, Range(0f, 1f)] private float openHatchAt = 0.6f;
+    [SerializeField] private float fadeTime = 0.25f;
+    [SerializeField] private float blackTime = 0.4f;
+    [SerializeField] private float descendTime = 1.5f;
+    bool CanDive => divePoint != null && bunkerCeilingPoint != null && blackout != null;
     private bool started;
 
     [Header("Slide change")]
@@ -74,6 +87,12 @@ partial class MenuFlow : MonoBehaviour
         }
         Snap(PickerSlide);
         inputTimer = timeBeforeInputAllowed;
+        if (blackout != null)
+        {
+            blackout.alpha = 0f;
+            blackout.blocksRaycasts = false;
+        }
+        if (hatch != null) hatch.updateMode = AnimatorUpdateMode.UnscaledTime;
     }
 
     void Update()
@@ -117,7 +136,58 @@ partial class MenuFlow : MonoBehaviour
         }
         started = true;
         picker.Open();
-        Move(player.Head, cameraMoveTime, () => player.enabled = true);
+        if (CanDive) moveCamera = StartCoroutine(EnterBunker());
+        else Move(player.Head, cameraMoveTime, () => player.enabled = true);
+    }
+
+    IEnumerator EnterBunker()
+    {
+        var cam = Camera.main.transform;
+        if (hatch != null) StartCoroutine(OpenHatchAfter(diveTime * openHatchAt));
+        yield return CameraMove.To(cam, divePoint, diveTime, cameraCurve);
+        yield return Fade(1f);
+        cam.SetPositionAndRotation(bunkerCeilingPoint.position, bunkerCeilingPoint.rotation);
+        yield return new WaitForSecondsRealtime(blackTime);
+        StartCoroutine(Fade(0f));
+        yield return CameraMove.To(cam, player.Head, descendTime, cameraCurve);
+        moveCamera = null;
+        player.enabled = true;
+    }
+
+    IEnumerator LeaveBunker()
+    {
+        var cam = Camera.main.transform;
+        yield return Fade(1f);
+        cam.SetPositionAndRotation(overWorldPoint.position, overWorldPoint.rotation);
+        CloseHatch();
+        yield return new WaitForSecondsRealtime(blackTime);
+        yield return Fade(0f);
+        moveCamera = null;
+    }
+
+    IEnumerator OpenHatchAfter(float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+        hatch.SetTrigger(hatchTrigger);
+    }
+
+    void CloseHatch()
+    {
+        if (hatch == null) return;
+        hatch.ResetTrigger(hatchTrigger);
+        hatch.Rebind();
+        hatch.Update(0f);
+    }
+
+    IEnumerator Fade(float to)
+    {
+        float from = blackout.alpha;
+        for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / fadeTime)
+        {
+            blackout.alpha = Mathf.Lerp(from, to, t);
+            yield return null;
+        }
+        blackout.alpha = to;
     }
 
     // Button on the picker slide
@@ -127,7 +197,8 @@ partial class MenuFlow : MonoBehaviour
         started = false;
         inputTimer = timeBeforeInputAllowed;
         player.enabled = false;   // hand the camera back to MenuFlow, frees the cursor
-        Move(overWorldPoint, cameraMoveTime, null);
+        if (CanDive) moveCamera = StartCoroutine(LeaveBunker());
+        else Move(overWorldPoint, cameraMoveTime, null);
     }
 
     // Button on the picker slide: the perk tree has its own slide, one further down the strip
