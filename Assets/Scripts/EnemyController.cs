@@ -1,8 +1,9 @@
-using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
+
+public enum EliteType { None, Mending, Blink, Artillery, Replicator, Firewall, DataThief }
 
 public class EnemyController : MonoBehaviour, IDamageable
 {
@@ -43,7 +44,10 @@ public class EnemyController : MonoBehaviour, IDamageable
     [SerializeField] private GameObject TripodShootPivot;
     [SerializeField] private GameObject DroneExplosionPrefab;
     private HitFlash flash;
-    public bool IsElite;   // set by EntityHandler.SpawnElite
+    public bool IsElite;
+    public EliteType Elite;
+    public bool IsBoss => AiType == 10;
+    public float ShieldedUntil;   
     string AttackerName => (IsElite ? "Elite " : "") + AiType switch
     {
         0 => "Walker", 1 => "Tank", 2 => "Drone", 3 => "Froggie", 4 => "Tripod", 10 => "Boss", _ => "Enemy"
@@ -647,6 +651,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     public float TakeDamage(float Amount, float CritChance, float CritDamage, bool byPlayer = true)
     {
         LastHitSource = HitSource.Effect;
+        if (Time.time < ShieldedUntil) Amount *= 0.25f; // Shielded Elite takes less damage, but still takes some.
         if (AiType == 10 && ProtectiveBarrierActive) Amount = 0;
 
         float CritRoll = Random.Range(0f, 100f);

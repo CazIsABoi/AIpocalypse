@@ -12284,10 +12284,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 217030490}
     m_Modifications:
     - target: {fileID: 3536153287342790283, guid: f5a58c186bf6df14985b1b2e4f480392, type: 3}
-      propertyPath: game
-      value: 
-      objectReference: {fileID: 822126392}
-    - target: {fileID: 3536153287342790283, guid: f5a58c186bf6df14985b1b2e4f480392, type: 3}
       propertyPath: clock
       value: 
       objectReference: {fileID: 822126394}

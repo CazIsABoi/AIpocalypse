@@ -47,8 +47,13 @@ public class EntityHandler : MonoBehaviour
     [Header("After the boss")]
     [SerializeField] private float endlessFloorStep = 1.15f;   // x per floor past the boss (floorStep before it)
     [SerializeField] private int actLength = 20;               // every this many floors past the boss a new act starts...
-    [SerializeField] private float actJump = 2f;               // ...and threat jumps by this
+    [SerializeField] private float actJump = 2f;               
     [SerializeField] private float healthPower = 1.2f;         // enemy HP = threat^this, so it outgrows threat (damage uses damageShare)
+    [SerializeField] private int eliteStartFloor = 2;
+
+    [Header("Elite types")]
+    public LayerMask EnemyLayers;
+    public GameObject RingPrefab, BlinkEffect, ArtilleryMarker, ArtilleryBlast;
 
     int Floor => game != null ? game.Floor : floor;   // a new floor's Core asks before this Update has seen the change
     int FloorsPastBoss => Mathf.Max(0, Floor - clock.BossFloor);
@@ -80,7 +85,7 @@ public class EntityHandler : MonoBehaviour
         if (!dungeon.IsReady) return;
         SpawnCD -= Time.deltaTime;
 
-        if (clock.Endless)
+        if (Floor >= eliteStartFloor)
         {
             eliteTimer += Time.deltaTime;
             if (eliteTimer >= eliteInterval) { eliteTimer = 0f; SpawnElite(); }
@@ -201,8 +206,11 @@ public class EntityHandler : MonoBehaviour
     void SpawnElite()
     {
         if (!dungeon.TryGetSpawnPosition(out Vector3 pos)) return;
-        EnemyController e = SpawnEnemy(RollEnemyWeightAndIndex(), pos);
+        int index = RollEnemyWeightAndIndex();
+        EnemyController e = SpawnEnemy(index, pos);
         e.IsElite = true;
+        e.Elite = (EliteType)Random.Range(1, System.Enum.GetValues(typeof(EliteType)).Length);
+        AddEliteScript(e, index);
         e.MaxHealth *= eliteHealth;
         e.Damage *= eliteDamage;
         e.Xp = Mathf.RoundToInt(e.Xp * eliteXp);
@@ -219,12 +227,36 @@ public class EntityHandler : MonoBehaviour
             }
             if (!(r is MeshRenderer || r is SkinnedMeshRenderer)) continue;
             r.GetPropertyBlock(block);
-            block.SetColor("_BaseColor", eliteTint);   // URP Lit/Unlit tint
+            block.SetColor("_BaseColor", TintFor(e.Elite));
             r.SetPropertyBlock(block);
         }
         AudioManager.Instance?.PlayAt(Sfx.BountySpawn, pos);
     }
+    void AddEliteScript(EnemyController e, int index)
+    {
+        switch (e.Elite)
+        {
+            case EliteType.Mending: e.gameObject.AddComponent<EliteMending>(); break;
+            case EliteType.Replicator: e.gameObject.AddComponent<EliteReplicator>().EnemyIndex = index; break;
+            case EliteType.Blink: e.gameObject.AddComponent<EliteBlink>(); break;
+            case EliteType.Artillery: e.gameObject.AddComponent<EliteArtillery>(); break;
+            case EliteType.Firewall: e.gameObject.AddComponent<EliteFirewall>(); break;
+            case EliteType.DataThief: e.gameObject.AddComponent<EliteDataThief>(); break;
+        }
+    }
 
+    Color TintFor(EliteType type)
+    {
+        switch (type)
+        {
+            case EliteType.Mending: return new Color(0.3f, 1f, 0.3f, 1f); // green
+            case EliteType.Blink: return new Color(1f, 1f, 0.3f, 1f); // yellow
+            case EliteType.Artillery: return new Color(1f, 0.3f, 0.3f, 1f); // red
+            case EliteType.Firewall: return new Color(0.3f, 0.3f, 1f, 1f); // blue
+            case EliteType.DataThief: return new Color(0.3f, 1f, 1f, 1f); // cyan
+            default: return eliteTint;
+        }
+    }
     public void SpawnSoon() 
     {
         SpawnCD = 0f;

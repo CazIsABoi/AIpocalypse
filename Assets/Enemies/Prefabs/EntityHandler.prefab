@@ -45,15 +45,49 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   dungeon: {fileID: 0}
+  clock: {fileID: 0}
   enemies:
   - {fileID: 11400000, guid: 137573ea11e2ab44fbd614afd5b90acc, type: 2}
   - {fileID: 11400000, guid: 9ca6cbc36d8b229459148abae103e275, type: 2}
   - {fileID: 11400000, guid: 82c591894311c6f4abdedb6aec9614e2, type: 2}
   - {fileID: 11400000, guid: 8da69a78490449445ac14f1fe7b37bbe, type: 2}
   - {fileID: 11400000, guid: ae239d9385bd00740a3289a520dde039, type: 2}
-  GameTime: 0
   CurrentSpawnCD: 0
   MinSpawnCount: 0
   MaxSpawnCount: 0
   spawnedEnemies: []
+  SpawnMultiplier: 1
+  floorStep: 1.11
+  timeStep: 1.03
+  stayGrace: 45
+  stayCap: 2
+  stayStep: 1.5
+  xpFloorStep: 1.04
+  damageShare: 0.6
+  graceSpawnRate:
+  - 0.5
+  - 0.75
+  - 0.9
+  graceDamage:
+  - 0.6
+  - 0.8
+  - 0.9
+  eliteInterval: 60
+  eliteHealth: 3
+  eliteDamage: 2
+  eliteXp: 3
+  eliteSize: 1.35
+  eliteTint: {r: 1, g: 0.35, b: 0.3, a: 1}
   eliteMapIcon: {fileID: 2100000, guid: 278d369296164ab98264938239a4fe1f, type: 2}
+  endlessFloorStep: 1.15
+  actLength: 20
+  actJump: 2
+  healthPower: 1.2
+  eliteStartFloor: 2
+  EnemyLayers:
+    serializedVersion: 2
+    m_Bits: 256
+  RingPrefab: {fileID: 2957225081585083003, guid: 6646b5c7b870cb945b42ec5d95460b7c, type: 3}
+  BlinkEffect: {fileID: 834697062866984408, guid: fde9e66ce80ab854f8d8dc4c286e5260, type: 3}
+  ArtilleryMarker: {fileID: 675187841268734136, guid: e5c67b6aa84b0fb48985505f54a9378f, type: 3}
+  ArtilleryBlast: {fileID: 356443228529692770, guid: 4b7f2a5b0e7d4e446bd44c64eaec6ca5, type: 3}
